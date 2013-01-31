@@ -95,6 +95,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		trianglesArray = trianglesList.ToArray();
 		uvArray = uvList.ToArray();
 
+		Debug.Log(trianglesList.Count);
+
 		mesh.Clear();
 		mesh.MarkDynamic();
 		mesh.vertices = verticesArray;

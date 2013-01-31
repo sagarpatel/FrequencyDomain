@@ -4,16 +4,16 @@ using System.Collections;
 public class AudioDirectorScript : MonoBehaviour 
 {
 
-	public float[] sampleArrayFreq = new float[1024];
+	//public float[] sampleArrayFreq = new float[1024];
 	public float[] sampleArrayFreqBH = new float[1024];
+/*
 	public float[] colorArray =  new float[4];
 	public float rgbAverage;
-
 	public float rScale = 20.0f;
 	public float gScale = 20.0f;
 	public float bScale = 20.0f;
 	public float aScale = 20.0f;
-	
+	*/
 	const int maxTrackCount = 1;
 	public AudioSource[] audioSourceArray = new AudioSource[maxTrackCount];
 
@@ -36,9 +36,9 @@ public class AudioDirectorScript : MonoBehaviour
 	void Update () 
 	{
 
-		audioSourceArray[0].GetSpectrumData(sampleArrayFreq, 0, FFTWindow.Rectangular);
+		//audioSourceArray[0].GetSpectrumData(sampleArrayFreq, 0, FFTWindow.Rectangular);
 		audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
-
+/*
 		float sum = 0;
 		for(int c = 0; c<4; c++)
 		{
@@ -58,7 +58,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 		rgbAverage = (colorArray[0] + colorArray[1] + colorArray[2])/3.0f;
 
-
+*/
 	
 	}
 
