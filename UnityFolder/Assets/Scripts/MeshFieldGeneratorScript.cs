@@ -202,4 +202,31 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	}
 
+	public float getHeightFromPosition(float x, float y)
+	{
+		float height = 0;
+
+		int xInt = (int)x;
+		int yInt = (int)y;
+
+		//make sure position is within mesh
+		//TODO: make it scalable
+		if( xInt<0 || xInt >= verticesTimeDepthCount )
+		{
+			return 0;  //return height 0 is out of bounds
+		}
+		if( yInt <0 || yInt >= verticesFrequencyDepthCount)
+		{
+			return 0;
+		}
+
+		//find closest vertice to the position
+		int arrayIndex = xInt * verticesFrequencyDepthCount + yInt;
+		Debug.Log(arrayIndex);
+		Vector3 tempVector = mesh.vertices[arrayIndex];
+		height = tempVector.y;
+
+		return height;
+	}
+
 }
