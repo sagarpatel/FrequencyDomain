@@ -222,7 +222,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		//find closest vertice to the position
 		int arrayIndex = xInt * verticesFrequencyDepthCount + yInt;
-		Debug.Log(arrayIndex);
+		//Debug.Log(arrayIndex);
 		Vector3 tempVector = mesh.vertices[arrayIndex];
 		height = tempVector.y;
 

@@ -3,10 +3,14 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour 
 {
-	public float hSpeed = 1.0f;
-	public float vSpeed = 1.0f;
+	public float hControlSpeed = 1.0f;
+	public float vControlSpeed = 1.0f;
 
-	public float currentHeight = 0;
+	public float newHeight = 0;
+	public float oldHeight = 0;
+
+	public float heightPosition = 0;
+	public float dropRatio = 0.98f;
 
 	MeshFieldGeneratorScript meshFieldGenerator;
 
@@ -20,17 +24,35 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		float xTranslation = Input.GetAxis("Horizontal");
-		float yTranslation = Input.GetAxis("Vertical");
+		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed;
+		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed;
 		transform.Translate( -yTranslation, 0 , xTranslation);
-
 		
-		//Get Height
-		currentHeight = meshFieldGenerator.getHeightFromPosition(transform.position.x, transform.position.z);
+		//Get New Height
+		newHeight = meshFieldGenerator.getHeightFromPosition(transform.position.x, transform.position.z);
+		
+		//Calculate height velocity, only if going higher
+		if( newHeight > oldHeight )
+		{
+			heightPosition += newHeight - oldHeight;
+		}
+		heightPosition = heightPosition * dropRatio;
+
+		// make sure you stay above the mesh
+		if( heightPosition < newHeight )
+		{
+			heightPosition = newHeight;
+		}
+
 		//Set Height
 		Vector3 tempVec = transform.position;
-		tempVec.y = currentHeight + 0.5f;
+		tempVec.y = heightPosition + 0.5f;
 		transform.position = tempVec;
+
+
+
+
+		oldHeight = newHeight;
 	
 	}
 
