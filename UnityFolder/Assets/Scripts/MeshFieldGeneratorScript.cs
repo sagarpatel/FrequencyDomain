@@ -209,19 +209,21 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		int xInt = (int)x;
 		int yInt = (int)y;
 
+		int xScale = (int)transform.localScale.x;
+		int yScale = (int)transform.localScale.z;
+
 		//make sure position is within mesh
-		//TODO: make it scalable
-		if( xInt<0 || xInt >= verticesTimeDepthCount )
+		if( xInt<0 || xInt >= verticesTimeDepthCount * xScale )
 		{
 			return 0;  //return height 0 is out of bounds
 		}
-		if( yInt <0 || yInt >= verticesFrequencyDepthCount)
+		if( yInt <0 || yInt >= verticesFrequencyDepthCount * yScale )
 		{
 			return 0;
 		}
 
 		//find closest vertice to the position
-		int arrayIndex = xInt * verticesFrequencyDepthCount + yInt;
+		int arrayIndex = (xInt/xScale) * verticesFrequencyDepthCount + (yInt/yScale);
 		//Debug.Log(arrayIndex);
 		Vector3 tempVector = mesh.vertices[arrayIndex];
 		height = tempVector.y;
