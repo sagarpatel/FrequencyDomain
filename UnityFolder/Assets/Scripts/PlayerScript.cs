@@ -12,12 +12,12 @@ public class PlayerScript : MonoBehaviour
 	public float heightPosition = 0;
 	public float dropRatio = 0.98f;
 
-	MeshFieldGeneratorScript meshFieldGenerator;
+	MeshFieldGeneratorScript meshFieldGeneratorScript;
 
 	// Use this for initialization
 	void Start () 
 	{
-		meshFieldGenerator = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
+		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
 	
 	}
 	
@@ -29,7 +29,7 @@ public class PlayerScript : MonoBehaviour
 		transform.Translate( -yTranslation, 0 , xTranslation);
 		
 		//Get New Height
-		newHeight = meshFieldGenerator.getHeightFromPosition(transform.position.x, transform.position.z);
+		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x, transform.position.z);
 		
 		//Calculate height velocity, only if going higher
 		if( newHeight > oldHeight )
