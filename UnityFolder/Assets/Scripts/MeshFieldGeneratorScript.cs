@@ -105,6 +105,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		mesh.RecalculateNormals();
 
 		GetComponent<MeshRenderer>().materials[0].color = Color.green;
+		renderer.material.shader = Shader.Find("Parallax Diffuse");
 
 		//GetComponent<MeshCollider>().sharedMesh = mesh;
 	

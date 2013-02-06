@@ -20,7 +20,7 @@ public class MainCameraScript : MonoBehaviour
 		float frequencyScale = meshFieldGenerator.transform.localScale.z;
 		screenCenter = (frequencyScale * (float)frequencyCount)/2.0f;
 
-		transform.LookAt( new Vector3(0,0,screenCenter), Vector3.up );
+		transform.LookAt( new Vector3(0,-10,screenCenter), Vector3.up );
 	}
 
 }
