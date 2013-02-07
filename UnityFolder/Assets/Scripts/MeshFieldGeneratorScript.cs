@@ -172,12 +172,9 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			}
 		}
 
-		tempVector = tempVerticesArray[0];
-		tempVector.y = 0;
-		tempVerticesArray[0] = tempVector;
-
 		mesh.MarkDynamic();
 		mesh.vertices = tempVerticesArray;
+		verticesArray = tempVerticesArray;
 
 		mesh.RecalculateNormals();
 		 
@@ -226,7 +223,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		//find closest vertice to the position
 		int arrayIndex = (xInt/xScale) * verticesFrequencyDepthCount + (yInt/yScale);
 		//Debug.Log(arrayIndex);
-		Vector3 tempVector = mesh.vertices[arrayIndex];
+		Vector3 tempVector = verticesArray[arrayIndex];
 		height = tempVector.y;
 
 		return height;
