@@ -36,7 +36,7 @@ public class AudioDirectorScript : MonoBehaviour
 	void Update () 
 	{
 
-		//audioSourceArray[0].GetSpectrumData(sampleArrayFreq, 0, FFTWindow.Rectangular);
+		//audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.Blackman);
 		audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
 /*
 		float sum = 0;
