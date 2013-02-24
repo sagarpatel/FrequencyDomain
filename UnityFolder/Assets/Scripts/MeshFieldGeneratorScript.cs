@@ -200,6 +200,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	}
 
+	// old version based on float to int casting, imprecise
+	/*
 	public float getHeightFromPosition(float x, float y)
 	{
 		float height = 0;
@@ -227,6 +229,60 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		height = tempVector.y;
 
 		return height;
+	}
+	*/
+
+	public float getHeightFromPosition(float xPos, float zPos)
+	{
+		float height = 0;
+
+		float xScale = transform.localScale.x;
+		float zScale = transform.localScale.z;
+
+		//normalize postion to a unit scale
+		xPos = xPos / xScale;
+		zPos = zPos / zScale;
+
+		float xFloor = Mathf.Floor(xPos);
+		float xCeil = Mathf.Ceil(xPos);
+		float zFloor = Mathf.Floor(zPos);
+		float zCeil = Mathf.Ceil(zPos);
+
+		
+
+		//make sure position is within mesh
+		if( xFloor <0 || xCeil >= (float)verticesTimeDepthCount  )
+		{
+			return 0;  //return height 0 is out of bounds
+		}
+		if( zFloor <0 || zCeil >= (float)verticesFrequencyDepthCount  )
+		{
+			return 0;
+		}
+
+		// get height of 4 corners arround position
+		float TL = getHeightFromHeightMap( (int)xFloor, (int)zFloor );
+		float TR = getHeightFromHeightMap( (int)xFloor, (int)zCeil );
+		float BL = getHeightFromHeightMap( (int)xCeil, (int)zFloor );
+		float BR = getHeightFromHeightMap( (int)xCeil, (int)zCeil );
+
+		float xLeftLerp = Mathf.Lerp(BL, TL, (xCeil - xPos ) );
+		float xRightLerp = Mathf.Lerp(BR, TR, (xCeil - xPos) ) ;
+
+		height = Mathf.Lerp( xLeftLerp, xRightLerp, zPos - zFloor );
+
+		return height;
+	}
+
+	public float getHeightFromHeightMap(int x, int z)
+	{
+		float heightmapHeight = 0;
+
+		int arrayIndex = (x) * verticesFrequencyDepthCount + (z);
+		Vector3 tempVector = verticesArray[arrayIndex];
+		heightmapHeight = tempVector.y;
+
+		return heightmapHeight;
 	}
 
 }

@@ -30,7 +30,7 @@ public class PlayerScript : MonoBehaviour
 		
 		//Get New Height
 		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x, transform.position.z);
-		
+		/*
 		//Calculate height velocity, only if going higher
 		if( newHeight > oldHeight )
 		{
@@ -43,7 +43,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			heightPosition = newHeight;
 		}
-
+	
 		//Set Height
 		Vector3 tempVec = transform.position;
 		tempVec.y = heightPosition + 0.5f;
@@ -53,7 +53,10 @@ public class PlayerScript : MonoBehaviour
 
 
 		oldHeight = newHeight;
-	
+		*/
+		Vector3 tempVec = transform.position;
+		tempVec.y = newHeight;
+		transform.position = tempVec;
 	}
 
 
