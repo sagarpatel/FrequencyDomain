@@ -43,7 +43,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
         // initial line
         for(int j = 0; j < verticesFrequencyDepthCount; j++)
     	{
-
     		verticesList.Add( new Vector3(0,0,j) );
     		uvList.Add( new Vector2(0,0) );
     	}
@@ -52,7 +51,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
     	// use verticesFrequencyDepthCount to shift between frewuency collumns
         for(int i = 1; i < verticesTimeDepthCount  ; i++)
         {
-
         	for(int j = 0; j < verticesFrequencyDepthCount; j += 2)
         	{
         		// bottom left triangle
@@ -116,34 +114,28 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	void Update () 
 	{
-	
 		Vector3 tempVector;
 
 		// propagate old audio data along time axis
 		for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
         {
-        		tempVector = verticesArray[i];
-        		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
-        		verticesArray[i] = tempVector;
+    		tempVector = verticesArray[i];
+    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
+    		verticesArray[i] = tempVector;
         }
 		
-
         // insert fresh audio data into first frequency collumn
-		
 		// copy one to one
 		if( dataRepCount == 0)
 		{
 			for(int i = 1; i<verticesFrequencyDepthCount; i++)
 			{
 				tempVector = verticesArray[i];
+
 				if( audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] < minimumAmplitude)
-				{
 					tempVector.y = 0.0f;
-				}
 				else
-				{
 					tempVector.y = audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] * verticesAudioHeightScale;
-				}
 
 				verticesArray[i] = tempVector;
 			}
@@ -158,15 +150,11 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 				int indexShifting = (i%(dataRepCount+1)) + ( (i/(dataRepCount+1)) * dataRepCount );
 				float frequencyValue = audioDirector.sampleArrayFreqBH[i +verticesStartFrequency - indexShifting];
-			//	Debug.Log(indexShifting);
+				//	Debug.Log(indexShifting);
 				if( frequencyValue < minimumAmplitude)
-				{
 					tempVector.y = 0.0f;
-				}
 				else
-				{
 					tempVector.y = frequencyValue * verticesAudioHeightScale;
-				}
 
 				verticesArray[i] = tempVector;
 			}
@@ -184,7 +172,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 
 		/// This part handles the color
-
 		for(int c = 0; c <3 ; c++)
 		{
 			float tempSum = 0;
@@ -253,13 +240,9 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		//make sure position is within mesh
 		if( xFloor <0 || xCeil >= (float)verticesTimeDepthCount  )
-		{
 			return 0;  //return height 0 is out of bounds
-		}
 		if( zFloor <0 || zCeil >= (float)verticesFrequencyDepthCount  )
-		{
 			return 0;
-		}
 
 		// get height of 4 corners arround position
 		float TL = getHeightFromHeightMap( (int)xFloor, (int)zFloor );
