@@ -116,15 +116,15 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	void Update () 
 	{
-		Vector3[] tempVerticesArray = mesh.vertices;
+	
 		Vector3 tempVector;
 
 		// propagate old audio data along time axis
-		for(int i = tempVerticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
+		for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
         {
-        		tempVector = tempVerticesArray[i];
-        		tempVector.y = tempVerticesArray[i - verticesFrequencyDepthCount].y;
-        		tempVerticesArray[i] = tempVector;
+        		tempVector = verticesArray[i];
+        		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
+        		verticesArray[i] = tempVector;
         }
 		
 
@@ -135,7 +135,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		{
 			for(int i = 1; i<verticesFrequencyDepthCount; i++)
 			{
-				tempVector = tempVerticesArray[i];
+				tempVector = verticesArray[i];
 				if( audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] < minimumAmplitude)
 				{
 					tempVector.y = 0.0f;
@@ -145,7 +145,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 					tempVector.y = audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] * verticesAudioHeightScale;
 				}
 
-				tempVerticesArray[i] = tempVector;
+				verticesArray[i] = tempVector;
 			}
 		}
 
@@ -154,7 +154,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		{
 			for(int i = 1; i<verticesFrequencyDepthCount; i++)
 			{
-				tempVector = tempVerticesArray[i];
+				tempVector = verticesArray[i];
 
 				int indexShifting = (i%(dataRepCount+1)) + ( (i/(dataRepCount+1)) * dataRepCount );
 				float frequencyValue = audioDirector.sampleArrayFreqBH[i +verticesStartFrequency - indexShifting];
@@ -168,13 +168,12 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 					tempVector.y = frequencyValue * verticesAudioHeightScale;
 				}
 
-				tempVerticesArray[i] = tempVector;
+				verticesArray[i] = tempVector;
 			}
 		}
 
 		mesh.MarkDynamic();
-		mesh.vertices = tempVerticesArray;
-		verticesArray = tempVerticesArray;
+		mesh.vertices = verticesArray;
 
 		mesh.RecalculateNormals();
 		 
@@ -184,12 +183,14 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		//GetComponent<MeshCollider>().sharedMesh = mesh;
 
 
+		/// This part handles the color
+
 		for(int c = 0; c <3 ; c++)
 		{
 			float tempSum = 0;
 			for(int i = c*verticesFrequencyDepthCount/3; i < (c*verticesFrequencyDepthCount/3 + verticesFrequencyDepthCount/3) ; i++)
 			{
-				tempSum += tempVerticesArray[i].y;
+				tempSum += verticesArray[i].y;
 			}
 
 			rgbaArrayForm[c] = (float)tempSum/(float)(verticesFrequencyDepthCount/3);
