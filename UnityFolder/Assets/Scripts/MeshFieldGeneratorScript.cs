@@ -125,39 +125,20 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		
         // insert fresh audio data into first frequency collumn
 		// copy one to one
-		if( dataRepCount == 0)
+		float tempHeight = 0;
+		for(int i = 1; i<verticesFrequencyDepthCount; i++)
 		{
-			for(int i = 1; i<verticesFrequencyDepthCount; i++)
-			{
-				tempVector = verticesArray[i];
+			tempVector = verticesArray[i];
+			tempHeight = audioDirector.pseudoLogArray[i/(dataRepCount+1)];
+			if( tempHeight < minimumAmplitude)
+				tempVector.y = 0.0f;
+			else
+				tempVector.y = tempHeight * verticesAudioHeightScale;
 
-				if( audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] < minimumAmplitude)
-					tempVector.y = 0.0f;
-				else
-					tempVector.y = audioDirector.sampleArrayFreqBH[i+verticesStartFrequency] * verticesAudioHeightScale;
-
-				verticesArray[i] = tempVector;
-			}
+			verticesArray[i] = tempVector;
 		}
 
-		// calculated  index shifting to copy value over multiple vertices
-		else
-		{
-			for(int i = 1; i<verticesFrequencyDepthCount; i++)
-			{
-				tempVector = verticesArray[i];
-
-				int indexShifting = (i%(dataRepCount+1)) + ( (i/(dataRepCount+1)) * dataRepCount );
-				float frequencyValue = audioDirector.sampleArrayFreqBH[i +verticesStartFrequency - indexShifting];
-				//	Debug.Log(indexShifting);
-				if( frequencyValue < minimumAmplitude)
-					tempVector.y = 0.0f;
-				else
-					tempVector.y = frequencyValue * verticesAudioHeightScale;
-
-				verticesArray[i] = tempVector;
-			}
-		}
+	
 
 		mesh.MarkDynamic();
 		mesh.vertices = verticesArray;
