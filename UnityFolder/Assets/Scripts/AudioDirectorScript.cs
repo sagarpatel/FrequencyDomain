@@ -68,7 +68,46 @@ public class AudioDirectorScript : MonoBehaviour
 			logIndex++;			
 		}
 
+		SpeadLocalMaxima();
+
 	
+	}
+
+	void SpeadLocalMaxima()
+	{
+		float previousValue;
+		float currentValue;
+		float nextValue;
+		for(int i = 3; i < pseudoLogArray.Length-3; i++)
+		{	
+			previousValue = pseudoLogArray[i-1];
+			currentValue = pseudoLogArray[i];
+			nextValue = pseudoLogArray[i+1];
+
+			// find local maxima
+			if( currentValue > previousValue && currentValue > nextValue)
+			{
+				// raise previous and next values
+				pseudoLogArray[i-1] = ( previousValue + currentValue )/2.0f;
+				pseudoLogArray[i+1] = ( nextValue + currentValue )/2.0f;
+				// lower the maxima value
+				pseudoLogArray[i] = (currentValue + previousValue)/1.5f;
+			}
+
+			// spead more
+			if(previousValue > pseudoLogArray[i-2])
+				pseudoLogArray[i-2] = (previousValue + pseudoLogArray[i-2])/2.0f;
+			if(nextValue > pseudoLogArray[i+2])
+				pseudoLogArray[i+2] = (nextValue + pseudoLogArray[i+2])/2.0f;
+
+			// spead moaaar
+			if(previousValue > pseudoLogArray[i-3])
+				pseudoLogArray[i-3] = (pseudoLogArray[i-3] + pseudoLogArray[i-2])/2.0f;
+			if(nextValue > pseudoLogArray[i+3])
+				pseudoLogArray[i+3] = (pseudoLogArray[i+3] + pseudoLogArray[i+2])/2.0f;
+
+		}
+
 	}
 
 
