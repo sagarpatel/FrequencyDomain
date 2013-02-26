@@ -86,7 +86,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	        	uvList.Add( new Vector2(0,0) );
 	        	uvList.Add( new Vector2(0,0) );
         	}
-
         }
 
         verticesArray = verticesList.ToArray();
