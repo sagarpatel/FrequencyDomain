@@ -249,4 +249,30 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		return heightmapHeight;
 	}
 
+	public bool isPlayerInMeshBounds(float xPos, float zPos)
+	{
+		float xScale = transform.localScale.x;
+		float zScale = transform.localScale.z;
+
+		//normalize postion to a unit scale
+		xPos = xPos / xScale;
+		zPos = zPos / zScale;
+
+		float xFloor = Mathf.Floor(xPos);
+		float xCeil = Mathf.Ceil(xPos);
+		float zFloor = Mathf.Floor(zPos);
+		float zCeil = Mathf.Ceil(zPos);
+
+		//make sure position is within mesh
+		if( xFloor <0 || xCeil >= (float)verticesTimeDepthCount  )
+		{
+			if( zFloor <0 || zCeil >= (float)verticesFrequencyDepthCount  )
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+
 }
