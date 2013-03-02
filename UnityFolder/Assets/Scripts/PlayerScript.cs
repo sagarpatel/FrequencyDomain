@@ -30,8 +30,16 @@ public class PlayerScript : MonoBehaviour
 
 		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed;
 		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed;
-		//transform.Translate( -yTranslation, 0 , xTranslation);
+		/*
+		// cancel velocity in axis if changing direction (left/right only)
+		if( xTranslation * velocity.z < 0) // if directions are oppsite
+			velocity.z = 0;
+	*/
+		// apply new force to velocity
 		velocity += new Vector3( -yTranslation, 0 , xTranslation);
+
+
+
 		// only apply friction to translation, not gravity/height
 		velocity.x -= velocity.x * friction;
 		velocity.z -= velocity.z * friction;
