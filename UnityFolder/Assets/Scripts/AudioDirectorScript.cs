@@ -11,16 +11,20 @@ public class AudioDirectorScript : MonoBehaviour
 
 	public float[] pseudoLogArray = new float[100];
 	public int[] samplesPerDecadeArray = new int[10];
+	public float[] scalingPerDecadeArray = new float[10];
 
 	// Use this for initialization
 	void Start () 
 	{
-
+		//Start music
 		for(int i = 0; i < maxTrackCount ; i++)
-		{
 			audioSourceArray[i].Play();
-			//audioSourceArray[i].volume = 0;
-		}
+
+		// Initialize array to 1 if not set in editor
+		for(int i = 0; i < scalingPerDecadeArray.Length; i++)
+			if(scalingPerDecadeArray[i] == 0)
+				scalingPerDecadeArray[i] = 1.0f;
+	
 	
 	}
 	
@@ -44,7 +48,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 			for(int j = 0; j < samplesPerDecadeArray[decadeIndex]; j++ )
 			{
-				pseudoLogArray[i] += sampleArrayFreqBH[fftSampleCounter];
+				pseudoLogArray[i] += sampleArrayFreqBH[fftSampleCounter] * scalingPerDecadeArray[decadeIndex];
 				fftSampleCounter++;
 			}
 		}
