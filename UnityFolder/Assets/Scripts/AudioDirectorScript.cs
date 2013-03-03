@@ -13,6 +13,11 @@ public class AudioDirectorScript : MonoBehaviour
 	public int[] samplesPerDecadeArray = new int[10];
 	public float[] scalingPerDecadeArray = new float[10];
 
+	public float rScale = 1.0f;
+	public float bScale = 1.0f;
+	public float gScale = 1.0f;
+	public Color calculatedRGB = new Color();
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -54,7 +59,13 @@ public class AudioDirectorScript : MonoBehaviour
 		}
 
 		SpeadLocalMaxima();
+
+		CalculateRBG();
+
 	}
+
+
+//// Functions
 
 	void SpeadLocalMaxima()
 	{
@@ -90,6 +101,48 @@ public class AudioDirectorScript : MonoBehaviour
 				pseudoLogArray[i+3] = (pseudoLogArray[i+3] + pseudoLogArray[i+2])/2.0f;
 
 		}
+
+	}
+
+
+	void CalculateRBG()
+	{
+		/// Hanlde RGB calculation
+
+		// linear scaling model (triangular)
+		// assuming a pseudo log array of size 100, cuz I'm lazy. It's easy to generalize, but don't feel like doing it now
+		
+		// Red (full), linear slope down, max 1.0
+		float tempR = 0;
+		for( int i = 0; i < 40; i++ )
+		{
+			tempR += pseudoLogArray[i] * (40.0f - (float)i)/40.0f ; // weighted according to position on slope
+		}
+	
+		// Green (first half), linear slope up, max 2/3 --> 0.67 (fromarea under curve calcuation)
+		float tempG  = 0;
+		for( int i = 20; i < 50; i++ )
+		{
+			tempG += pseudoLogArray[i] * 0.67f * ((float)(i - 20))/30.0f;
+		}
+
+		// Green (second half), linear slope down
+		for( int i = 50; i < 80; i++ )
+		{
+			tempG += pseudoLogArray[i] * 0.67f * (30.0f - (float)(i-50))/30.0f;
+		}
+
+
+		// Blue (full), linear slope up
+		float tempB = 0;
+		for( int i = 60; i < 100; i++)
+		{
+			tempB += pseudoLogArray[i] * ((float)(i - 60))/40.0f;
+		}
+	
+
+		calculatedRGB = new Color( tempR * rScale, tempG * gScale, tempB * bScale, 1.0f);
+
 
 	}
 
