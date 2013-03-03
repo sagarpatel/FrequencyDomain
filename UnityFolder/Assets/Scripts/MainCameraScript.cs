@@ -22,7 +22,7 @@ public class MainCameraScript : MonoBehaviour
 		playerVelocity = ((PlayerScript)(transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
 		cameraTarget = transform.parent.position;
 		cameraTarget.x -= distanceAhead;
-		//cameraTarget.y = playerVelocity.y;
+		//cameraTarget.y = playerVelocity.y* 0.1f;
 		
 		transform.LookAt( cameraTarget, Vector3.up );
 
