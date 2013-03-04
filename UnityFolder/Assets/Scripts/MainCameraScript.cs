@@ -23,6 +23,7 @@ public class MainCameraScript : MonoBehaviour
 		cameraTarget = transform.parent.position;
 		cameraTarget.x -= distanceAhead;
 		//cameraTarget.y = playerVelocity.y* 0.1f;
+		cameraTarget.y = cameraTarget.y/3.0f;
 		
 		transform.LookAt( cameraTarget, Vector3.up );
 

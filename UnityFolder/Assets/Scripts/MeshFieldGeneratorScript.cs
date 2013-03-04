@@ -121,17 +121,13 @@ public class MeshFieldGeneratorScript : MonoBehaviour
         }
 		
         // insert fresh audio data into first frequency collumn
-		// copy one to one
+		// copy one to dataRepCount+1
 		float tempHeight = 0;
 		for(int i = 1; i<verticesFrequencyDepthCount; i++)
 		{
 			tempVector = verticesArray[i];
 			tempHeight = audioDirector.pseudoLogArray[i/(dataRepCount+1)];
-			if( tempHeight < minimumAmplitude)
-				tempVector.y = 0.0f;
-			else
-				tempVector.y = tempHeight * verticesAudioHeightScale;
-
+			tempVector.y = tempHeight * verticesAudioHeightScale;
 			verticesArray[i] = tempVector;
 		}
 
