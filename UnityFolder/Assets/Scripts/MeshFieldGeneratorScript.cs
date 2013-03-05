@@ -154,7 +154,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		zPos = zPos / zScale;
 
 		// Getting position 1 ahead
-		xPos = xPos -1;
+		//xPos = xPos -1;
 
 		float xFloor = Mathf.Floor(xPos);
 		float xCeil = Mathf.Ceil(xPos);

@@ -7,12 +7,12 @@ public class PlayerScript : MonoBehaviour
 	public float vControlSpeed = 1.0f;
 
 	public float newHeight = 0;
-	public float oldHeight = 0;
 
 	public Vector3 velocity = new Vector3();
 	public float friction = 0.0f;
 	public float gravity = 0.0f;
-
+	public float rampUpFactor = 1.0f;
+	public float rampUpCounter = 0;
 
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 
@@ -46,26 +46,30 @@ public class PlayerScript : MonoBehaviour
 
 		
 		//Get New Height
-		oldHeight = newHeight;
-		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x, transform.position.z);
-
-		// if ramping up
-		if( newHeight > oldHeight)
+		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z);
+		
+		if( oldPosition.y < newHeight) // ramping up
 		{
-			velocity.y += newHeight - oldHeight;
-		}
-
-		// if up in the air
-		if( oldPosition.y > newHeight)
-		{
-			velocity.y -= gravity ;
-		}
-		else 
-		{
-			// if not in the air, hug surface
+			rampUpCounter += (newHeight - oldPosition.y) * Time.deltaTime ; // keep track of of much height is gained
 			velocity.y = 0;
-			oldPosition.y = newHeight;
+			oldPosition.y = newHeight; // hug mesh
 		}
+		else if( oldPosition.y > newHeight) // flying in the air
+		{
+			if( rampUpCounter > 0 ) // the first moment in the air
+			{
+				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
+				//Debug.Log(velocity.y);
+				rampUpCounter = 0; // reset it
+			}
+			else // in free fall
+			{
+				velocity.y -= gravity * Time.deltaTime; // apply gravity 
+				Debug.Log(gravity * Time.deltaTime);
+			}
+		}
+
+		// if oldPosition.y and newHeight are equal, oldPosition stays untouched.
 
 		transform.position = oldPosition + velocity * Time.deltaTime;
 	}
