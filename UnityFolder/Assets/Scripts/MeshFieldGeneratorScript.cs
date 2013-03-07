@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class MeshFieldGeneratorScript : MonoBehaviour 
 {
 
+	public float xScale = 1;
+	public float zScale = 1;
+
 	public Vector3[] verticesArray;
 	public int[] trianglesArray;
 
@@ -40,7 +43,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
         // initial line
         for(int j = 0; j < verticesFrequencyDepthCount; j++)
     	{
-    		verticesList.Add( new Vector3(0,0,j) );
+    		verticesList.Add( new Vector3(0,0,j * zScale) );
     		uvList.Add( new Vector2(0,0) );
     	}
 
@@ -51,7 +54,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
         	for(int j = 0; j < verticesFrequencyDepthCount; j += 2)
         	{
         		// bottom left triangle
-        		verticesList.Add( new Vector3(i,0, j) );
+        		verticesList.Add( new Vector3(i * xScale,0, j * zScale) );
         		int currentListIndex = verticesList.Count -1;
 
 	        	trianglesList.Add(currentListIndex);
@@ -73,7 +76,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	        	}	
 
 	        	// top right triangle
-	        	verticesList.Add( new Vector3(i,0, j + 1) );
+	        	verticesList.Add( new Vector3( i*xScale,0, (j + 1)*zScale ) );
 	        	currentListIndex++;
 	        	
 	        	trianglesList.Add(currentListIndex);
@@ -146,9 +149,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	{
 		float height = 0;
 
-		float xScale = transform.localScale.x;
-		float zScale = transform.localScale.z;
-
 		//normalize postion to a unit scale
 		xPos = xPos / xScale;
 		zPos = zPos / zScale;
@@ -194,8 +194,6 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	public bool isPlayerInMeshBounds(float xPos, float zPos)
 	{
-		float xScale = transform.localScale.x;
-		float zScale = transform.localScale.z;
 
 		//normalize postion to a unit scale
 		xPos = xPos / xScale;
