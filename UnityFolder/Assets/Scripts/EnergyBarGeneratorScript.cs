@@ -19,9 +19,10 @@ public class EnergyBarGeneratorScript : MonoBehaviour
 		float rotationFactor = (rotationCount / (float)energyPiecesArray.Length) * (2*Mathf.PI) ;
 		for(int i =0; i < energyPiecesArray.Length; i++)
 		{
-			tempPosition = new Vector3( (float)i*depthScale , radius * Mathf.Cos( (float)i*rotationFactor), radius* Mathf.Sin( (float)i*rotationFactor)  );
+			tempPosition = new Vector3( -(float)i*depthScale , radius * Mathf.Cos( (float)i*rotationFactor), radius* Mathf.Sin( (float)i*rotationFactor)  );
 			energyPiecesArray[i] = (GameObject)Instantiate(energyBarPiecePrefab, tempPosition, transform.localRotation );
 			energyPiecesArray[i].transform.parent = transform;
+			radius --;
 		}
 	
 	}
