@@ -14,9 +14,12 @@ public class PlayerScript : MonoBehaviour
 	public float rampUpFactor = 1.0f;
 	public float rampUpCounter = 0;
 
-	public float boostFactor = 1.0f;
+	public float[] boostFactorArray = new float[3];
+	public float[] boostTreasholdArray = new float[2];
+	public int boostStage = 0;
 	public float energyCounter = 0;
 	public float originalFieldOfView = 90;
+	public float currentFieldOfView;
 
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCamera;
@@ -80,7 +83,19 @@ public class PlayerScript : MonoBehaviour
 
 	void HandleBoost()
 	{
-		if( Input.GetButton("Fire1") )
+		currentFieldOfView = mainCamera.fieldOfView;
+
+		if( currentFieldOfView < boostTreasholdArray[0] )
+			boostStage = 0;
+		else if( currentFieldOfView < boostTreasholdArray[1] )
+			boostStage = 1;
+		else
+			boostStage = 2;
+
+		float boostFactor = 0;
+		boostFactor = boostFactorArray[boostStage];
+
+		if( Input.GetButton("Fire1") || Input.GetButton("Jump") )
 		{
 			energyCounter += Time.deltaTime * boostFactor;
 		}
