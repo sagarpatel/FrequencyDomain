@@ -71,7 +71,7 @@ public class PlayerScript : MonoBehaviour
 			else // in free fall
 			{
 				velocity.y -= gravity * Time.deltaTime; // apply gravity 
-				Debug.Log(gravity * Time.deltaTime);
+				//Debug.Log(gravity * Time.deltaTime);
 			}
 		}
 

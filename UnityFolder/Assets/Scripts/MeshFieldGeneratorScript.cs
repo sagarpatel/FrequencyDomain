@@ -24,6 +24,9 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	public float minimumAmplitude = 0.001f;
 	public int dataRepCount = 0;
 
+	public float updateRefreshMinimum = 0.02f;
+	float updateRefreshCounter;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -113,32 +116,40 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	void Update () 
 	{
-		Vector3 tempVector;
 
-		// propagate old audio data along time axis
-		for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
-        {
-    		tempVector = verticesArray[i];
-    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
-    		verticesArray[i] = tempVector;
-        }
-		
-        // insert fresh audio data into first frequency collumn
-		// copy one to dataRepCount+1
-		float tempHeight = 0;
-		for(int i = 1; i<verticesFrequencyDepthCount; i++)
+		updateRefreshCounter += Time.deltaTime;
+
+		if(updateRefreshCounter > updateRefreshMinimum)
 		{
-			tempVector = verticesArray[i];
-			tempHeight = audioDirector.pseudoLogArray[i/(dataRepCount+1)];
-			tempVector.y = tempHeight * verticesAudioHeightScale;
-			verticesArray[i] = tempVector;
+			Debug.Log(updateRefreshCounter);
+			updateRefreshCounter = 0;
+
+			Vector3 tempVector;
+			// propagate old audio data along time axis
+			for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
+	        {
+	    		tempVector = verticesArray[i];
+	    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
+	    		verticesArray[i] = tempVector;
+	        }
+			
+	        // insert fresh audio data into first frequency collumn
+			// copy one to dataRepCount+1
+			float tempHeight = 0;
+			for(int i = 1; i<verticesFrequencyDepthCount; i++)
+			{
+				tempVector = verticesArray[i];
+				tempHeight = audioDirector.pseudoLogArray[i/(dataRepCount+1)];
+				tempVector.y = tempHeight * verticesAudioHeightScale;
+				verticesArray[i] = tempVector;
+			}
+
+			mesh.MarkDynamic();
+			mesh.vertices = verticesArray;
+			mesh.RecalculateNormals();
+
+			GetComponent<MeshRenderer>().materials[0].color = audioDirector.calculatedRGB;
 		}
-
-		mesh.MarkDynamic();
-		mesh.vertices = verticesArray;
-		mesh.RecalculateNormals();
-
-		GetComponent<MeshRenderer>().materials[0].color = audioDirector.calculatedRGB;
 
 	}
 
