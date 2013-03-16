@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class PlayerScript : MonoBehaviour 
 {
 	public float hControlSpeed = 1.0f;
@@ -9,6 +10,7 @@ public class PlayerScript : MonoBehaviour
 	public float newHeight = 0;
 
 	public Vector3 velocity = new Vector3();
+	Vector3 oldVelocity = new Vector3();
 	public float friction = 0.0f;
 	public float gravity = 0.0f;
 	public float rampUpFactor = 1.0f;
@@ -21,21 +23,33 @@ public class PlayerScript : MonoBehaviour
 	public float originalFieldOfView = 90;
 	public float currentFieldOfView;
 
+	public float orignalBloomIntensityValue = 2.0f;
+	public float bloomBurstValue;
+	public float bloomBurstScale = 1.0f;
+	public float bloomBurstDegradationLength = 500;
+	public float bloomBurstMinimumHeight = 10;
+
+	public float jumpHeight;
+
+	public int activeCoroutineCounter = 0;
+
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCamera;
+	Bloom bloomScript;
 
 	// Use this for initialization
 	void Start () 
 	{
 		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
 		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
-	
+		bloomScript = (Bloom)GameObject.Find("Main Camera").GetComponent("Bloom");	
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		Vector3 oldPosition = transform.position;
+		oldVelocity = velocity;
 
 		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed;
 		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed;
@@ -64,6 +78,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			if( rampUpCounter > 0 ) // the first moment in the air
 			{
+				jumpHeight = transform.position.y;
 				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
 				//Debug.Log(velocity.y);
 				rampUpCounter = 0; // reset it
@@ -79,6 +94,7 @@ public class PlayerScript : MonoBehaviour
 		transform.position = oldPosition + velocity * Time.deltaTime;
 
 		HandleBoost();
+		HandleBloomBurst();
 	}
 
 	void HandleBoost()
@@ -115,6 +131,33 @@ public class PlayerScript : MonoBehaviour
 		}
 
 
+	}
+
+	void HandleBloomBurst()
+	{
+		if(oldVelocity.y < 0 && velocity.y == 0 && jumpHeight > bloomBurstMinimumHeight) // moment of impact with ground
+		{
+			bloomBurstValue = -oldVelocity.y * bloomBurstScale;
+			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstValue;
+			activeCoroutineCounter++;
+			StartCoroutine(BloomBurstDegradeCoroutine());
+		}
+	}
+
+	IEnumerator BloomBurstDegradeCoroutine()
+	{	
+		float timeCounter = 0;
+		while( timeCounter < bloomBurstDegradationLength )
+		{
+			bloomBurstValue = Mathf.Lerp(bloomBurstValue, 0, timeCounter/bloomBurstDegradationLength);
+			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstValue;
+			timeCounter += Time.deltaTime;
+			//Debug.Log(timeCounter);
+			yield return null;
+		}
+		bloomBurstValue = 0;
+		Debug.Log("COROUTINE EXIT");
+		activeCoroutineCounter --;
 	}
 
 

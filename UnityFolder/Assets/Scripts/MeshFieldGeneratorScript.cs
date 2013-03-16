@@ -121,7 +121,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		if(updateRefreshCounter > updateRefreshMinimum)
 		{
-			Debug.Log(updateRefreshCounter);
+			//Debug.Log(updateRefreshCounter);
 			updateRefreshCounter = 0;
 
 			Vector3 tempVector;
