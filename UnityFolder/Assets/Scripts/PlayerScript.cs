@@ -26,10 +26,13 @@ public class PlayerScript : MonoBehaviour
 	public float orignalBloomIntensityValue = 2.0f;
 	public float bloomBurstValue;
 	public float bloomBurstScale = 1.0f;
-	public float bloomBurstDegradationLength = 500;
 	public float bloomBurstMinimumHeight = 10;
 
 	public float jumpHeight;
+	public float hangtimeCounter;
+	public float[] bloomBurstValueArray = new float[5];
+
+	public float hangTimeScale = 1;
 
 	public int activeCoroutineCounter = 0;
 
@@ -86,6 +89,7 @@ public class PlayerScript : MonoBehaviour
 			else // in free fall
 			{
 				velocity.y -= gravity * Time.deltaTime; // apply gravity 
+				hangtimeCounter += Time.deltaTime;
 				//Debug.Log(gravity * Time.deltaTime);
 			}
 		}
@@ -136,28 +140,39 @@ public class PlayerScript : MonoBehaviour
 	void HandleBloomBurst()
 	{
 		if(oldVelocity.y < 0 && velocity.y == 0 && jumpHeight > bloomBurstMinimumHeight) // moment of impact with ground
-		{
+		{				
 			bloomBurstValue = -oldVelocity.y * bloomBurstScale;
-			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstValue;
 			activeCoroutineCounter++;
-			StartCoroutine(BloomBurstDegradeCoroutine());
+			StartCoroutine(BloomBurstDegradeCoroutine(hangtimeCounter, bloomBurstValue));
+			hangtimeCounter = 0;
 		}
+		float bloomBurstSum = 0;
+		for(int i = 0; i < bloomBurstValueArray.Length; i++)
+			bloomBurstSum += bloomBurstValueArray[i];
+		bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstSum;
+
 	}
 
-	IEnumerator BloomBurstDegradeCoroutine()
+	IEnumerator BloomBurstDegradeCoroutine(float hangTime, float initialBloomBurst)
 	{	
-		float timeCounter = 0;
-		while( timeCounter < bloomBurstDegradationLength )
+		for(int i =0; i < bloomBurstValueArray.Length; i++)
 		{
-			bloomBurstValue = Mathf.Lerp(bloomBurstValue, 0, timeCounter/bloomBurstDegradationLength);
-			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstValue;
-			timeCounter += Time.deltaTime;
-			//Debug.Log(timeCounter);
-			yield return null;
+			// find an empty stack slot
+			if(bloomBurstValueArray[i] == 0)
+			{
+				float timeCounter = 0;
+				hangTime = hangTime * hangTimeScale;
+				bloomBurstValueArray[i] = initialBloomBurst;
+				while( timeCounter < hangTime )
+				{
+					bloomBurstValueArray[i] = Mathf.Lerp(bloomBurstValueArray[i], 0, timeCounter/hangTime);
+					timeCounter += Time.deltaTime;
+					yield return null;
+				}
+				bloomBurstValueArray[i] = 0;
+				activeCoroutineCounter --;
+			}
 		}
-		bloomBurstValue = 0;
-		Debug.Log("COROUTINE EXIT");
-		activeCoroutineCounter --;
 	}
 
 
