@@ -141,7 +141,8 @@ public class PlayerScript : MonoBehaviour
 	{
 		if(oldVelocity.y < 0 && velocity.y == 0 && jumpHeight > bloomBurstMinimumHeight) // moment of impact with ground
 		{				
-			bloomBurstValue = -oldVelocity.y * bloomBurstScale;
+			//bloomBurstValue = -oldVelocity.y * bloomBurstScale;
+			bloomBurstValue = hangtimeCounter * bloomBurstScale;
 			activeCoroutineCounter++;
 			StartCoroutine(BloomBurstDegradeCoroutine(hangtimeCounter, bloomBurstValue));
 			hangtimeCounter = 0;
@@ -171,6 +172,7 @@ public class PlayerScript : MonoBehaviour
 				}
 				bloomBurstValueArray[i] = 0;
 				activeCoroutineCounter --;
+				break;
 			}
 		}
 	}
