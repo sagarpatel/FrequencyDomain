@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class PlayerScript : MonoBehaviour 
@@ -24,8 +25,13 @@ public class PlayerScript : MonoBehaviour
 	public float currentFieldOfView;
 
 	public float orignalBloomIntensityValue = 2.0f;
-	public float bloomBurstValue;
+	public float originalLightsRange = 250.0f;
+
+	float bloomBurstValue;
+
 	public float bloomBurstScale = 1.0f;
+	public float meshLightsScale = 1.0f;
+
 	public float bloomBurstMinimumHeight = 10;
 
 	public float jumpHeight;
@@ -39,13 +45,21 @@ public class PlayerScript : MonoBehaviour
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCamera;
 	Bloom bloomScript;
+	List<Light> meshLightsList = new List<Light>();
 
 	// Use this for initialization
 	void Start () 
 	{
 		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
 		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
-		bloomScript = (Bloom)GameObject.Find("Main Camera").GetComponent("Bloom");	
+		bloomScript = (Bloom)GameObject.Find("Main Camera").GetComponent("Bloom");
+		GameObject[] meshLightsObjectsArray =  GameObject.FindGameObjectsWithTag("MeshLight");
+		
+		for(int i =0; i < meshLightsObjectsArray.Length; i++)
+		{
+			meshLightsList.Add( (Light)(meshLightsObjectsArray[i]).GetComponent("Light") );
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -99,6 +113,7 @@ public class PlayerScript : MonoBehaviour
 
 		HandleBoost();
 		HandleBloomBurst();
+		HandleMeshLights();
 	}
 
 	void HandleBoost()
@@ -175,6 +190,17 @@ public class PlayerScript : MonoBehaviour
 				break;
 			}
 		}
+	}
+
+	void HandleMeshLights()
+	{
+		float bloomBurstSum = 0;
+		for(int i = 0; i < bloomBurstValueArray.Length; i++)
+			bloomBurstSum += bloomBurstValueArray[i];
+
+
+		for(int i = 0; i < meshLightsList.Count; i++ )
+			meshLightsList[i].range = originalLightsRange + bloomBurstSum * meshLightsScale;
 	}
 
 
