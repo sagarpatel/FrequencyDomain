@@ -60,6 +60,7 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList.Add( (Light)(meshLightsObjectsArray[i]).GetComponent("Light") );
 		}
 
+
 	}
 	
 	// Update is called once per frame
@@ -183,6 +184,8 @@ public class PlayerScript : MonoBehaviour
 				{
 					bloomBurstValueArray[i] = Mathf.Lerp(bloomBurstValueArray[i], 0, timeCounter/hangTime);
 					timeCounter += Time.deltaTime;
+					if(bloomBurstValueArray[i] < 0.00001 ) // kill the co-routine if value is too low to be noticeable (this seems to fix inconsistencies bug)
+						break;
 					yield return null;
 				}
 				bloomBurstValueArray[i] = 0;
@@ -196,7 +199,7 @@ public class PlayerScript : MonoBehaviour
 	{
 		float bloomBurstSum = 0;
 		for(int i = 0; i < bloomBurstValueArray.Length; i++)
-			bloomBurstSum += bloomBurstValueArray[i];
+			bloomBurstSum += bloomBurstValueArray[i]/bloomBurstScale; //undo bloombusrt scale
 
 
 		for(int i = 0; i < meshLightsList.Count; i++ )
