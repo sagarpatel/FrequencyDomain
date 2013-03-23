@@ -9,6 +9,10 @@ public class MainCameraScript : MonoBehaviour
 	public float rollSensitivity = 1.0f;
 	public float pitchSensitivity = 1.0f;
 
+	public float barrelRollSensitivity = 1.0f;
+	public float barrelRollDegradation = 0.95f;
+	public float barrelRollTriggerCounter;
+
 
 	// Use this for initialization
 	void Start () 
@@ -27,12 +31,21 @@ public class MainCameraScript : MonoBehaviour
 		
 		transform.LookAt( cameraTarget, Vector3.up );
 
+		// Handle barrel roll input
+		// windows controls for triggers
+		if( Input.GetAxis("LeftTrigger") > 0 )
+			barrelRollTriggerCounter += Input.GetAxis("LeftTrigger");
+		if( Input.GetAxis("RightTrigger") < 0 )
+			barrelRollTriggerCounter += Input.GetAxis("RightTrigger");
+
 		transform.eulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
 											transform.eulerAngles.y, 
-											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
+											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity + barrelRollTriggerCounter * barrelRollSensitivity);
 
-		Debug.Log( Input.GetAxis("LeftTrigger") );
-		Debug.Log( Input.GetAxis("RightTrigger") );
+		barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
+
+		//Debug.Log( Input.GetAxis("LeftTrigger") );
+		//Debug.Log( Input.GetAxis("RightTrigger") );
 		//Debug.Log( Input.GetAxis("Horizontal") );
 
 	}
