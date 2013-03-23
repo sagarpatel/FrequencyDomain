@@ -5,10 +5,16 @@ public class LevelSelectDirectorScript : MonoBehaviour
 {
 	public float levelLoadFOV = 179.0f;
 	Camera mainCamera;
+	public int nextLevelIndex;
+
 	// Use this for initialization
 	void Start () 
 	{
 		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
+
+		nextLevelIndex =  Application.loadedLevel + 1;
+		if( nextLevelIndex >6 )
+			nextLevelIndex = 1;
 	
 	}
 	
@@ -19,7 +25,30 @@ public class LevelSelectDirectorScript : MonoBehaviour
 		float fov = mainCamera.fieldOfView;
 
 		if( fov > levelLoadFOV )
-			Application.LoadLevel("Aliceeffekt_T2");
+			Application.LoadLevel(nextLevelIndex);
+
+		if( Input.GetKey("0") )
+			Application.LoadLevel(0);
+
+		if( Input.GetKey("1") )
+			Application.LoadLevel(1);
+
+		if( Input.GetKey("2") )
+			Application.LoadLevel(2);
+
+		if( Input.GetKey("3") )
+			Application.LoadLevel(3);
+
+		if( Input.GetKey("4") )
+			Application.LoadLevel(4);
+
+		if( Input.GetKey("5") )
+			Application.LoadLevel(5);
+
+		if( Input.GetKey("6") )
+			Application.LoadLevel(6);
+
+
 	
 	}
 
