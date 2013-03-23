@@ -31,6 +31,10 @@ public class MainCameraScript : MonoBehaviour
 											transform.eulerAngles.y, 
 											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
 
+		Debug.Log( Input.GetAxis("LeftTrigger") );
+		Debug.Log( Input.GetAxis("RightTrigger") );
+		//Debug.Log( Input.GetAxis("Horizontal") );
+
 	}
 
 }
