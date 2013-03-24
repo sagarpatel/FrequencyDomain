@@ -26,7 +26,7 @@ public class MainCameraScript : MonoBehaviour
 		playerVelocity = ((PlayerScript)(transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
 		cameraTarget = transform.parent.position;
 		cameraTarget.x -= distanceAhead;
-		//cameraTarget.y = playerVelocity.y* 0.1f;
+		cameraTarget.y = playerVelocity.y* 0.1f;
 		cameraTarget.y = cameraTarget.y/3.0f;
 		
 		transform.LookAt( cameraTarget, Vector3.up );
@@ -40,7 +40,7 @@ public class MainCameraScript : MonoBehaviour
 
 		transform.eulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
 											transform.eulerAngles.y, 
-											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity + barrelRollTriggerCounter * 5);
+											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity + barrelRollTriggerCounter * 10);
 
 		barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
 
