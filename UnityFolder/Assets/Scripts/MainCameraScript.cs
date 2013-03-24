@@ -40,12 +40,12 @@ public class MainCameraScript : MonoBehaviour
 
 		transform.eulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
 											transform.eulerAngles.y, 
-											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity + barrelRollTriggerCounter * barrelRollSensitivity);
+											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity + barrelRollTriggerCounter * 5);
 
 		barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
 
-		//Debug.Log( Input.GetAxis("LeftTrigger") );
-		//Debug.Log( Input.GetAxis("RightTrigger") );
+		Debug.Log( Input.GetAxis("LeftTrigger") );
+		Debug.Log( Input.GetAxis("RightTrigger") );
 		//Debug.Log( Input.GetAxis("Horizontal") );
 
 	}
