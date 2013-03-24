@@ -18,6 +18,12 @@ public class AudioDirectorScript : MonoBehaviour
 	public float gScale = 1.0f;
 	public Color calculatedRGB = new Color();
 
+	// Low Pass Filter Parameters
+	public float initialLPFCutoffFrequency = 20000;
+	float initialFOV;
+	AudioLowPassFilter lowPassFilter;
+	Camera mainCamera;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -30,7 +36,9 @@ public class AudioDirectorScript : MonoBehaviour
 			if(scalingPerDecadeArray[i] == 0)
 				scalingPerDecadeArray[i] = 1.0f;
 	
-	
+		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
+		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
+		initialFOV = ( (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
 	}
 	
 	// Update is called once per frame
@@ -61,6 +69,8 @@ public class AudioDirectorScript : MonoBehaviour
 		SpeadLocalMaxima();
 
 		CalculateRBG();
+
+		HandleLowPassFilter();
 
 	}
 
@@ -142,10 +152,16 @@ public class AudioDirectorScript : MonoBehaviour
 	
 
 		calculatedRGB = new Color( tempR * rScale, tempG * gScale, tempB * bScale, 1.0f);
-
-
 	}
 
+
+	void HandleLowPassFilter()
+	{
+		float currentFOV = mainCamera.fieldOfView;
+		float progressRatio = ( currentFOV - initialFOV )/(180.0f - initialFOV);
+		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio);
+
+	}
 
 
 }
