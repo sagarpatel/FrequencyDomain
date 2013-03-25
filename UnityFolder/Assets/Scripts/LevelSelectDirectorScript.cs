@@ -48,6 +48,12 @@ public class LevelSelectDirectorScript : MonoBehaviour
 		if( Input.GetKey("6") )
 			Application.LoadLevel(6);
 
+		if( Input.GetKey("7") )
+			Application.LoadLevel(7);
+
+		if( Input.GetKey("8") )
+			Application.LoadLevel(8);
+
 
 	
 	}
