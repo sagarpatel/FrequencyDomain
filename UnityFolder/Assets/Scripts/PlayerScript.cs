@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour
 
 	public Vector3 velocity = new Vector3();
 	Vector3 oldVelocity = new Vector3();
+	Vector3 oldPosition = new Vector3();
 	public float friction = 0.0f;
 	public float gravity = 0.0f;
 	public float rampUpFactor = 1.0f;
@@ -66,7 +67,7 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		Vector3 oldPosition = transform.position;
+		oldPosition = transform.position;
 		oldVelocity = velocity;
 
 		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed;
@@ -82,6 +83,8 @@ public class PlayerScript : MonoBehaviour
 		// only apply friction to translation, not gravity/height
 		velocity.x -= velocity.x * friction;
 		velocity.z -= velocity.z * friction;
+
+		HandleControlBounds();
 
 		//Get New Height
 		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z);
@@ -206,5 +209,20 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList[i].range = originalLightsRange + bloomBurstSum * meshLightsScale;
 	}
 
+	void HandleControlBounds()
+	{
+		// check if input would put player out of bounds
+		Vector3 predecitedPosition =  oldPosition + velocity * Time.deltaTime;
+		float fdc = meshFieldGeneratorScript.verticesFrequencyDepthCount;
+		float tdc = meshFieldGeneratorScript.verticesTimeDepthCount;
+		float xscale = meshFieldGeneratorScript.xScale;
+		float zscale = meshFieldGeneratorScript.zScale;
+
+		if( predecitedPosition.x < 0.3f*tdc*xscale || predecitedPosition.x > tdc*xscale )
+			velocity.x = 0;
+		if( predecitedPosition.z < 0 || predecitedPosition.z > 0.9f*fdc*zscale )
+			velocity.z =0;
+
+	}
 
 }
