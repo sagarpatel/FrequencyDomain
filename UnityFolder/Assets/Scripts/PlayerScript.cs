@@ -70,8 +70,8 @@ public class PlayerScript : MonoBehaviour
 		oldPosition = transform.position;
 		oldVelocity = velocity;
 
-		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed;
-		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed;
+		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
+		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
 		/*
 		// cancel velocity in axis if changing direction (left/right only)
 		if( xTranslation * velocity.z < 0) // if directions are oppsite
@@ -81,8 +81,8 @@ public class PlayerScript : MonoBehaviour
 		velocity += new Vector3( -yTranslation, 0 , xTranslation);
 
 		// only apply friction to translation, not gravity/height
-		velocity.x -= velocity.x * friction;
-		velocity.z -= velocity.z * friction;
+		velocity.x -= velocity.x * friction * Time.deltaTime;
+		velocity.z -= velocity.z * friction * Time.deltaTime;
 
 		HandleControlBounds();
 
