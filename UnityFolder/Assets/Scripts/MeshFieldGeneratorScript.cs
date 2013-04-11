@@ -130,7 +130,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
 	        {
 	    		tempVector = verticesArray[i];
-	    		tempVector.y = (verticesArray[i - verticesFrequencyDepthCount].y + verticesArray[i].y)/1.969f;
+	    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y ;
 	    		verticesArray[i] = tempVector;
 	        }
 			
@@ -141,7 +141,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			{
 				tempVector = verticesArray[i];
 				tempHeight = audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)];
-				tempVector.y = tempHeight * verticesAudioHeightScale;
+				tempVector.y = tempHeight * verticesAudioHeightScale; // normal version
+				//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 				verticesArray[i] = tempVector;
 			}
 			// reset the audio data buffer
