@@ -10,6 +10,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	public Vector3[] verticesArray;
 	public int[] trianglesArray;
+	public Vector2[] uvArray;
 
 	public int verticesFrequencyDepthCount = 64;
 	public int verticesTimeDepthCount = 100;
@@ -33,13 +34,13 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		gameObject.AddComponent("MeshFilter");
         gameObject.AddComponent("MeshRenderer");
-        gameObject.AddComponent("MeshCollider");
+       // gameObject.AddComponent("MeshCollider");
         mesh = GetComponent<MeshFilter>().mesh;
 
         List<int> trianglesList = new List<int>();
         List<Vector3> verticesList = new List<Vector3>();
 
-        Vector2[] uvArray;
+        
         List<Vector2> uvList = new List<Vector2>();
 
 
@@ -129,7 +130,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
 	        {
 	    		tempVector = verticesArray[i];
-	    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y;
+	    		tempVector.y = (verticesArray[i - verticesFrequencyDepthCount].y + verticesArray[i].y)/1.969f;
 	    		verticesArray[i] = tempVector;
 	        }
 			
