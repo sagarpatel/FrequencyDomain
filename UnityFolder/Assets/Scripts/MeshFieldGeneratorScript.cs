@@ -122,7 +122,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		if(updateRefreshCounter > updateRefreshMinimum)
 		{
 			//Debug.Log(updateRefreshCounter);
-			updateRefreshCounter = 0;
+			updateRefreshCounter -= updateRefreshMinimum;
 
 			Vector3 tempVector;
 			// propagate old audio data along time axis
@@ -139,10 +139,13 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			for(int i = 1; i<verticesFrequencyDepthCount; i++)
 			{
 				tempVector = verticesArray[i];
-				tempHeight = audioDirector.pseudoLogArray[i/(dataRepCount+1)];
+				tempHeight = audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)];
 				tempVector.y = tempHeight * verticesAudioHeightScale;
 				verticesArray[i] = tempVector;
 			}
+			// reset the audio data buffer
+			for(int i = 0; i < audioDirector.pseudoLogArray.Length; i++)
+				audioDirector.pseudoLogArrayBuffer[i] = 0;
 
 			mesh.MarkDynamic();
 			mesh.vertices = verticesArray;

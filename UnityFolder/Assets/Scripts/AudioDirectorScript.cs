@@ -13,6 +13,8 @@ public class AudioDirectorScript : MonoBehaviour
 	public int[] samplesPerDecadeArray = new int[10];
 	public float[] scalingPerDecadeArray = new float[10];
 
+	public float[] pseudoLogArrayBuffer = new float[100];
+
 	public float rScale = 1.0f;
 	public float bScale = 1.0f;
 	public float gScale = 1.0f;
@@ -70,7 +72,14 @@ public class AudioDirectorScript : MonoBehaviour
 
 		CalculateRBG();
 
-		HandleLowPassFilter();
+		HandleLowPassFilter(); // does not affect the landscape
+
+
+		//update buffer
+		for(int i = 0; i < pseudoLogArray.Length; i++)
+			pseudoLogArrayBuffer[i] += pseudoLogArray[i];
+
+
 
 	}
 
