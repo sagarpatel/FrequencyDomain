@@ -40,8 +40,8 @@ public class MainCameraScript : MonoBehaviour
 		
 
 
-		Debug.Log( Input.GetAxis("LeftTrigger") );
-		Debug.Log( Input.GetAxis("RightTrigger") );
+		//Debug.Log( Input.GetAxis("LeftTrigger") );
+		//Debug.Log( Input.GetAxis("RightTrigger") );
 		//Debug.Log( Input.GetAxis("Horizontal") );
 
 	}

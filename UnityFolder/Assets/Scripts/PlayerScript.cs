@@ -220,7 +220,7 @@ public class PlayerScript : MonoBehaviour
 
 		if( predecitedPosition.x < 0.3f*tdc*xscale || predecitedPosition.x > tdc*xscale )
 			velocity.x = 0;
-		if( predecitedPosition.z < 0 || predecitedPosition.z > 0.9f*fdc*zscale )
+		if( predecitedPosition.z < -10 || predecitedPosition.z > 1.0f*fdc*zscale )
 			velocity.z =0;
 
 	}

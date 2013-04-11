@@ -47,7 +47,8 @@ public class AudioDirectorScript : MonoBehaviour
 	void Update () 
 	{
 		// get raw FFT data 
-		audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
+		//audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
+		AudioListener.GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);
 
 		// cleanup pseudolog array first
 		for(int i = 0; i < pseudoLogArray.Length; i++)
@@ -168,7 +169,7 @@ public class AudioDirectorScript : MonoBehaviour
 	{
 		float currentFOV = mainCamera.fieldOfView;
 		float progressRatio = ( currentFOV - initialFOV )/(180.0f - initialFOV);
-		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio);
+		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio)/2.0f;
 
 	}
 
