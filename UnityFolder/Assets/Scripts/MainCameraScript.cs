@@ -33,7 +33,7 @@ public class MainCameraScript : MonoBehaviour
 
 		
 		
-		transform.eulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
+		transform.localEulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
 											transform.eulerAngles.y + playerVelocity.z *  yawSensitivity, 
 											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
 
