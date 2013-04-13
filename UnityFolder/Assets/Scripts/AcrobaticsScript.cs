@@ -23,13 +23,24 @@ public class AcrobaticsScript : MonoBehaviour
 		// Handle barrel roll input
 		// windows controls for triggers
 		if( Input.GetAxis("LeftTrigger") > 0 )
-			barrelRollTriggerCounter += Input.GetAxis("LeftTrigger");
+		{
+			if( barrelRollTriggerCounter > 0)
+				barrelRollTriggerCounter += Input.GetAxis("LeftTrigger") * Time.deltaTime;
+			else
+				barrelRollTriggerCounter += Input.GetAxis("LeftTrigger") * Time.deltaTime * 3.0f ; //reverse faster
+		}
 		if( Input.GetAxis("RightTrigger") < 0 )
-			barrelRollTriggerCounter += Input.GetAxis("RightTrigger");
+		{
+			if( barrelRollTriggerCounter < 0)
+				barrelRollTriggerCounter += Input.GetAxis("RightTrigger") * Time.deltaTime;
+			else
+				barrelRollTriggerCounter += Input.GetAxis("RightTrigger") * Time.deltaTime * 3.0f; //reverse faster
+		}
+
 		if( Mathf.Abs(Input.GetAxis("LeftTrigger")) < 0.1f )
 			barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
 
-
+		transform.Rotate( -barrelRollTriggerCounter * barrelRollSensitivity, 0, 0);
 
 		
 

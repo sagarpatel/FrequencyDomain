@@ -16,13 +16,13 @@ public class MainCameraScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		playerVelocity = ((PlayerScript)(transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
+		playerVelocity = ((PlayerScript)(transform.parent.gameObject.transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		playerVelocity = ((PlayerScript)(transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
+		playerVelocity = ((PlayerScript)(transform.parent.gameObject.transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
 		cameraTarget = transform.parent.position;
 		cameraTarget.x -= distanceAhead;
 		//cameraTarget.y = playerVelocity.y* 0.1f;
