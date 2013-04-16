@@ -12,6 +12,10 @@ public class ParticleGeneratorScript : MonoBehaviour
 	int particleCounter = 0;
 	PlayerScript playerScript;
 
+	public float updateRefreshMinimum = 0.02f;
+	float updateRefreshCounter;
+
+
 
 	// Use this for initialization
 	void Start () 
@@ -37,8 +41,17 @@ public class ParticleGeneratorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		updateRefreshCounter += Time.deltaTime;
+
+		if(updateRefreshCounter > updateRefreshMinimum)
+		{
+			updateRefreshCounter -= updateRefreshMinimum;
+			
+			PropagateHeight();
+			
+		}
+		
 		FollowPlayerHeight();
-		PropagateHeight();
 		particleSystem.SetParticles(particlesArray, particlesArray.Length);
 
 	}
