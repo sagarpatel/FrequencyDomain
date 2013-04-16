@@ -97,7 +97,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		else if( oldPosition.y > newHeight) // flying in the air
 		{
-			if( rampUpCounter > 0 ) // the first moment in the air
+			if( rampUpCounter > 0 ) // the first moment in the air, should not have consecutive enters
 			{
 				jumpHeight = transform.position.y;
 				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
