@@ -86,7 +86,7 @@ public class TileGeneratorScript : MonoBehaviour
 	void PropagateTargetArray()
 	{
 		Vector3 tempPosition;
-		for(int i = tilesCounter -1; i > widthCount; i--)
+		for(int i = tilesCounter -1; i >= widthCount; i--)
 		{
 			tempPosition = targetPositionArray[i];
 			tempPosition.y = targetPositionArray[i - widthCount].y;
