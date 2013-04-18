@@ -47,6 +47,7 @@ public class PlayerScript : MonoBehaviour
 	Camera mainCamera;
 	Bloom bloomScript;
 	List<Light> meshLightsList = new List<Light>();
+	CreatureManagerScript creatureManagerScript;
 
 	// Use this for initialization
 	void Start () 
@@ -61,6 +62,7 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList.Add( (Light)(meshLightsObjectsArray[i]).GetComponent("Light") );
 		}
 
+		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
 
 	}
 	
@@ -103,6 +105,7 @@ public class PlayerScript : MonoBehaviour
 				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
 				//Debug.Log(velocity.y);
 				rampUpCounter = 0; // reset it
+				creatureManagerScript.AttemptSpwanCreature(transform.position, jumpHeight);
 			}
 			else // in free fall
 			{
