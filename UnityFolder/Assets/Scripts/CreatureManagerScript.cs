@@ -94,7 +94,7 @@ public class CreatureManagerScript : MonoBehaviour
 		GameObject[] creaturePartsArray = creaturePartsList.ToArray();
 		
 		GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
-		((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AssembleCreature(creaturePartsArray);
+		((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
 
 
 	}

@@ -43,6 +43,8 @@ public class PlayerScript : MonoBehaviour
 
 	public int activeCoroutineCounter = 0;
 
+	public float moveTowardsRatio = 0; 
+
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCamera;
 	Bloom bloomScript;
@@ -82,7 +84,7 @@ public class PlayerScript : MonoBehaviour
 		// apply new force to velocity
 		velocity += new Vector3( -yTranslation, 0 , xTranslation);
 
-		// only apply friction to translation, not gravity/height
+		// only apply friction to translation, not gravity/velocity
 		velocity.x -= velocity.x * friction * Time.deltaTime;
 		velocity.z -= velocity.z * friction * Time.deltaTime;
 
@@ -105,10 +107,12 @@ public class PlayerScript : MonoBehaviour
 				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
 				//Debug.Log(velocity.y);
 				rampUpCounter = 0; // reset it
+				moveTowardsRatio = 0;
 				creatureManagerScript.AttemptSpwanCreature(transform.position, jumpHeight);
 			}
 			else // in free fall
 			{
+				moveTowardsRatio = (jumpHeight - (oldPosition.y - newHeight))/jumpHeight;
 				velocity.y -= gravity * Time.deltaTime; // apply gravity 
 				hangtimeCounter += Time.deltaTime;
 				//Debug.Log(gravity * Time.deltaTime);
