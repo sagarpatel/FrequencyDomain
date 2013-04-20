@@ -15,6 +15,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	CreatureStates creatureState = CreatureStates.PreInitialize;
 
 	GameObject[] creaturePartsArray;
+	Vector3[] creaturePartsOriginalPositionArray;
 
 	PlayerScript playerScript;
 
@@ -41,12 +42,15 @@ public class FlyingCreatureScript : MonoBehaviour
 	public void AquireCreatureParts(GameObject[] partsArray)
 	{
 		List<GameObject> creaturePartsList = new List<GameObject>();
+		List<Vector3> creaturePartsOriginalPositionList = new List<Vector3>();
 		for(int i = 0; i < partsArray.Length; i++ )
 		{
 			partsArray[i].transform.parent = transform;
 			creaturePartsList.Add(partsArray[i]);
+			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);
 		}
 		creaturePartsArray = creaturePartsList.ToArray();
+		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
 		creatureState = CreatureStates.AssemblingParts;
 
 	}
@@ -58,9 +62,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		float targetDistance;
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsArray[i].transform.position, transform.position, playerScript.moveTowardsRatio );
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio );
 		}
-		//Debug.Log(playerScript.moveTowardsRatio);
+		Debug.Log(playerScript.moveTowardsRatio);
 
 	}
 

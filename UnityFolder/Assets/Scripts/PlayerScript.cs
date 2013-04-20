@@ -116,6 +116,7 @@ public class PlayerScript : MonoBehaviour
 				jumpApexHeight = 0;
 				jumpVelocity = velocity.y;
 				isReadyToSpawnCreature = true;
+				//Debug.Log(jumpVelocity);
 			}
 			else // in free fall
 			{
@@ -133,6 +134,7 @@ public class PlayerScript : MonoBehaviour
 					else
 					{
 						moveTowardsRatio = 1.0f - (oldPosition.y - newHeight)/jumpApexHeight; // 0 means at the top, 1 means touching ground
+					
 					}
 				}
 			}
