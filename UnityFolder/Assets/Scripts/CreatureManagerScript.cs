@@ -14,6 +14,8 @@ public class CreatureManagerScript : MonoBehaviour
 
 	public GameObject flyingCreaturePrefab;
 
+	public float playerMinimumJumpVelocity = 10.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -50,51 +52,54 @@ public class CreatureManagerScript : MonoBehaviour
 
 	}
 
-	public void AttemptSpwanCreature(Vector3 playerPosition, float jumpH)
+	public void AttemptSpwanCreature(Vector3 playerPosition, float playerJumpVelocity)
 	{
-		// check to see if a creature can be contructed (need 1 head part)
-		// search for a free head part
-		bool canBuildCreature = false;
-		foreach (Transform child in transform) 
+		if(playerJumpVelocity > playerMinimumJumpVelocity)
 		{
-			if(child.gameObject.tag == "CreatureHeadPart")
-				canBuildCreature = true;
-		}
-
-		if(!canBuildCreature)
-			return; //if no head found, can't build creature, exit function
-
-		List<GameObject> creaturePartsList = new List<GameObject>();
-
-		// search for a free head part
-		foreach (Transform child in transform) 
-		{
-			if(child.gameObject.tag == "CreatureHeadPart")
+			// check to see if a creature can be contructed (need 1 head part)
+			// search for a free head part
+			bool canBuildCreature = false;
+			foreach (Transform child in transform) 
 			{
-				creaturePartsList.Add(child.gameObject);
-				child.transform.parent = null;
-				break;
-			}
-		}
-
-		// search for a free body part
-		foreach (Transform child in transform) 
-		{
-			if(child.gameObject.tag == "CreatureBodyPart")
-			{
-				creaturePartsList.Add(child.gameObject);
-				child.transform.parent = null;
-				break;
+				if(child.gameObject.tag == "CreatureHeadPart")
+					canBuildCreature = true;
 			}
 
+			if(!canBuildCreature)
+				return; //if no head found, can't build creature, exit function
+
+			List<GameObject> creaturePartsList = new List<GameObject>();
+
+			// search for a free head part
+			foreach (Transform child in transform) 
+			{
+				if(child.gameObject.tag == "CreatureHeadPart")
+				{
+					creaturePartsList.Add(child.gameObject);
+					child.transform.parent = null;
+					break;
+				}
+			}
+
+			// search for a free body part
+			foreach (Transform child in transform) 
+			{
+				if(child.gameObject.tag == "CreatureBodyPart")
+				{
+					creaturePartsList.Add(child.gameObject);
+					child.transform.parent = null;
+					break;
+				}
+
+			}
+
+			//Debug.Log(creaturePartsList.Count);
+
+			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
+			
+			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
 		}
-
-		//Debug.Log(creaturePartsList.Count);
-
-		GameObject[] creaturePartsArray = creaturePartsList.ToArray();
-		
-		GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
-		((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
 
 
 	}

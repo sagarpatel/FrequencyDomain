@@ -44,6 +44,10 @@ public class PlayerScript : MonoBehaviour
 	public int activeCoroutineCounter = 0;
 
 	public float moveTowardsRatio = 0; 
+	bool isReadyToSpawnCreature = false;
+	Vector3 jumpPosition;
+	float jumpApexHeight;
+	float jumpVelocity;
 
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCamera;
@@ -108,14 +112,29 @@ public class PlayerScript : MonoBehaviour
 				//Debug.Log(velocity.y);
 				rampUpCounter = 0; // reset it
 				moveTowardsRatio = 0;
-				creatureManagerScript.AttemptSpwanCreature(transform.position, jumpHeight);
+				jumpPosition = transform.position;
+				jumpApexHeight = 0;
+				jumpVelocity = velocity.y;
+				isReadyToSpawnCreature = true;
 			}
 			else // in free fall
 			{
-				moveTowardsRatio = (jumpHeight - (oldPosition.y - newHeight))/jumpHeight;
 				velocity.y -= gravity * Time.deltaTime; // apply gravity 
 				hangtimeCounter += Time.deltaTime;
-				//Debug.Log(gravity * Time.deltaTime);
+				if( velocity.y < 0 )
+				{
+					if(isReadyToSpawnCreature == true) // if its the first time falling down, start creating the creature
+					{
+						isReadyToSpawnCreature = false;
+						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity);
+						jumpApexHeight = transform.position.y;
+						jumpVelocity = 0;
+					}
+					else
+					{
+						moveTowardsRatio = 1.0f - (oldPosition.y - newHeight)/jumpApexHeight; // 0 means at the top, 1 means touching ground
+					}
+				}
 			}
 		}
 

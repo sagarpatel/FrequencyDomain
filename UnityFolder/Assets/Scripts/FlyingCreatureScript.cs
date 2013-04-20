@@ -58,13 +58,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		float targetDistance;
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			currentDistance = Vector3.Distance(creaturePartsArray[i].transform.position, transform.position);
-			targetDistance = currentDistance * playerScript.moveTowardsRatio;
-			tempDistance = currentDistance - targetDistance;
-			creaturePartsArray[i].transform.position = Vector3.MoveTowards(creaturePartsArray[i].transform.position, transform.position, tempDistance);
-
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsArray[i].transform.position, transform.position, playerScript.moveTowardsRatio );
 		}
-		Debug.Log(playerScript.moveTowardsRatio);
+		//Debug.Log(playerScript.moveTowardsRatio);
 
 	}
 
