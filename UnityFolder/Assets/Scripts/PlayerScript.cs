@@ -246,7 +246,7 @@ public class PlayerScript : MonoBehaviour
 		float xscale = meshFieldGeneratorScript.xScale;
 		float zscale = meshFieldGeneratorScript.zScale;
 
-		if( predecitedPosition.x < 0.3f*tdc*xscale || predecitedPosition.x > tdc*xscale )
+		if( predecitedPosition.x < 0.5f*tdc*xscale || predecitedPosition.x > tdc*xscale )
 			velocity.x = 0;
 		if( predecitedPosition.z < -10 || predecitedPosition.z > 1.0f*fdc*zscale )
 			velocity.z =0;

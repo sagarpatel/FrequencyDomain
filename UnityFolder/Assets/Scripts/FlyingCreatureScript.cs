@@ -62,18 +62,23 @@ public class FlyingCreatureScript : MonoBehaviour
 		float tempDistance;
 		float currentDistance;
 		float targetDistance;
-		float currentRatio = playerScript.moveTowardsRatio;
+		// player hits the ground., need to complete creature formation
 		if(playerScript.oldVelocity.y < 0 && playerScript.velocity.y == 0)
 		{
-			currentRatio = previousRatio;
 			Debug.Log("Hit Ground");
+			for(int i = 0; i < creaturePartsArray.Length; i++)
+			{
+				creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, 1.0f);
+			}
+			creatureState = CreatureStates.Alive;
 		}
+
+		// ordinary update
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio );
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio);
 		}
 		//Debug.Log(playerScript.moveTowardsRatio);
-		previousRatio = currentRatio;
 	}
 
 
