@@ -19,6 +19,8 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	PlayerScript playerScript;
 
+	float previousRatio = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -60,12 +62,18 @@ public class FlyingCreatureScript : MonoBehaviour
 		float tempDistance;
 		float currentDistance;
 		float targetDistance;
+		float currentRatio = playerScript.moveTowardsRatio;
+		if(playerScript.oldVelocity.y < 0 && playerScript.velocity.y == 0)
+		{
+			currentRatio = previousRatio;
+			Debug.Log("Hit Ground");
+		}
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
 			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio );
 		}
-		Debug.Log(playerScript.moveTowardsRatio);
-
+		//Debug.Log(playerScript.moveTowardsRatio);
+		previousRatio = currentRatio;
 	}
 
 

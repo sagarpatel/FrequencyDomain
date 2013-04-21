@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
 	public float newHeight = 0;
 
 	public Vector3 velocity = new Vector3();
-	Vector3 oldVelocity = new Vector3();
+	public Vector3 oldVelocity = new Vector3();
 	Vector3 oldPosition = new Vector3();
 	public float friction = 0.0f;
 	public float gravity = 0.0f;
@@ -133,8 +133,8 @@ public class PlayerScript : MonoBehaviour
 					}
 					else
 					{
-						moveTowardsRatio = 1.0f - (oldPosition.y - newHeight)/jumpApexHeight; // 0 means at the top, 1 means touching ground
-					
+						moveTowardsRatio = (jumpApexHeight - oldPosition.y )/jumpApexHeight; // 0 means at the top, 1 means touching ground
+
 					}
 				}
 			}
