@@ -125,6 +125,8 @@ public class PlayerScript : MonoBehaviour
 				jumpApexHeight = 0;
 				jumpVelocity = velocity.y;
 				isReadyToSpawnCreature = true;
+				positionRecordingList.Clear();
+				rotationRecordingList.Clear();
 				//Debug.Log(jumpVelocity);
 			}
 			else // in free fall
