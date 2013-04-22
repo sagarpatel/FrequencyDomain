@@ -90,10 +90,7 @@ public class CreatureManagerScript : MonoBehaviour
 					child.transform.parent = null;
 					break;
 				}
-
 			}
-
-			//Debug.Log(creaturePartsList.Count);
 
 			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
 			

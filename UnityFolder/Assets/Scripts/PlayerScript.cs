@@ -76,10 +76,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
-
 		mainCameraGameObject = GameObject.Find("Main Camera");
-
-
 	}
 	
 	// Update is called once per frame
@@ -120,7 +117,6 @@ public class PlayerScript : MonoBehaviour
 			{
 				jumpHeight = transform.position.y;
 				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
-				//Debug.Log(velocity.y);
 				rampUpCounter = 0; // reset it
 				moveTowardsRatio = 0;
 				jumpPosition = transform.position;
@@ -132,7 +128,6 @@ public class PlayerScript : MonoBehaviour
 					isRecording = true;
 					StartCoroutine(HandlePlayerMovementRotationRecording());
 				}
-				//Debug.Log(jumpVelocity);
 			}
 			else // in free fall
 			{

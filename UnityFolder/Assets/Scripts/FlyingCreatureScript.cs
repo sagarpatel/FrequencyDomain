@@ -96,7 +96,6 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio);
 		}
-		//Debug.Log(playerScript.moveTowardsRatio);
 	}
 
 	void CollectPathData()
@@ -109,8 +108,6 @@ public class FlyingCreatureScript : MonoBehaviour
 		playerScript.rotationRecordingList.Clear();
 		// change state
 		creatureState = CreatureStates.FollowingPath;
-
-		Debug.Log(positionsRecordingsList.Count);
 	}
 
 	void FollowPath()
@@ -120,13 +117,8 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsArray[i].transform.position =  Vector3.Lerp( creaturePartsArray[i].transform.position, positionsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
 			creaturePartsArray[i].transform.position += playbackPositionDisplacement;
 			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, rotationsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
-
 		}
-		/*
-		transform.position = Vector3.Lerp( transform.position, positionsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
-		transform.position += playbackPositionDisplacement;
-		transform.rotation = Quaternion.Slerp( transform.rotation, rotationsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
-*/
+
 		if(pathNodePlaybackIntervalCounter > pathNodePlaybackInterval)
 		{
 			pathNodePlaybackIntervalCounter -= pathNodePlaybackInterval;
@@ -136,7 +128,6 @@ public class FlyingCreatureScript : MonoBehaviour
 
 		if(pathNodeCounter > positionsRecordingsList.Count -1) // gone through the entire list, arrived at the end of the path
 			creatureState = CreatureStates.SelfDestructing;
-
 	}
 
 	void SelfDestruct()
@@ -149,7 +140,6 @@ public class FlyingCreatureScript : MonoBehaviour
 		}
 		// destroy
 		Object.Destroy(this.gameObject);
-
 	}
 
 
