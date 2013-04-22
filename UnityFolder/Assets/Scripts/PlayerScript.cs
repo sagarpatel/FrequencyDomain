@@ -50,7 +50,7 @@ public class PlayerScript : MonoBehaviour
 	float jumpVelocity;
 
 	public List<Vector3> positionRecordingList = new List<Vector3>();
-	public List<Vector3> rotationRecordingList = new List<Vector3>();
+	public List<Quaternion> rotationRecordingList = new List<Quaternion>();
 	public float recordingUpdateInterval = 0.015f;
 	float recordingUpdateIntervalCounter = 0;
 	GameObject mainCameraGameObject;
@@ -141,12 +141,10 @@ public class PlayerScript : MonoBehaviour
 						jumpVelocity = 0;
 					}
 					else
-					{
 						moveTowardsRatio = (jumpApexHeight - oldPosition.y )/jumpApexHeight; // 0 means at the top, 1 means touching ground
-
-					}
 				}
 			}
+			HandlePlayerMovementRotationRecording();
 		}
 
 		// if oldPosition.y and newHeight are equal, oldPosition stays untouched.
@@ -155,7 +153,7 @@ public class PlayerScript : MonoBehaviour
 		HandleBoost();
 		HandleBloomBurst();
 		HandleMeshLights();
-		HandlePlayerMovementRotationRecording();
+		
 	}
 
 	void HandleBoost()
@@ -269,7 +267,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			recordingUpdateIntervalCounter -= recordingUpdateInterval;
 			positionRecordingList.Add(mainCameraGameObject.transform.position);
-			rotationRecordingList.Add(mainCameraGameObject.transform.eulerAngles);
+			rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
 		}
 
 		recordingUpdateIntervalCounter += Time.deltaTime;
