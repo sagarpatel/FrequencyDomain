@@ -8,18 +8,20 @@ public class FlyingCreatureScript : MonoBehaviour
 	{
 		PreInitialize,
 		AssemblingParts,
-		Alive,
+		CollectingPathData,
+		FollowingPath,
 		Dead
 	};
-
 	CreatureStates creatureState = CreatureStates.PreInitialize;
 
 	GameObject[] creaturePartsArray;
 	Vector3[] creaturePartsOriginalPositionArray;
 
+	public List<Vector3> positionsRecordingsList;
+	public List<Vector3> rotationsRecordingsList;
+
 	PlayerScript playerScript;
 
-	float previousRatio = 0;
 
 	// Use this for initialization
 	void Start () 
@@ -36,6 +38,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			case CreatureStates.AssemblingParts:
 				AssembleCreature();
+				break;
+			case CreatureStates.CollectingPathData:
+				CollectPathData();
 				break;
 		}
 	
@@ -70,7 +75,7 @@ public class FlyingCreatureScript : MonoBehaviour
 			{
 				creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, 1.0f);
 			}
-			creatureState = CreatureStates.Alive;
+			creatureState = CreatureStates.CollectingPathData;
 		}
 
 		// ordinary update
@@ -79,6 +84,18 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio);
 		}
 		//Debug.Log(playerScript.moveTowardsRatio);
+	}
+
+	void CollectPathData()
+	{
+		// get the data from the original list in the player
+		positionsRecordingsList = new List<Vector3>( playerScript.positionRecordingList );
+		rotationsRecordingsList = new List<Vector3>( playerScript.rotationRecordingList );
+		// wipe the original
+		playerScript.positionRecordingList.Clear();
+		playerScript.rotationRecordingList.Clear();
+		// change state
+		creatureState = CreatureStates.FollowingPath;
 	}
 
 

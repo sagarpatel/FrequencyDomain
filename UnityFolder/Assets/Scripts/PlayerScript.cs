@@ -49,8 +49,14 @@ public class PlayerScript : MonoBehaviour
 	float jumpApexHeight;
 	float jumpVelocity;
 
+	public List<Vector3> positionRecordingList = new List<Vector3>();
+	public List<Vector3> rotationRecordingList = new List<Vector3>();
+	public float recordingUpdateInterval = 0.015f;
+	float recordingUpdateIntervalCounter = 0;
+	GameObject mainCameraGameObject;
+
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
-	Camera mainCamera;
+	Camera mainCameraComponent;
 	Bloom bloomScript;
 	List<Light> meshLightsList = new List<Light>();
 	CreatureManagerScript creatureManagerScript;
@@ -59,7 +65,7 @@ public class PlayerScript : MonoBehaviour
 	void Start () 
 	{
 		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
-		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
+		mainCameraComponent = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
 		bloomScript = (Bloom)GameObject.Find("Main Camera").GetComponent("Bloom");
 		GameObject[] meshLightsObjectsArray =  GameObject.FindGameObjectsWithTag("MeshLight");
 		
@@ -69,6 +75,9 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
+
+		mainCameraGameObject = GameObject.Find("Main Camera");
+
 
 	}
 	
@@ -146,11 +155,12 @@ public class PlayerScript : MonoBehaviour
 		HandleBoost();
 		HandleBloomBurst();
 		HandleMeshLights();
+		HandlePlayerMovementRotationRecording();
 	}
 
 	void HandleBoost()
 	{
-		currentFieldOfView = mainCamera.fieldOfView;
+		currentFieldOfView = mainCameraComponent.fieldOfView;
 
 		if( currentFieldOfView < boostTreasholdArray[0] )
 			boostStage = 0;
@@ -177,8 +187,8 @@ public class PlayerScript : MonoBehaviour
 
 		if( originalFieldOfView + energyCounter < 180 )
 		{
-			mainCamera.fieldOfView = originalFieldOfView + energyCounter;
-			mainCamera.backgroundColor = new Color(rgbValue,rgbValue,rgbValue,rgbValue);
+			mainCameraComponent.fieldOfView = originalFieldOfView + energyCounter;
+			mainCameraComponent.backgroundColor = new Color(rgbValue,rgbValue,rgbValue,rgbValue);
 		}
 
 
@@ -251,6 +261,18 @@ public class PlayerScript : MonoBehaviour
 		if( predecitedPosition.z < -10 || predecitedPosition.z > 1.0f*fdc*zscale )
 			velocity.z =0;
 
+	}
+
+	void HandlePlayerMovementRotationRecording()
+	{
+		if(recordingUpdateIntervalCounter > recordingUpdateInterval)
+		{
+			recordingUpdateIntervalCounter -= recordingUpdateInterval;
+			positionRecordingList.Add(mainCameraGameObject.transform.position);
+			rotationRecordingList.Add(mainCameraGameObject.transform.eulerAngles);
+		}
+
+		recordingUpdateIntervalCounter += Time.deltaTime;
 	}
 
 }
