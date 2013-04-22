@@ -44,7 +44,7 @@ public class PlayerScript : MonoBehaviour
 	public int activeCoroutineCounter = 0;
 
 	public float moveTowardsRatio = 0; 
-	bool isReadyToSpawnCreature = false;
+	bool isFlyingUpward = false;
 	Vector3 jumpPosition;
 	float jumpApexHeight;
 	float jumpVelocity;
@@ -53,6 +53,7 @@ public class PlayerScript : MonoBehaviour
 	public List<Quaternion> rotationRecordingList = new List<Quaternion>();
 	public float recordingUpdateInterval = 0.015f;
 	float recordingUpdateIntervalCounter = 0;
+	bool isRecording = false;
 	GameObject mainCameraGameObject;
 
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
@@ -111,6 +112,7 @@ public class PlayerScript : MonoBehaviour
 			rampUpCounter += (newHeight - oldPosition.y) * Time.deltaTime ; // keep track of of much height is gained
 			velocity.y = 0;
 			oldPosition.y = newHeight; // hug mesh
+			isRecording  = false;
 		}
 		else if( oldPosition.y > newHeight) // flying in the air
 		{
@@ -124,9 +126,12 @@ public class PlayerScript : MonoBehaviour
 				jumpPosition = transform.position;
 				jumpApexHeight = 0;
 				jumpVelocity = velocity.y;
-				isReadyToSpawnCreature = true;
-				positionRecordingList.Clear();
-				rotationRecordingList.Clear();
+				isFlyingUpward = true;
+				if( jumpVelocity > creatureManagerScript.playerMinimumJumpVelocity)
+				{
+					isRecording = true;
+					StartCoroutine(HandlePlayerMovementRotationRecording());
+				}
 				//Debug.Log(jumpVelocity);
 			}
 			else // in free fall
@@ -135,9 +140,9 @@ public class PlayerScript : MonoBehaviour
 				hangtimeCounter += Time.deltaTime;
 				if( velocity.y < 0 )
 				{
-					if(isReadyToSpawnCreature == true) // if its the first time falling down, start creating the creature
+					if(isFlyingUpward == true) // if its the first time falling down, start creating the creature
 					{
-						isReadyToSpawnCreature = false;
+						isFlyingUpward = false;
 						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity);
 						jumpApexHeight = transform.position.y;
 						jumpVelocity = 0;
@@ -146,7 +151,6 @@ public class PlayerScript : MonoBehaviour
 						moveTowardsRatio = (jumpApexHeight - oldPosition.y )/jumpApexHeight; // 0 means at the top, 1 means touching ground
 				}
 			}
-			HandlePlayerMovementRotationRecording();
 		}
 
 		// if oldPosition.y and newHeight are equal, oldPosition stays untouched.
@@ -263,16 +267,19 @@ public class PlayerScript : MonoBehaviour
 
 	}
 
-	void HandlePlayerMovementRotationRecording()
+	IEnumerator HandlePlayerMovementRotationRecording()
 	{
-		if(recordingUpdateIntervalCounter > recordingUpdateInterval)
+		while(isRecording == true)
 		{
-			recordingUpdateIntervalCounter -= recordingUpdateInterval;
-			positionRecordingList.Add(mainCameraGameObject.transform.position);
-			rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
+			if(recordingUpdateIntervalCounter > recordingUpdateInterval)
+			{
+				recordingUpdateIntervalCounter -= recordingUpdateInterval;
+				positionRecordingList.Add(mainCameraGameObject.transform.position);
+				rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
+			}
+			recordingUpdateIntervalCounter += Time.deltaTime;
+			yield return null;
 		}
-
-		recordingUpdateIntervalCounter += Time.deltaTime;
 	}
 
 }
