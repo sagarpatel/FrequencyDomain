@@ -22,8 +22,10 @@ public class FlyingCreatureScript : MonoBehaviour
 	public float pathNodePlaybackInterval = 0.015f;
 	float pathNodePlaybackIntervalCounter = 0;
 	int pathNodeCounter = 0;
+	public float plabackTimeScale = 1.0f;
 
-	public Vector3 playbackPositionDisplacement = new Vector3(-100,0,0);
+	public float forwardSpeed;
+	Vector3 positionDisplacement;
 
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
@@ -83,7 +85,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		// player hits the ground., need to complete creature formation
 		if(playerScript.oldVelocity.y < 0 && playerScript.velocity.y == 0)
 		{
-			Debug.Log("Hit Ground");
+			//Debug.Log("Hit Ground");
 			for(int i = 0; i < creaturePartsArray.Length; i++)
 			{
 				creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, 1.0f);
@@ -112,19 +114,29 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void FollowPath()
 	{
-		for(int i = 0; i < creaturePartsArray.Length; i++)
+		// make the head follow the player path
+		creaturePartsArray[0].transform.position =  Vector3.Lerp( creaturePartsArray[0].transform.position, positionsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
+		creaturePartsArray[0].transform.rotation = Quaternion.Slerp( creaturePartsArray[0].transform.rotation, rotationsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
+		
+		//update the position displacement
+		positionDisplacement += new Vector3(-forwardSpeed * Time.deltaTime * plabackTimeScale,0,0);
+		//displace the head with the speed/position displacement vector
+		creaturePartsArray[0].transform.position += positionDisplacement;
+
+		// make body parts follow the one in front
+		for(int i = 1; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position =  Vector3.Lerp( creaturePartsArray[i].transform.position, positionsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
-			creaturePartsArray[i].transform.position += playbackPositionDisplacement;
-			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, rotationsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 4 * Time.deltaTime );
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 4 * Time.deltaTime);
 		}
+
 
 		if(pathNodePlaybackIntervalCounter > pathNodePlaybackInterval)
 		{
 			pathNodePlaybackIntervalCounter -= pathNodePlaybackInterval;
 			pathNodeCounter++;
 		}
-		pathNodePlaybackIntervalCounter += Time.deltaTime;
+		pathNodePlaybackIntervalCounter += Time.deltaTime * plabackTimeScale;
 
 		if(pathNodeCounter > positionsRecordingsList.Count -1) // gone through the entire list, arrived at the end of the path
 			creatureState = CreatureStates.SelfDestructing;

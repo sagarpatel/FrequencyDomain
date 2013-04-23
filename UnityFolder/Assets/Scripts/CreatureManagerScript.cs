@@ -16,6 +16,9 @@ public class CreatureManagerScript : MonoBehaviour
 
 	public float playerMinimumJumpVelocity = 10.0f;
 
+	public float creatureForwardSpeed = 1.0f;
+	public float creaturePlaybackTimeScale = 1.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -81,21 +84,26 @@ public class CreatureManagerScript : MonoBehaviour
 				}
 			}
 
-			// search for a free body part
+			// try to gather the appropriate number of body parts
+			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/10.0f);
 			foreach (Transform child in transform) 
 			{
 				if(child.gameObject.tag == "CreatureBodyPart")
 				{
 					creaturePartsList.Add(child.gameObject);
 					child.transform.parent = null;
-					break;
+					bodyPartsDesiredCounter --;
 				}
+				if(bodyPartsDesiredCounter == 0)
+					break;
 			}
 
 			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
 			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeed = creatureForwardSpeed;
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).plabackTimeScale = creaturePlaybackTimeScale;
 		}
 
 
