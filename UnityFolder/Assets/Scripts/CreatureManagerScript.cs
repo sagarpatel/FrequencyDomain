@@ -100,6 +100,8 @@ public class CreatureManagerScript : MonoBehaviour
 
 			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
 			
+			playerPosition += new Vector3(-100,0,0); // to make creature appear in fron of player so they can see it assemble and born
+			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeed = creatureForwardSpeed;

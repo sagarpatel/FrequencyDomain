@@ -27,6 +27,8 @@ public class FlyingCreatureScript : MonoBehaviour
 	public float forwardSpeed;
 	Vector3 positionDisplacement;
 
+	Vector3 initialPositionOffset;
+
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
 
@@ -110,12 +112,14 @@ public class FlyingCreatureScript : MonoBehaviour
 		playerScript.rotationRecordingList.Clear();
 		// change state
 		creatureState = CreatureStates.FollowingPath;
+
+		initialPositionOffset = transform.position - positionsRecordingsList[0];
 	}
 
 	void FollowPath()
 	{
 		// make the head follow the player path
-		creaturePartsArray[0].transform.position =  Vector3.Lerp( creaturePartsArray[0].transform.position, positionsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
+		creaturePartsArray[0].transform.position =  Vector3.Lerp( creaturePartsArray[0].transform.position, positionsRecordingsList[pathNodeCounter] + initialPositionOffset, pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
 		creaturePartsArray[0].transform.rotation = Quaternion.Slerp( creaturePartsArray[0].transform.rotation, rotationsRecordingsList[pathNodeCounter], pathNodePlaybackIntervalCounter/pathNodePlaybackInterval);
 		
 		//update the position displacement
@@ -126,8 +130,8 @@ public class FlyingCreatureScript : MonoBehaviour
 		// make body parts follow the one in front
 		for(int i = 1; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 4 * Time.deltaTime );
-			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 4 * Time.deltaTime);
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 7 * Time.deltaTime );
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 7 * Time.deltaTime);
 		}
 
 
@@ -147,7 +151,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		// relinquish all parts to the creature manager
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = new Vector3(0,0,0); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
+			creaturePartsArray[i].transform.position = new Vector3( Random.Range(-200.0f, -50.0f), Random.Range(-10.0f,200.0f), Random.Range(-100.0f, 600.0f) ); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
 			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
 		}
 		// destroy
