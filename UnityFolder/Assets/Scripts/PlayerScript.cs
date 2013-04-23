@@ -54,8 +54,9 @@ public class PlayerScript : MonoBehaviour
 	public float recordingUpdateInterval = 0.015f;
 	float recordingUpdateIntervalCounter = 0;
 	bool isRecording = false;
-	GameObject mainCameraGameObject;
+	public float recordingLength = 0;
 
+	GameObject mainCameraGameObject;
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	Camera mainCameraComponent;
 	Bloom bloomScript;
@@ -126,6 +127,7 @@ public class PlayerScript : MonoBehaviour
 				if( jumpVelocity > creatureManagerScript.playerMinimumJumpVelocity)
 				{
 					isRecording = true;
+					recordingLength = 0;
 					StartCoroutine(HandlePlayerMovementRotationRecording());
 				}
 			}
@@ -273,6 +275,7 @@ public class PlayerScript : MonoBehaviour
 				rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
 			}
 			recordingUpdateIntervalCounter += Time.deltaTime;
+			recordingLength += Time.deltaTime;
 			yield return null;
 		}
 	}
