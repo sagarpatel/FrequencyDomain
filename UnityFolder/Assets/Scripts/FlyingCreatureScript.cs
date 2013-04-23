@@ -100,7 +100,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		// ordinary update
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, playerScript.moveTowardsRatio);
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio));
 		}
 	}
 
