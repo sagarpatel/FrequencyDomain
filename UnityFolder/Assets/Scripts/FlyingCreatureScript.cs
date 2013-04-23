@@ -20,8 +20,6 @@ public class FlyingCreatureScript : MonoBehaviour
 	public List<Vector3> positionsRecordingsList;
 	public List<Quaternion> rotationsRecordingsList;
 	public float pathNodePlaybackInterval = 0.015f;
-	float pathNodePlaybackIntervalCounter = 0;
-	int pathNodeCounter = 0;
 	public float plabackTimeScale = 1.0f;
 	float originalPathTimeLength;
 	float currentPathTimeCounter = 0;
@@ -40,7 +38,6 @@ public class FlyingCreatureScript : MonoBehaviour
 	{
 		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
-	
 	}
 	
 	// Update is called once per frame
@@ -60,9 +57,7 @@ public class FlyingCreatureScript : MonoBehaviour
 			case CreatureStates.SelfDestructing:
 				SelfDestruct();
 				break;
-
 		}
-	
 	}
 
 	public void AquireCreatureParts(GameObject[] partsArray)
@@ -78,14 +73,10 @@ public class FlyingCreatureScript : MonoBehaviour
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
 		creatureState = CreatureStates.AssemblingParts;
-
 	}
 
 	void AssembleCreature()
 	{
-		float tempDistance;
-		float currentDistance;
-		float targetDistance;
 		// player hits the ground., need to complete creature formation
 		if(playerScript.oldVelocity.y < 0 && playerScript.velocity.y == 0)
 		{
