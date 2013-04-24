@@ -51,6 +51,7 @@ public class PlayerScript : MonoBehaviour
 
 	public List<Vector3> positionRecordingList = new List<Vector3>();
 	public List<Quaternion> rotationRecordingList = new List<Quaternion>();
+	public List<Color> colorRecordingList = new List<Color>();
 	public float recordingUpdateInterval = 0.015f;
 	float recordingUpdateIntervalCounter = 0;
 	bool isRecording = false;
@@ -273,6 +274,7 @@ public class PlayerScript : MonoBehaviour
 				recordingUpdateIntervalCounter -= recordingUpdateInterval;
 				positionRecordingList.Add(mainCameraGameObject.transform.position);
 				rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
+				colorRecordingList.Add(meshFieldGeneratorScript.currentColor);
 			}
 			recordingUpdateIntervalCounter += Time.deltaTime;
 			recordingLength += Time.deltaTime;

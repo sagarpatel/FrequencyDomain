@@ -19,6 +19,7 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	public List<Vector3> positionsRecordingsList;
 	public List<Quaternion> rotationsRecordingsList;
+	public List<Color> colorsRecordingsList;
 	public float pathNodePlaybackInterval = 0.015f;
 	public float plabackTimeScale = 1.0f;
 	float originalPathTimeLength;
@@ -100,6 +101,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		// get the data from the original list in the player
 		positionsRecordingsList = new List<Vector3>( playerScript.positionRecordingList );
 		rotationsRecordingsList = new List<Quaternion>( playerScript.rotationRecordingList );
+		colorsRecordingsList = new List<Color>( playerScript.colorRecordingList );
 		// get original flight duration
 		originalPathTimeLength = playerScript.recordingLength;
 		// get spawn offset
@@ -107,8 +109,16 @@ public class FlyingCreatureScript : MonoBehaviour
 		// wipe the original
 		playerScript.positionRecordingList.Clear();
 		playerScript.rotationRecordingList.Clear();
+		playerScript.colorRecordingList.Clear();
 		// change state
-		creatureState = CreatureStates.FollowingPath;		
+		creatureState = CreatureStates.FollowingPath;	
+
+
+		// set initial color
+		for(int i = 0; i < creaturePartsArray.Length; i++)
+		{
+			creaturePartsArray[i].renderer.material.color = colorsRecordingsList[0];
+		}	
 	}
 
 	void FollowPath()
@@ -125,7 +135,8 @@ public class FlyingCreatureScript : MonoBehaviour
 		//updating head part
 		creaturePartsArray[0].transform.position = Vector3.Lerp( positionsRecordingsList[currentPathNodeIndex], positionsRecordingsList[currentPathNodeIndex + 1], ratioToNextPathNode);
 		creaturePartsArray[0].transform.rotation = Quaternion.Slerp( rotationsRecordingsList[currentPathNodeIndex], rotationsRecordingsList[currentPathNodeIndex + 1], ratioToNextPathNode);
-		
+		creaturePartsArray[0].renderer.material.color = Color.Lerp( colorsRecordingsList[currentPathNodeIndex], colorsRecordingsList[currentPathNodeIndex +1], ratioToNextPathNode );
+
 		//update the position displacement
 		positionDisplacement += new Vector3(-forwardSpeed * Time.deltaTime * plabackTimeScale,0,0);
 		//displace the head with the speed/position displacement vector
@@ -136,6 +147,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 7 * plabackTimeScale * Time.deltaTime );
 			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 7 * plabackTimeScale * Time.deltaTime);
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, creaturePartsArray[i-1].renderer.material.color, 25 * plabackTimeScale * Time.deltaTime);
 		}
 		currentPathTimeCounter += Time.deltaTime * plabackTimeScale;
 	}
@@ -147,6 +159,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.position = new Vector3( Random.Range(-200.0f, -50.0f), Random.Range(-10.0f,200.0f), Random.Range(-100.0f, 600.0f) ); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
 			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
+			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
 		}
 		// destroy
 		Object.Destroy(this.gameObject);

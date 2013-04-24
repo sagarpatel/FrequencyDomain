@@ -28,6 +28,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	public float updateRefreshMinimum = 0.02f;
 	float updateRefreshCounter;
 
+	public Color currentColor;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -153,7 +155,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			mesh.vertices = verticesArray;
 			mesh.RecalculateNormals();
 
-			GetComponent<MeshRenderer>().materials[0].color = audioDirector.calculatedRGB;
+			currentColor = audioDirector.calculatedRGB;
+			GetComponent<MeshRenderer>().materials[0].color = currentColor;
 		}
 
 	}
