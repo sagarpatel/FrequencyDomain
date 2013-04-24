@@ -178,7 +178,19 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			// set final posions of parts (back into the pool)
 			for(int i = 0; i < creaturePartsArray.Length; i++)
+			{
 				partsDeathPositionsList.Add(creatureManagerScript.GenerateRandomPointOnSemiSpehere());
+				/*
+				creaturePartsArray[i].AddComponent("TrailRenderer");
+				Material tempMaterial = new Material(Shader.Find("Diffuse"));
+				Color tempColor = creaturePartsArray[i].renderer.material.color;
+				tempColor.a = 0.1f;
+				tempMaterial.SetColor("_Color", tempColor);
+				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).material = tempMaterial ;
+				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).startWidth = 10;
+				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).endWidth = 10;
+				*/
+			}
 			creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
 		}
 
@@ -187,10 +199,13 @@ public class FlyingCreatureScript : MonoBehaviour
 	void AnimateDeath_SendoffParts()
 	{
 		float deltaCounter = 0;
+		Color targetColor = new Color(1,1,1,1);
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, partsDeathPositionsList[i], 10 * Time.deltaTime );
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, partsDeathPositionsList[i], 1 * Time.deltaTime );
 			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, partsDeathPositionsList[i]);
+
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.2f * Time.deltaTime);
 		}
 		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
 		if(deltaAverage < 5)
@@ -204,6 +219,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
 			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
+			//Destroy(creaturePartsArray[i].GetComponent("TrailRenderer"));
 		}
 		// destroy
 		Object.Destroy(this.gameObject);
