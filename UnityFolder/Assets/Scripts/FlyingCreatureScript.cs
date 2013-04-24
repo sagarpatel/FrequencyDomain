@@ -111,6 +111,13 @@ public class FlyingCreatureScript : MonoBehaviour
 		positionsRecordingsList = new List<Vector3>( playerScript.positionRecordingList );
 		rotationsRecordingsList = new List<Quaternion>( playerScript.rotationRecordingList );
 		colorsRecordingsList = new List<Color>( playerScript.colorRecordingList );
+		//set color transparency, only works if shader in material is of Transparent/ type
+		for(int i = 0; i < colorsRecordingsList.Count; i++)
+		{
+			Color tempColor = colorsRecordingsList[i];
+			tempColor.a = 0.9f;
+			colorsRecordingsList[i] = tempColor;
+		}
 		// get original flight duration
 		originalPathTimeLength = playerScript.recordingLength;
 		// get spawn offset
