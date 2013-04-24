@@ -157,7 +157,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		// relinquish all parts to the creature manager
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = new Vector3( Random.Range(-200.0f, -50.0f), Random.Range(-10.0f,200.0f), Random.Range(-100.0f, 600.0f) ); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
+			creaturePartsArray[i].transform.position = creatureManagerScript.GenerateRandomPointOnSemiSpehere(); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
 			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
 			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
 		}

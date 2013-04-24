@@ -10,6 +10,8 @@ public class CreatureManagerScript : MonoBehaviour
 	public GameObject creatureBodyPartPrefab;
 	public int headPartsCount = 10;
 	public int bodyPartsCount = 20;
+	public float randomPositionSemiSphereRadius = 500.0f;
+	public Vector3 randomPositionSemiSphereCenterOffset;
 	GameObject[] creaturePartsArray;
 
 	public GameObject flyingCreaturePrefab;
@@ -28,7 +30,7 @@ public class CreatureManagerScript : MonoBehaviour
 		for(int i = 0; i < headPartsCount ; i++)
 		{
 			creaturePartsArray[partsCounter] = (GameObject)Instantiate( creatureHeadPartPrefab,
-																		new Vector3( Random.Range(-400.0f, -50.0f), Random.Range(-100.0f,100.0f), Random.Range(-100.0f, 600.0f) ),
+																		GenerateRandomPointOnSemiSpehere(),
 																		Quaternion.identity );
 			creaturePartsArray[partsCounter].transform.parent = transform;
 			partsCounter ++;
@@ -37,7 +39,7 @@ public class CreatureManagerScript : MonoBehaviour
 		{
 			
 			creaturePartsArray[partsCounter] = (GameObject)Instantiate( creatureBodyPartPrefab,
-																		new Vector3( Random.Range(-400.0f, -50.0f), Random.Range(-100.0f,100.0f),Random.Range(-100.0f, 600.0f) ),
+																		GenerateRandomPointOnSemiSpehere(),
 																		Quaternion.identity );
 			creaturePartsArray[partsCounter].transform.parent = transform;
 			partsCounter ++;
@@ -109,6 +111,19 @@ public class CreatureManagerScript : MonoBehaviour
 		}
 
 
+	}
+
+	public Vector3 GenerateRandomPointOnSemiSpehere()
+	{
+		Vector3 randomPosition = Random.onUnitSphere * randomPositionSemiSphereRadius;
+
+		while(randomPosition.y < 0) //make sure that point is on the top half of the sphere only
+			randomPosition = Random.onUnitSphere * randomPositionSemiSphereRadius;
+
+		// adjust with offset
+		randomPosition += randomPositionSemiSphereCenterOffset;
+		
+		return randomPosition;
 	}
 
 
