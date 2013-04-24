@@ -10,7 +10,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		AssemblingParts,
 		CollectingPathData,
 		FollowingPath,
-		SelfDestructing
+		AnimatingDeath_GatheringParts,
+		AnimatingDeath_SendingoffParts,
+		RelinquishingParts
 	};
 	CreatureStates creatureState = CreatureStates.PreInitialize;
 
@@ -27,8 +29,9 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	public float forwardSpeed;
 	Vector3 positionDisplacement;
-
 	Vector3 initialPositionOffset;
+
+	List<Vector3> partsDeathPositionsList = new List<Vector3>();
 
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
@@ -55,8 +58,14 @@ public class FlyingCreatureScript : MonoBehaviour
 			case CreatureStates.FollowingPath:
 				FollowPath();
 				break;
-			case CreatureStates.SelfDestructing:
-				SelfDestruct();
+			case CreatureStates.AnimatingDeath_GatheringParts:
+				AnimateDeath_GatherParts();
+				break;
+			case CreatureStates.AnimatingDeath_SendingoffParts:
+				AnimateDeath_SendoffParts();
+				break;
+			case CreatureStates.RelinquishingParts:
+				RelinquishParts();
 				break;
 		}
 	}
@@ -113,7 +122,6 @@ public class FlyingCreatureScript : MonoBehaviour
 		// change state
 		creatureState = CreatureStates.FollowingPath;	
 
-
 		// set initial color
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
@@ -127,7 +135,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		int currentPathNodeIndex = Mathf.FloorToInt(pathProgressionRatio * (float)positionsRecordingsList.Count);
 		if(currentPathNodeIndex > positionsRecordingsList.Count -2) // gone through the entire list, arrived at the end of the path
 		{
-			creatureState = CreatureStates.SelfDestructing;
+			creatureState = CreatureStates.AnimatingDeath_GatheringParts;
 			return;
 		}
 
@@ -152,12 +160,48 @@ public class FlyingCreatureScript : MonoBehaviour
 		currentPathTimeCounter += Time.deltaTime * plabackTimeScale;
 	}
 
-	void SelfDestruct()
+
+	void AnimateDeath_GatherParts()
+	{
+		Vector3 headPostion = creaturePartsArray[0].transform.position;
+		Vector3 lastPartPosition = creaturePartsArray[creaturePartsArray.Length -1].transform.position;
+		if( Mathf.Abs(Vector3.Distance(headPostion, lastPartPosition)) > 5) // conitnue body animation until the last piece has caught up sufficiently to the head
+		{
+			for(int i = 1; i < creaturePartsArray.Length; i++)
+			{
+				creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 7 * plabackTimeScale * Time.deltaTime );
+				creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 7 * plabackTimeScale * Time.deltaTime);
+				creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, creaturePartsArray[i-1].renderer.material.color, 25 * plabackTimeScale * Time.deltaTime);
+			}
+		}
+		else
+		{
+			// set final posions of parts (back into the pool)
+			for(int i = 0; i < creaturePartsArray.Length; i++)
+				partsDeathPositionsList.Add(creatureManagerScript.GenerateRandomPointOnSemiSpehere());
+			creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
+		}
+
+	}
+
+	void AnimateDeath_SendoffParts()
+	{
+		float deltaCounter = 0;
+		for(int i = 0; i < creaturePartsArray.Length; i++)
+		{
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, partsDeathPositionsList[i], 10 * Time.deltaTime );
+			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, partsDeathPositionsList[i]);
+		}
+		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
+		if(deltaAverage < 5)
+			creatureState = CreatureStates.RelinquishingParts;
+	}
+
+	void RelinquishParts()
 	{
 		// relinquish all parts to the creature manager
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = creatureManagerScript.GenerateRandomPointOnSemiSpehere(); //TOO: This is TEMPORARY until the dragonball dispersal system is implemented
 			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
 			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
 		}
