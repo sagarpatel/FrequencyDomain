@@ -11,6 +11,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		CollectingPathData,
 		FollowingPath,
 		AnimatingDeath_GatheringParts,
+		AnimatingDeath_ShootingUpParts,
 		AnimatingDeath_SendingoffParts,
 		RelinquishingParts
 	};
@@ -30,6 +31,10 @@ public class FlyingCreatureScript : MonoBehaviour
 	public float forwardSpeed;
 	Vector3 positionDisplacement;
 	Vector3 initialPositionOffset;
+
+	Vector3 finalAliveHeadPosition;
+	float shootUpLerpCounter = 0;
+	float waitCounter = 0;
 
 	List<Vector3> partsDeathPositionsList = new List<Vector3>();
 
@@ -60,6 +65,9 @@ public class FlyingCreatureScript : MonoBehaviour
 				break;
 			case CreatureStates.AnimatingDeath_GatheringParts:
 				AnimateDeath_GatherParts();
+				break;
+			case CreatureStates.AnimatingDeath_ShootingUpParts:
+				AnimateDeath_ShootUpParts();
 				break;
 			case CreatureStates.AnimatingDeath_SendingoffParts:
 				AnimateDeath_SendoffParts();
@@ -176,8 +184,8 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			for(int i = 1; i < creaturePartsArray.Length; i++)
 			{
-				creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 21 * plabackTimeScale * Time.deltaTime );
-				creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 21 * plabackTimeScale * Time.deltaTime);
+				creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 25 * plabackTimeScale * Time.deltaTime );
+				creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 25 * plabackTimeScale * Time.deltaTime);
 				creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, creaturePartsArray[i-1].renderer.material.color, 25 * plabackTimeScale * Time.deltaTime);
 			}
 		}
@@ -198,8 +206,32 @@ public class FlyingCreatureScript : MonoBehaviour
 				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).endWidth = 10;
 				*/
 			}
-			creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
+			finalAliveHeadPosition = creaturePartsArray[0].transform.position;
+			creatureState = CreatureStates.AnimatingDeath_ShootingUpParts;
 		}
+
+	}
+
+	void AnimateDeath_ShootUpParts()
+	{
+		Vector3 bottomPosition = finalAliveHeadPosition;
+		Vector3 topPosition = bottomPosition + new Vector3(0, positionsRecordingsList.Count * 1.5f, 0); // rise is proportional to number of parts
+		shootUpLerpCounter += 1f * Time.deltaTime;
+		for(int i =0; i < creaturePartsArray.Length; i++)
+		{	
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, topPosition, Mathf.SmoothStep(0,1f, shootUpLerpCounter) );
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, Quaternion.identity, Mathf.SmoothStep(0,1f, shootUpLerpCounter) );
+		}
+
+		Vector3 currentPosition = creaturePartsArray[0].transform.position;
+		if( (topPosition.y - currentPosition.y)/(topPosition.y  - bottomPosition.y) < 0.01f ) // if past 99% to the target, end
+		{
+			if(waitCounter < 0.50f)
+				waitCounter += Time.deltaTime;
+			else
+				creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
+		}
+			
 
 	}
 
@@ -212,7 +244,7 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, partsDeathPositionsList[i], 1 * Time.deltaTime );
 			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, partsDeathPositionsList[i]);
 
-			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.2f * Time.deltaTime);
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.5f * Time.deltaTime);
 		}
 		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
 		if(deltaAverage < 5)
