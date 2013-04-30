@@ -15,6 +15,12 @@ public class AudioDirectorScript : MonoBehaviour
 
 	public float[] pseudoLogArrayBuffer = new float[100];
 
+	float[] outputDataArray = new float[1024];
+	float refRMSValue = 0.1f; // RMS value for 0dB
+	public float rmsValue;
+	public float dbValue;
+
+
 	public float rScale = 1.0f;
 	public float bScale = 1.0f;
 	public float gScale = 1.0f;
@@ -49,6 +55,16 @@ public class AudioDirectorScript : MonoBehaviour
 		// get raw FFT data 
 		//audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
 		AudioListener.GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);
+
+		// get colume data, from --> http://answers.unity3d.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
+		AudioListener.GetOutputData(outputDataArray, 0);
+		float outputSumSq = 0;
+		for(int i = 0; i < outputDataArray.Length; i++)
+		{
+			outputSumSq = outputDataArray[i] * outputDataArray[i]; 
+		}
+		rmsValue = Mathf.Sqrt(outputSumSq/outputDataArray.Length);
+		dbValue = 20 * Mathf.Log10(rmsValue/refRMSValue);
 
 		// cleanup pseudolog array first
 		for(int i = 0; i < pseudoLogArray.Length; i++)
