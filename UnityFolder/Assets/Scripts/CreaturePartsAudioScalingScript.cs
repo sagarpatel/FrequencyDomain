@@ -25,6 +25,7 @@ public class CreaturePartsAudioScalingScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		/*
 		float newRMS = audioDirector.rmsValue * rmsScalingFactor;
 
 		if( newRMS > currentRMSScalingValue )
@@ -37,6 +38,7 @@ public class CreaturePartsAudioScalingScript : MonoBehaviour
 		}
 
 		transform.localScale = originalPrefabScale + (currentRMSScalingValue * originalPrefabScale);
-	
+	*/
 	}
+
 }
