@@ -87,7 +87,7 @@ public class CreatureManagerScript : MonoBehaviour
 			}
 
 			// try to gather the appropriate number of body parts
-			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/10.0f);
+			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/5.0f);
 			foreach (Transform child in transform) 
 			{
 				if(child.gameObject.tag == "CreatureBodyPart")
@@ -102,7 +102,7 @@ public class CreatureManagerScript : MonoBehaviour
 
 			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
 			
-			playerPosition += new Vector3(-200,0,0); // to make creature appear in fron of player so they can see it assemble and born
+			playerPosition += new Vector3(-120,0,0); // to make creature appear in fron of player so they can see it assemble and born
 			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);

@@ -168,9 +168,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		// make body parts follow the one in front
 		for(int i = 1; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 7 * plabackTimeScale * Time.deltaTime );
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, creaturePartsArray[i-1].transform.position, 21 * plabackTimeScale * Time.deltaTime );
 			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, creaturePartsArray[i-1].transform.rotation, 7 * plabackTimeScale * Time.deltaTime);
-			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, creaturePartsArray[i-1].renderer.material.color, 25 * plabackTimeScale * Time.deltaTime);
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, creaturePartsArray[i-1].renderer.material.color, 21 * plabackTimeScale * Time.deltaTime);
 		}
 		currentPathTimeCounter += Time.deltaTime * plabackTimeScale;
 	}
