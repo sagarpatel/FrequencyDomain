@@ -66,6 +66,9 @@ public class CreatureManagerScript : MonoBehaviour
 			// now commited to spawning a creature
 			List<GameObject> partsForNewCreatureList = new List<GameObject>();
 
+			// randommly order array to ensure not always the first ones get picked,
+			creatureHeadPartsArray.Shuffle();
+
 			// search for a free head part
 			for(int i = 0; i < creatureHeadPartsArray.Length; i++)  
 			{
@@ -79,8 +82,11 @@ public class CreatureManagerScript : MonoBehaviour
 				}
 			}
 
+
 			// try to gather the appropriate number of body parts
 			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/5.0f);
+			creatureBodyPartsArray.Shuffle();
+
 			for(int i = 0; i < creatureBodyPartsArray.Length; i++)  
 			{
 				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureBodyPartsArray[i].GetComponent("CreaturePartsGeneralScript");
@@ -124,4 +130,25 @@ public class CreatureManagerScript : MonoBehaviour
 
 
 
+
+
+}
+
+
+// shuffling list randomly, using Fisher Yates, from --> http://www.bytechaser.com/en/functions/p6sv9tve9v/randomly-shuffle-contents-of-any-list-in-c-sharp.aspx
+public static class ListExtensions
+{
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        var randomNumber = new System.Random(Time.frameCount);
+        var n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            var k = randomNumber.Next(n + 1);
+            var value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+    }
 }
