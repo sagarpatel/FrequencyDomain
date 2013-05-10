@@ -22,6 +22,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 	float dispersalUpdateCounter = 0;
 
 	float oldHeight;
+	public float gravity = 1.0f;
 
 	// Use this for initialization
 	void Start () 
@@ -59,9 +60,13 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		Vector3 tempPosition = positionsList[0];
 		if( audioAverage * audioHeightScaling > oldHeight )
-			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 4.0f * Time.deltaTime);
+			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 3.0f * Time.deltaTime);
 		else
-			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 1.0f * Time.deltaTime);
+		{
+			tempPosition.y -= gravity * Time.deltaTime; //tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 1.0f * Time.deltaTime);
+			if(tempPosition.y <0)
+				tempPosition.y = 0;
+		}
 		positionsList[0] = tempPosition;
 
 		oldHeight = positionsList[0].y;
