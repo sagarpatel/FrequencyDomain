@@ -6,13 +6,10 @@ public class CreatureManagerScript : MonoBehaviour
 {
 	// creatures are composed of 1 head part and 1+ body parts
 
-	public GameObject creatureHeadPartPrefab;
-	public GameObject creatureBodyPartPrefab;
 	public int headPartsCount = 10;
 	public int bodyPartsCount = 20;
 	public float randomPositionSemiSphereRadius = 500.0f;
 	public Vector3 randomPositionSemiSphereCenterOffset;
-	GameObject[] creaturePartsArray;
 
 	public GameObject flyingCreaturePrefab;
 
@@ -21,37 +18,29 @@ public class CreatureManagerScript : MonoBehaviour
 	public float creatureForwardSpeed = 1.0f;
 	public float creaturePlaybackTimeScale = 1.0f;
 
+	GameObject[] creatureHeadPartsArray;
+	GameObject[] creatureBodyPartsArray;
+
+	bool isInitialized = false;
+
 	// Use this for initialization
 	void Start () 
 	{
 
-		creaturePartsArray = new GameObject[headPartsCount + bodyPartsCount];
-		int partsCounter = 0;
-		for(int i = 0; i < headPartsCount ; i++)
-		{
-			creaturePartsArray[partsCounter] = (GameObject)Instantiate( creatureHeadPartPrefab,
-																		GenerateRandomPointOnSemiSpehere(),
-																		Quaternion.identity );
-			creaturePartsArray[partsCounter].transform.parent = transform;
-			partsCounter ++;
-		}
-		for(int i = 0; i < bodyPartsCount ; i++)
-		{
-			
-			creaturePartsArray[partsCounter] = (GameObject)Instantiate( creatureBodyPartPrefab,
-																		GenerateRandomPointOnSemiSpehere(),
-																		Quaternion.identity );
-			creaturePartsArray[partsCounter].transform.parent = transform;
-			partsCounter ++;
-		}
-
-		
 
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+
+		if(isInitialized == false)
+		{
+			creatureHeadPartsArray = GameObject.FindGameObjectsWithTag("CreatureHeadPart");
+			creatureBodyPartsArray = GameObject.FindGameObjectsWithTag("CreatureBodyPart");
+
+			isInitialized = true;
+		}
 
 	
 
@@ -64,48 +53,55 @@ public class CreatureManagerScript : MonoBehaviour
 			// check to see if a creature can be contructed (need 1 head part)
 			// search for a free head part
 			bool canBuildCreature = false;
-			foreach (Transform child in transform) 
+			for(int i = 0; i < creatureHeadPartsArray.Length; i++) 
 			{
-				if(child.gameObject.tag == "CreatureHeadPart")
+				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureHeadPartsArray[i].GetComponent("CreaturePartsGeneralScript");
+				if( creaturePartGeneralScript.isPartOfCreature == false )
 					canBuildCreature = true;
 			}
 
 			if(!canBuildCreature)
 				return; //if no head found, can't build creature, exit function
 
-			List<GameObject> creaturePartsList = new List<GameObject>();
+			// now commited to spawning a creature
+			List<GameObject> partsForNewCreatureList = new List<GameObject>();
 
 			// search for a free head part
-			foreach (Transform child in transform) 
+			for(int i = 0; i < creatureHeadPartsArray.Length; i++)  
 			{
-				if(child.gameObject.tag == "CreatureHeadPart")
+				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureHeadPartsArray[i].GetComponent("CreaturePartsGeneralScript");
+				if( creaturePartGeneralScript.isPartOfCreature == false )
 				{
-					creaturePartsList.Add(child.gameObject);
-					child.transform.parent = null;
+					partsForNewCreatureList.Add(creatureHeadPartsArray[i]);
+					creaturePartGeneralScript.isPartOfCreature = true;
+					creatureHeadPartsArray[i].transform.parent = null;
 					break;
 				}
 			}
 
 			// try to gather the appropriate number of body parts
 			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/5.0f);
-			foreach (Transform child in transform) 
+			for(int i = 0; i < creatureBodyPartsArray.Length; i++)  
 			{
-				if(child.gameObject.tag == "CreatureBodyPart")
+				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureBodyPartsArray[i].GetComponent("CreaturePartsGeneralScript");
+				if( creaturePartGeneralScript.isPartOfCreature == false )
 				{
-					creaturePartsList.Add(child.gameObject);
-					child.transform.parent = null;
+					partsForNewCreatureList.Add(creatureBodyPartsArray[i]);
+					creaturePartGeneralScript.isPartOfCreature = true;
+					creatureBodyPartsArray[i].transform.parent = null;
+
 					bodyPartsDesiredCounter --;
 				}
 				if(bodyPartsDesiredCounter == 0)
 					break;
 			}
 
-			GameObject[] creaturePartsArray = creaturePartsList.ToArray();
+			GameObject[] partsForNewCreatureArray = partsForNewCreatureList.ToArray();
 			
 			playerPosition += new Vector3(-120,0,0); // to make creature appear in fron of player so they can see it assemble and born
 			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
-			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(creaturePartsArray);
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(partsForNewCreatureArray);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeed = creatureForwardSpeed;
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).plabackTimeScale = creaturePlaybackTimeScale;
 		}

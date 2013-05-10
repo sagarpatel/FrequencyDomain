@@ -36,8 +36,6 @@ public class FlyingCreatureScript : MonoBehaviour
 	float shootUpLerpCounter = 0;
 	float waitCounter = 0;
 
-	List<Vector3> partsDeathPositionsList = new List<Vector3>();
-
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
 
@@ -85,6 +83,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		for(int i = 0; i < partsArray.Length; i++ )
 		{
 			partsArray[i].transform.parent = transform;
+			((CreaturePartsGeneralScript)partsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = true;
 			creaturePartsList.Add(partsArray[i]);
 			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);
 		}
@@ -191,21 +190,6 @@ public class FlyingCreatureScript : MonoBehaviour
 		}
 		else
 		{
-			// set final posions of parts (back into the pool)
-			for(int i = 0; i < creaturePartsArray.Length; i++)
-			{
-				partsDeathPositionsList.Add(creatureManagerScript.GenerateRandomPointOnSemiSpehere());
-				/*
-				creaturePartsArray[i].AddComponent("TrailRenderer");
-				Material tempMaterial = new Material(Shader.Find("Diffuse"));
-				Color tempColor = creaturePartsArray[i].renderer.material.color;
-				tempColor.a = 0.1f;
-				tempMaterial.SetColor("_Color", tempColor);
-				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).material = tempMaterial ;
-				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).startWidth = 10;
-				((TrailRenderer)creaturePartsArray[i].GetComponent("TrailRenderer")).endWidth = 10;
-				*/
-			}
 			finalAliveHeadPosition = creaturePartsArray[0].transform.position;
 			creatureState = CreatureStates.AnimatingDeath_ShootingUpParts;
 		}
@@ -241,8 +225,13 @@ public class FlyingCreatureScript : MonoBehaviour
 		Color targetColor = new Color(1,1,1,1);
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, partsDeathPositionsList[i], 1 * Time.deltaTime );
-			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, partsDeathPositionsList[i]);
+			//update final location
+			int aIndex = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+			Vector3 anchorPosition = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.positionsList[aIndex];
+			anchorPosition = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.transform.TransformPoint(anchorPosition);
+
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, anchorPosition , 1 * Time.deltaTime );
+			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, anchorPosition);
 
 			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.5f * Time.deltaTime);
 		}
@@ -256,9 +245,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		// relinquish all parts to the creature manager
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.parent = creatureManagerScript.gameObject.transform;
+			creaturePartsArray[i].transform.parent = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).originalArrayTransform;
+			((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = false;
 			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
-			//Destroy(creaturePartsArray[i].GetComponent("TrailRenderer"));
 		}
 		// destroy
 		Object.Destroy(this.gameObject);
