@@ -21,6 +21,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 	public float dispersalUpdateMinimum = 0.02f;
 	float dispersalUpdateCounter = 0;
 
+	float oldHeight;
 
 	// Use this for initialization
 	void Start () 
@@ -57,9 +58,13 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 		//Debug.Log(audioAverage);
 
 		Vector3 tempPosition = positionsList[0];
-		tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 2.0f * Time.deltaTime);
+		if( audioAverage * audioHeightScaling > oldHeight )
+			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 4.0f * Time.deltaTime);
+		else
+			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 1.0f * Time.deltaTime);
 		positionsList[0] = tempPosition;
 
+		oldHeight = positionsList[0].y;
 
 		// disperse vaules
 
