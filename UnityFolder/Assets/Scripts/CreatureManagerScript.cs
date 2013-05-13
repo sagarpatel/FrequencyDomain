@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class CreatureManagerScript : MonoBehaviour 
 {
-	// creatures are composed of 1 head part and 1+ body parts
+	// creatures are composed of 1 Head part and 1+ body parts
 
-	public int headPartsCount = 10;
+	public int HeadPartsCount = 10;
 	public int bodyPartsCount = 20;
 	public float randomPositionSemiSphereRadius = 500.0f;
 	public Vector3 randomPositionSemiSphereCenterOffset;
@@ -39,6 +39,14 @@ public class CreatureManagerScript : MonoBehaviour
 			creatureHeadPartsArray = GameObject.FindGameObjectsWithTag("CreatureHeadPart");
 			creatureBodyPartsArray = GameObject.FindGameObjectsWithTag("CreatureBodyPart");
 
+			// sort parts
+			sortBodyParts();
+			sortHeadParts();
+			
+
+
+
+
 			isInitialized = true;
 		}
 
@@ -50,8 +58,8 @@ public class CreatureManagerScript : MonoBehaviour
 	{
 		if(playerJumpVelocity > playerMinimumJumpVelocity)
 		{
-			// check to see if a creature can be contructed (need 1 head part)
-			// search for a free head part
+			// check to see if a creature can be contructed (need 1 Head part)
+			// search for a free Head part
 			bool canBuildCreature = false;
 			for(int i = 0; i < creatureHeadPartsArray.Length; i++) 
 			{
@@ -61,15 +69,15 @@ public class CreatureManagerScript : MonoBehaviour
 			}
 
 			if(!canBuildCreature)
-				return; //if no head found, can't build creature, exit function
+				return; //if no Head found, can't build creature, exit function
 
 			// now commited to spawning a creature
 			List<GameObject> partsForNewCreatureList = new List<GameObject>();
 
 			// randommly order array to ensure not always the first ones get picked,
-			creatureHeadPartsArray.Shuffle();
+			//creatureHeadPartsArray.Shuffle();
 
-			// search for a free head part
+			// search for a free Head part
 			for(int i = 0; i < creatureHeadPartsArray.Length; i++)  
 			{
 				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureHeadPartsArray[i].GetComponent("CreaturePartsGeneralScript");
@@ -85,7 +93,7 @@ public class CreatureManagerScript : MonoBehaviour
 
 			// try to gather the appropriate number of body parts
 			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/5.0f);
-			creatureBodyPartsArray.Shuffle();
+			//creatureBodyPartsArray.Shuffle();
 
 			for(int i = 0; i < creatureBodyPartsArray.Length; i++)  
 			{
@@ -129,12 +137,70 @@ public class CreatureManagerScript : MonoBehaviour
 	}
 
 
+	void sortBodyParts()
+	{
+		List<GameObject> tempBodyList = new List<GameObject>();
+		tempBodyList.Add(creatureBodyPartsArray[0]);
+		for(int i = 1; i < creatureBodyPartsArray.Length; i++)
+		{
+			int currentPartIndex = ((CreaturePartsGeneralScript)creatureBodyPartsArray[i].GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+			
+			int oldListCount = tempBodyList.Count;
+
+			foreach(GameObject part in tempBodyList)
+			{
+				int comparisonPartIndex = ((CreaturePartsGeneralScript)part.GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+				if( currentPartIndex >= comparisonPartIndex ) // highest index at top
+				{
+					tempBodyList.Insert(tempBodyList.IndexOf(part), creatureBodyPartsArray[i]);
+					break;
+				}
+
+			}
+			int newListCount = tempBodyList.Count;
+			if( newListCount == oldListCount ) // if not insterted above anything else
+				tempBodyList.Add(creatureBodyPartsArray[i]);
+		}
+
+		creatureBodyPartsArray = tempBodyList.ToArray();
+
+	}
+
+
+	void sortHeadParts()
+	{
+		List<GameObject> tempHeadList = new List<GameObject>();
+		tempHeadList.Add(creatureHeadPartsArray[0]);
+		for(int i = 1; i < creatureHeadPartsArray.Length; i++)
+		{
+			int currentPartIndex = ((CreaturePartsGeneralScript)creatureHeadPartsArray[i].GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+			
+			int oldListCount = tempHeadList.Count;
+
+			foreach(GameObject part in tempHeadList)
+			{
+				int comparisonPartIndex = ((CreaturePartsGeneralScript)part.GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+				if( currentPartIndex >= comparisonPartIndex ) // highest index at top
+				{
+					tempHeadList.Insert(tempHeadList.IndexOf(part), creatureHeadPartsArray[i]);
+					break;
+				}
+
+			}
+			int newListCount = tempHeadList.Count;
+			if( newListCount == oldListCount ) // if not insterted above anything else
+				tempHeadList.Add(creatureHeadPartsArray[i]);
+		}
+
+		creatureHeadPartsArray = tempHeadList.ToArray();
+
+	}
 
 
 
 }
 
-
+/*
 // shuffling list randomly, using Fisher Yates, from --> http://www.bytechaser.com/en/functions/p6sv9tve9v/randomly-shuffle-contents-of-any-list-in-c-sharp.aspx
 public static class ListExtensions
 {
@@ -152,3 +218,5 @@ public static class ListExtensions
         }
     }
 }
+
+*/
