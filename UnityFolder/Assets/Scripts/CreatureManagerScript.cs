@@ -6,8 +6,6 @@ public class CreatureManagerScript : MonoBehaviour
 {
 	// creatures are composed of 1 Head part and 1+ body parts
 
-	public int HeadPartsCount = 10;
-	public int bodyPartsCount = 20;
 	public float randomPositionSemiSphereRadius = 500.0f;
 	public Vector3 randomPositionSemiSphereCenterOffset;
 
