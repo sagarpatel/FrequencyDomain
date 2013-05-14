@@ -40,6 +40,7 @@ public class PlayerScript : MonoBehaviour
 	public float[] bloomBurstValueArray = new float[5];
 
 	public float hangTimeScale = 1;
+	public float degradationTimeScale = 1.0f;
 
 	public int activeCoroutineCounter = 0;
 
@@ -226,7 +227,7 @@ public class PlayerScript : MonoBehaviour
 				while( timeCounter < hangTime )
 				{
 					bloomBurstValueArray[i] = Mathf.Lerp(bloomBurstValueArray[i], 0, timeCounter/hangTime);
-					timeCounter += Time.deltaTime;
+					timeCounter += degradationTimeScale * Time.deltaTime;
 					if(bloomBurstValueArray[i] < 0.00001 ) // kill the co-routine if value is too low to be noticeable (this seems to fix inconsistencies bug)
 						break;
 					yield return null;
