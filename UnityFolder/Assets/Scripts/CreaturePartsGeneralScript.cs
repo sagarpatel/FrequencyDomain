@@ -28,6 +28,7 @@ public class CreaturePartsGeneralScript : MonoBehaviour
 		{
 			transform.parent = originalArrayTransform;
 			transform.localPosition = ownerArrayScript.positionsList[arrayIndex]; 
+			transform.rotation = ownerArrayScript.rotationsList[arrayIndex]; 
 		}
 	
 	}

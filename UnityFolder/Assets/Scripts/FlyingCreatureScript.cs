@@ -100,7 +100,8 @@ public class FlyingCreatureScript : MonoBehaviour
 			//Debug.Log("Hit Ground");
 			for(int i = 0; i < creaturePartsArray.Length; i++)
 			{
-				creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, 1.0f);
+				creaturePartsArray[i].transform.position = transform.position;
+				creaturePartsArray[i].transform.rotation = Quaternion.identity;
 			}
 			creatureState = CreatureStates.CollectingPathData;
 		}
@@ -109,6 +110,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
 			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio));
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, Quaternion.identity, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio) );
 		}
 	}
 
@@ -221,16 +223,24 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void AnimateDeath_SendoffParts()
 	{
+		float sendoffSpeedScale = 2.0f;
+
 		float deltaCounter = 0;
 		Color targetColor = new Color(1,1,1,1);
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
 			//update final location
 			int aIndex = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).arrayIndex;
+			
 			Vector3 anchorPosition = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.positionsList[aIndex];
 			anchorPosition = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.transform.TransformPoint(anchorPosition);
+			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, anchorPosition , sendoffSpeedScale * Time.deltaTime );
 
-			creaturePartsArray[i].transform.position = Vector3.Lerp( creaturePartsArray[i].transform.position, anchorPosition , 1 * Time.deltaTime );
+			// lerp to target rotation
+			Quaternion anchorRotation = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.rotationsList[aIndex];
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, anchorRotation, sendoffSpeedScale * Time.deltaTime);
+
+
 			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, anchorPosition);
 
 			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.5f * Time.deltaTime);

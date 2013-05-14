@@ -9,6 +9,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 	public int partsCount;
 	public List<Vector3> positionsList = new List<Vector3>();
+	public List<Quaternion> rotationsList = new List<Quaternion>();
 	List<Vector3> velocitiesList = new List<Vector3>();
 
 	AudioDirectorScript audioDirector;
@@ -31,7 +32,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 		for(int i = 0; i < partsCount; i++)
 		{
 			positionsList.Add(new Vector3( 480.0f * Mathf.Cos( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ), 0 , -800.0f * Mathf.Sin( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ) ) );
-			Debug.Log(positionsList[i]);
+			rotationsList.Add(Quaternion.identity);
+			//Debug.Log(positionsList[i]);
 			velocitiesList.Add(new Vector3());
 			GameObject tempGameObject = (GameObject)Instantiate(partPrefab, positionsList[i], Quaternion.identity);
 			tempGameObject.transform.parent = transform;
@@ -61,7 +63,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		Vector3 tempPosition = positionsList[0];
 		if( audioAverage * audioHeightScaling > oldHeight )
-			tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 3.0f * Time.deltaTime);
+			tempPosition.y  =  audioAverage * audioHeightScaling; //Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 3.0f * Time.deltaTime);
 		else
 		{
 			tempPosition.y -= gravity * Time.deltaTime; //tempPosition.y  = Mathf.Lerp( tempPosition.y, audioAverage * audioHeightScaling, 1.0f * Time.deltaTime);
@@ -80,6 +82,13 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 			tempPosition = positionsList[i];
 			tempPosition.y = newHeight;
 			positionsList[i] = tempPosition;
+		}
+
+		//update roations list
+		for(int i = 0; i < rotationsList.Count; i++)
+		{
+			Quaternion tempRotation = Quaternion.AngleAxis(positionsList[i].y * Time.deltaTime * 3.0f, Vector3.forward);
+			rotationsList[i] *= tempRotation;
 		}
 
 
