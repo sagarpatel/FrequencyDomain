@@ -37,14 +37,12 @@ public class FlyingCreatureScript : MonoBehaviour
 	float waitCounter = 0;
 
 	PlayerScript playerScript;
-	CreatureManagerScript creatureManagerScript;
 
 
 	// Use this for initialization
 	void Start () 
 	{
 		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
-		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
 	}
 	
 	// Update is called once per frame
