@@ -244,7 +244,7 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.5f * Time.deltaTime);
 		}
 		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
-		if(deltaAverage < 5)
+		if(deltaAverage < 10)
 			creatureState = CreatureStates.RelinquishingParts;
 	}
 
