@@ -221,7 +221,7 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void AnimateDeath_SendoffParts()
 	{
-		float sendoffSpeedScale = 2.0f;
+		float sendoffSpeedScale = 1.5f;
 
 		float deltaCounter = 0;
 		Color targetColor = new Color(1,1,1,1);
