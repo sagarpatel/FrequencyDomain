@@ -113,7 +113,7 @@ public class CreatureManagerScript : MonoBehaviour
 			GameObject[] partsForNewCreatureArray = partsForNewCreatureList.ToArray();
 			
 			playerPosition += creatureSpawnPositionOffset;//new Vector3(-100,0,0); // to make creature appear in fron of player so they can see it assemble and born
-			playerPosition += new Vector3(0, - playerPosition.y * 0.2f, 0); // reduce height
+			//playerPosition += new Vector3(0, - playerPosition.y * 0.2f, 0); // reduce height
 			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(partsForNewCreatureArray);
