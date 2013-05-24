@@ -7,6 +7,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	enum CreatureStates
 	{
 		PreInitialize,
+		MovingPartsToRandomStartPositions,
 		AssemblingParts,
 		CollectingPathData,
 		FollowingPath,
@@ -36,13 +37,17 @@ public class FlyingCreatureScript : MonoBehaviour
 	float shootUpLerpCounter = 0;
 	float waitCounter = 0;
 
+	public float spawnPlayerJumpVelocity = 0;
+	List<Vector3> partsRandomStartPositionsList = new List<Vector3>();
+
 	PlayerScript playerScript;
+	CreatureManagerScript creatureManagerScript;
 
 
 	// Use this for initialization
 	void Start () 
 	{
-		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
+
 	}
 	
 	// Update is called once per frame
@@ -50,6 +55,9 @@ public class FlyingCreatureScript : MonoBehaviour
 	{
 		switch(creatureState)
 		{
+			case CreatureStates.MovingPartsToRandomStartPositions:
+				MovePartsToRandomStartPositions();
+				break;
 			case CreatureStates.AssemblingParts:
 				AssembleCreature();
 				break;
@@ -76,6 +84,10 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	public void AquireCreatureParts(GameObject[] partsArray)
 	{
+
+		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
+		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
+
 		List<GameObject> creaturePartsList = new List<GameObject>();
 		List<Vector3> creaturePartsOriginalPositionList = new List<Vector3>();
 		for(int i = 0; i < partsArray.Length; i++ )
@@ -84,10 +96,32 @@ public class FlyingCreatureScript : MonoBehaviour
 			((CreaturePartsGeneralScript)partsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = true;
 			creaturePartsList.Add(partsArray[i]);
 			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);
+
+			partsRandomStartPositionsList.Add( creatureManagerScript.GenerateRandomPointOnSemiSpehere());  // set random target start positions for each part
 		}
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
-		creatureState = CreatureStates.AssemblingParts;
+
+		creatureState = CreatureStates.MovingPartsToRandomStartPositions;
+	}
+
+	void MovePartsToRandomStartPositions()
+	{
+		// normal update, move towards start target posotions
+		float velocityRatio = 1.0f - (playerScript.velocity.y/spawnPlayerJumpVelocity);
+		for(int i = 0; i < creaturePartsArray.Length; i++)
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], partsRandomStartPositionsList[i], Mathf.SmoothStep(0f,1f,velocityRatio));
+	
+
+		// if starting to fall down,  lock down positions and move to next state
+		if(playerScript.velocity.y < 0)
+		{
+			for(int i = 0; i < creaturePartsArray.Length; i++)
+				creaturePartsOriginalPositionArray[i] = creaturePartsArray[i].transform.position;
+	
+			creatureState = CreatureStates.AssemblingParts;
+		}
+
 	}
 
 	void AssembleCreature()

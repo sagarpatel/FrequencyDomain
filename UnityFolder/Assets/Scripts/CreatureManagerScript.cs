@@ -119,6 +119,8 @@ public class CreatureManagerScript : MonoBehaviour
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(partsForNewCreatureArray);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeed = creatureForwardSpeed;
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).plabackTimeScale = creaturePlaybackTimeScale;
+
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).spawnPlayerJumpVelocity = playerJumpVelocity;
 		}
 
 

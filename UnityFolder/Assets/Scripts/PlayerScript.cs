@@ -121,7 +121,9 @@ public class PlayerScript : MonoBehaviour
 				{
 					isRecording = true;
 					recordingLength = 0;
-					StartCoroutine(HandlePlayerMovementRotationRecording());
+					StartCoroutine(HandlePlayerMovementRotationRecording()); // start logging position
+					
+					creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
 				}
 			}
 			else // in free fall
@@ -130,10 +132,9 @@ public class PlayerScript : MonoBehaviour
 				hangtimeCounter += Time.deltaTime;
 				if( velocity.y < 0 )
 				{
-					if(isFlyingUpward == true) // if its the first time falling down, start creating the creature
+					if(isFlyingUpward == true) 
 					{
 						isFlyingUpward = false;
-						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity);
 						jumpApexHeight = transform.position.y;
 						jumpVelocity = 0;
 					}
@@ -304,6 +305,9 @@ public class PlayerScript : MonoBehaviour
 			recordingLength += Time.deltaTime;
 			yield return null;
 		}
+
 	}
+
+
 
 }
