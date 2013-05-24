@@ -88,21 +88,9 @@ public class PlayerScript : MonoBehaviour
 		oldPosition = transform.position;
 		oldVelocity = velocity;
 
-		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
-		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
-		/*
-		// cancel velocity in axis if changing direction (left/right only)
-		if( xTranslation * velocity.z < 0) // if directions are oppsite
-			velocity.z = 0;
-	*/
-		// apply new force to velocity
-		velocity += new Vector3( -yTranslation, 0 , xTranslation);
+		HandleControls();
 
-		// only apply friction to translation, not gravity/velocity
-		velocity.x -= velocity.x * friction * Time.deltaTime;
-		velocity.z -= velocity.z * friction * Time.deltaTime;
-
-		HandleControlBounds();
+		
 
 		//Get New Height
 		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x - 0, transform.position.z);
@@ -253,7 +241,7 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList[i].range = originalLightsRange + bloomBurstSum * meshLightsScale;
 	}
 
-	void HandleControlBounds()
+	void HandleControls()
 	{
 		// check if input would put player out of bounds
 		Vector3 predecitedPosition =  oldPosition + velocity * Time.deltaTime;
@@ -262,10 +250,42 @@ public class PlayerScript : MonoBehaviour
 		float xscale = meshFieldGeneratorScript.xScale;
 		float zscale = meshFieldGeneratorScript.zScale;
 
-		if( predecitedPosition.x < 0.5f*tdc*xscale || predecitedPosition.x > tdc*xscale )
-			velocity.x = 0;
-		if( predecitedPosition.z < -10 || predecitedPosition.z > 1.0f*fdc*zscale )
-			velocity.z =0;
+
+		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
+		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
+
+		Vector3 frictionScaling = new Vector3(1,1,1);
+
+		if( predecitedPosition.x < 0.5f*tdc*xscale && yTranslation > 0)
+		{
+			yTranslation = 0;
+			frictionScaling.x = 2.0f;
+		}
+
+		if( predecitedPosition.x > tdc*xscale && yTranslation < 0)
+		{
+			yTranslation = 0;
+			frictionScaling.x = 2.0f;
+		}
+
+		if( predecitedPosition.z < -10 && xTranslation < 0)
+		{
+			xTranslation = 0;
+			frictionScaling.z = 2.0f;
+		}
+
+		if( predecitedPosition.z > 1.0f*fdc*zscale && xTranslation >0 )
+		{
+			xTranslation = 0;
+			frictionScaling.z = 2.0f;
+		}
+
+		// apply new force to velocity
+		velocity += new Vector3( -yTranslation, 0 , xTranslation);
+
+		// only apply friction to translation, not gravity/velocity
+		velocity.x -= velocity.x * friction * frictionScaling.x * Time.deltaTime;
+		velocity.z -= velocity.z * friction * frictionScaling.z * Time.deltaTime;
 
 	}
 
