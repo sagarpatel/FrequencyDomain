@@ -105,7 +105,10 @@ public class PlayerScript : MonoBehaviour
 		HandleControlBounds();
 
 		//Get New Height
-		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z);
+		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x - 0, transform.position.z);
+		newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z) )/4.0f;
+		newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -2, transform.position.z) )/8.0f;
+		//newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -3, transform.position.z) )/8.0f;
 		
 		if( oldPosition.y < newHeight) // ramping up
 		{
