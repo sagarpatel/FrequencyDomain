@@ -37,6 +37,24 @@ public class AcrobaticsScript : MonoBehaviour
 				barrelRollTriggerCounter += Input.GetAxis("RightTrigger") * Time.deltaTime * 3.0f; //reverse faster
 		}
 
+		//handle keyboard input
+		if( Input.GetKey("q") )
+		{
+			if( barrelRollTriggerCounter > 0)
+				barrelRollTriggerCounter += Time.deltaTime;
+			else
+				barrelRollTriggerCounter +=  Time.deltaTime * 3.0f ; //reverse faster
+		}
+		if( Input.GetKey("e") )
+		{
+			if( barrelRollTriggerCounter < 0)
+				barrelRollTriggerCounter -= Time.deltaTime;
+			else
+				barrelRollTriggerCounter -=  Time.deltaTime * 3.0f; //reverse faster
+		}
+
+
+
 		if( Mathf.Abs(Input.GetAxis("LeftTrigger")) < 0.1f )
 			barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
 
