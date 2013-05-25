@@ -11,6 +11,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	public Vector3[] verticesArray;
 	public int[] trianglesArray;
 	public Vector2[] uvArray;
+	public Vector3[] normalsArray;
 
 	public int verticesFrequencyDepthCount = 64;
 	public int verticesTimeDepthCount = 100;
@@ -29,6 +30,10 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 	float updateRefreshCounter;
 
 	public Color currentColor;
+
+	GameObject calculationsMiniMeshGameObject;
+	Mesh calculationsMiniMesh;
+	Vector3[] miniVertsArray;
 
 	// Use this for initialization
 	void Start () 
@@ -107,10 +112,14 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		mesh.triangles = trianglesArray;
 		mesh.RecalculateNormals();
 
+		normalsArray = mesh.normals;
+
 		GetComponent<MeshRenderer>().materials[0].color = Color.green;
 		renderer.material.shader = Shader.Find("Parallax Diffuse");
 
 		//GetComponent<MeshCollider>().sharedMesh = mesh;
+
+		GenerateCalculationsMiniMesh();
 	
 		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
 	}
@@ -128,12 +137,14 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			updateRefreshCounter -= updateRefreshMinimum;
 
 			Vector3 tempVector;
-			// propagate old audio data along time axis
+			// propagate old audio data along time axis, also propagte normal vectors down
 			for(int i = verticesArray.Length -1; i > verticesFrequencyDepthCount ; i--)
 	        {
 	    		tempVector = verticesArray[i];
 	    		tempVector.y = verticesArray[i - verticesFrequencyDepthCount].y ;
 	    		verticesArray[i] = tempVector;
+
+	    		normalsArray[i] = normalsArray[i - verticesFrequencyDepthCount]; //tricle down normals on main mesh
 	        }
 			
 	        // insert fresh audio data into first frequency collumn
@@ -153,11 +164,103 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 			mesh.MarkDynamic();
 			mesh.vertices = verticesArray;
-			mesh.RecalculateNormals();
+			
+			// updates vertices of the mini mesh
+			for(int i = 0; i < (2 * verticesFrequencyDepthCount); i++)
+				miniVertsArray[i] = verticesArray[i];
+
+			calculationsMiniMesh.vertices = miniVertsArray;
+			calculationsMiniMesh.RecalculateNormals();
+
+			Vector3[] tempMiniNormals = calculationsMiniMesh.normals;
+			for(int i = 0; i < verticesFrequencyDepthCount; i++)
+				normalsArray[i] = tempMiniNormals[i];
+
+			//mesh.RecalculateNormals();
+			// update main mesh normals
+			mesh.normals = normalsArray;
 
 			currentColor = audioDirector.calculatedRGB;
 			GetComponent<MeshRenderer>().materials[0].color = currentColor;
 		}
+
+	}
+
+
+	void GenerateCalculationsMiniMesh()
+	{
+
+		GameObject calculationsMiniMeshGameObject = new GameObject("CalculationsMiniMesh");
+		calculationsMiniMeshGameObject.AddComponent("MeshFilter");
+		//calculationsMiniMeshGameObject.AddComponent("MeshRenderer");
+		calculationsMiniMesh = calculationsMiniMeshGameObject.GetComponent<MeshFilter>().mesh;
+
+        List<int> trisList = new List<int>();
+        List<Vector3> vertsList = new List<Vector3>();
+
+        List<Vector2> tempUVList = new List<Vector2>();
+
+        // initial line
+        for(int j = 0; j < verticesFrequencyDepthCount; j++)
+    	{
+    		vertsList.Add( new Vector3(0,0,j * zScale) );
+    		tempUVList.Add( new Vector2(0,0) );
+    	}
+
+    	// populate the rest of the vertices, triangles
+    	// use verticesFrequencyDepthCount to shift between frewuency collumns
+
+    	// generate only one extra row for normals calculations
+        for(int i = 1; i < 2; i++)
+        {
+        	for(int j = 0; j < verticesFrequencyDepthCount; j += 2)
+        	{
+        		// bottom left triangle
+        		vertsList.Add( new Vector3(i * xScale,0, j * zScale) );
+        		int currentListIndex = vertsList.Count -1;
+
+	        	trisList.Add(currentListIndex);
+	        	trisList.Add(currentListIndex - verticesFrequencyDepthCount);
+	        	trisList.Add(currentListIndex - verticesFrequencyDepthCount + 1);
+
+	        	// fill triangles in between this and previous triangle below
+	        	if( j > 0) // is not at the edge
+	        	{
+	        		// bottom left triangle
+	        		trisList.Add(currentListIndex -1);
+		        	trisList.Add(currentListIndex - verticesFrequencyDepthCount -1);
+		        	trisList.Add(currentListIndex - verticesFrequencyDepthCount);
+
+		        	// top right triangle
+		        	trisList.Add(currentListIndex);
+		        	trisList.Add(currentListIndex - 1);
+		        	trisList.Add(currentListIndex - verticesFrequencyDepthCount);
+	        	}	
+
+	        	// top right triangle
+	        	vertsList.Add( new Vector3( i*xScale,0, (j + 1)*zScale ) );
+	        	currentListIndex++;
+	        	
+	        	trisList.Add(currentListIndex);
+	        	trisList.Add(currentListIndex - 1);
+	        	trisList.Add(currentListIndex - verticesFrequencyDepthCount);
+  	
+	        	tempUVList.Add( new Vector2(0,0) );
+	        	tempUVList.Add( new Vector2(0,0) );
+        	}
+        }
+
+
+		Debug.Log(trisList.Count);
+
+		calculationsMiniMesh.Clear();
+		calculationsMiniMesh.MarkDynamic();
+		calculationsMiniMesh.vertices = vertsList.ToArray();
+		calculationsMiniMesh.uv = tempUVList.ToArray();
+		calculationsMiniMesh.triangles = trisList.ToArray();
+		calculationsMiniMesh.RecalculateNormals();
+
+		miniVertsArray = calculationsMiniMesh.normals;
 
 	}
 
