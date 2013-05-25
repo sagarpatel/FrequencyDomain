@@ -41,14 +41,14 @@ public class AcrobaticsScript : MonoBehaviour
 		if( Input.GetKey("q") )
 		{
 			if( barrelRollTriggerCounter > 0)
-				barrelRollTriggerCounter += Time.deltaTime;
+				barrelRollTriggerCounter += 1.5f * Time.deltaTime;
 			else
 				barrelRollTriggerCounter +=  Time.deltaTime * 3.0f ; //reverse faster
 		}
 		if( Input.GetKey("e") )
 		{
 			if( barrelRollTriggerCounter < 0)
-				barrelRollTriggerCounter -= Time.deltaTime;
+				barrelRollTriggerCounter -= 1.5f * Time.deltaTime;
 			else
 				barrelRollTriggerCounter -=  Time.deltaTime * 3.0f; //reverse faster
 		}
