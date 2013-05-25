@@ -167,6 +167,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		playerScript.positionRecordingList.Clear();
 		playerScript.rotationRecordingList.Clear();
 		playerScript.colorRecordingList.Clear();
+		Debug.Log("CLEARED DATA");
 		// change state
 		creatureState = CreatureStates.FollowingPath;	
 

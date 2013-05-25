@@ -25,6 +25,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 	float oldHeight;
 	public float gravity = 1.0f;
 
+	public float rotationSpeed = 1.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -87,7 +89,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 		//update roations list
 		for(int i = 0; i < rotationsList.Count; i++)
 		{
-			Quaternion tempRotation = Quaternion.AngleAxis(positionsList[i].y * Time.deltaTime * 3.0f, Vector3.forward);
+			Quaternion tempRotation = Quaternion.AngleAxis(positionsList[i].y * Time.deltaTime * rotationSpeed, Vector3.forward);
 			rotationsList[i] *= tempRotation;
 		}
 
