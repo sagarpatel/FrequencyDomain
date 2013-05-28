@@ -87,7 +87,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
-		mainCameraGameObject = GameObject.Find("Main Camera");
+		mainCameraGameObject =  GameObject.FindWithTag("MainCamera"); //GameObject.Find("Main Camera");
 	}
 	
 	// Update is called once per frame
@@ -306,6 +306,9 @@ public class PlayerScript : MonoBehaviour
 
 	IEnumerator HandlePlayerMovementRotationRecording()
 	{
+
+		Debug.Log("RECORDING COROUTINE ENTERED");
+
 		while(isRecording == true)
 		{
 			if(recordingUpdateIntervalCounter > recordingUpdateInterval)
