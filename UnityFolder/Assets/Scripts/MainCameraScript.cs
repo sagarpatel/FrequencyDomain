@@ -3,12 +3,12 @@ using System.Collections;
 
 public class MainCameraScript : MonoBehaviour 
 {
-	public float distanceAhead = 0;
+	public float distanceAhead = 100;
 	Vector3 cameraTarget = new Vector3();
 	Vector3 playerVelocity = new Vector3();
-	public float rollSensitivity = 1.0f;
-	public float yawSensitivity = 1.0f;
-	public float pitchSensitivity = 1.0f;
+	public float rollSensitivity = 0.1f;
+	public float yawSensitivity = 0.05f;
+	public float pitchSensitivity = 0.2f;
 
 	
 
@@ -16,13 +16,13 @@ public class MainCameraScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		playerVelocity = ((PlayerScript)(transform.parent.gameObject.transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
+		playerVelocity = ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).velocity;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		playerVelocity = ((PlayerScript)(transform.parent.gameObject.transform.parent.gameObject.GetComponent("PlayerScript"))).velocity;
+		playerVelocity = ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).velocity;
 		cameraTarget = transform.parent.position;
 		cameraTarget.x -= distanceAhead;
 		//cameraTarget.y = playerVelocity.y* 0.1f;

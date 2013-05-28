@@ -60,8 +60,8 @@ public class PlayerScript : MonoBehaviour
 
 	GameObject mainCameraGameObject;
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
-	Camera mainCameraComponent;
-	Bloom bloomScript;
+	List<Camera> mainCameraComponentList = new List<Camera>();
+	List<Bloom> bloomScriptList = new List<Bloom>();
 	List<Light> meshLightsList = new List<Light>();
 	CreatureManagerScript creatureManagerScript;
 
@@ -69,8 +69,16 @@ public class PlayerScript : MonoBehaviour
 	void Start () 
 	{
 		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
-		mainCameraComponent = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
-		bloomScript = (Bloom)GameObject.Find("Main Camera").GetComponent("Bloom");
+		
+		GameObject[] tempCameraObjectArray =  GameObject.FindGameObjectsWithTag("MainCamera");
+		for(int i = 0; i < tempCameraObjectArray.Length; i++)
+			mainCameraComponentList.Add( (Camera)tempCameraObjectArray[i].GetComponent("Camera") );
+
+		//mainCameraComponent = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
+		
+		for(int i = 0; i < tempCameraObjectArray.Length; i++)
+			bloomScriptList.Add( (Bloom)tempCameraObjectArray[i].GetComponent("Bloom") );
+
 		GameObject[] meshLightsObjectsArray =  GameObject.FindGameObjectsWithTag("MeshLight");
 		
 		for(int i =0; i < meshLightsObjectsArray.Length; i++)
@@ -155,37 +163,41 @@ public class PlayerScript : MonoBehaviour
 
 	void HandleBoost()
 	{
-		currentFieldOfView = mainCameraComponent.fieldOfView;
 
-		if( currentFieldOfView < boostTreasholdArray[0] )
-			boostStage = 0;
-		else if( currentFieldOfView < boostTreasholdArray[1] )
-			boostStage = 1;
-		else
-			boostStage = 2;
-
-		float boostFactor = 0;
-		boostFactor = boostFactorArray[boostStage];
-
-		if( Input.GetButton("Fire1") || Input.GetButton("Jump") )
+		foreach(Camera mainCameraComponent in mainCameraComponentList)
 		{
-			energyCounter += Time.deltaTime * boostFactor;
-		}
-		else
-		{
-			energyCounter -= Time.deltaTime * boostFactor;
-			if(energyCounter < 0)
-				energyCounter = 0;
-		}
+			currentFieldOfView = mainCameraComponent.fieldOfView;
 
-		float rgbValue =  energyCounter/(181 - originalFieldOfView) ;
+			if( currentFieldOfView < boostTreasholdArray[0] )
+				boostStage = 0;
+			else if( currentFieldOfView < boostTreasholdArray[1] )
+				boostStage = 1;
+			else
+				boostStage = 2;
 
-		if( originalFieldOfView + energyCounter < 180 )
-		{
-			mainCameraComponent.fieldOfView = originalFieldOfView + energyCounter;
-			mainCameraComponent.backgroundColor = new Color(rgbValue,rgbValue,rgbValue,rgbValue);
+			float boostFactor = 0;
+			boostFactor = boostFactorArray[boostStage];
+
+			if( Input.GetButton("Fire1") || Input.GetButton("Jump") )
+			{
+				energyCounter += Time.deltaTime * boostFactor;
+			}
+			else
+			{
+				energyCounter -= Time.deltaTime * boostFactor;
+				if(energyCounter < 0)
+					energyCounter = 0;
+			}
+
+			float rgbValue =  energyCounter/(181 - originalFieldOfView) ;
+
+			if( originalFieldOfView + energyCounter < 180 )
+			{
+				mainCameraComponent.fieldOfView = originalFieldOfView + energyCounter;
+				mainCameraComponent.backgroundColor = new Color(rgbValue,rgbValue,rgbValue,rgbValue);
+			}
+
 		}
-
 
 	}
 
@@ -202,7 +214,9 @@ public class PlayerScript : MonoBehaviour
 		float bloomBurstSum = 0;
 		for(int i = 0; i < bloomBurstValueArray.Length; i++)
 			bloomBurstSum += bloomBurstValueArray[i];
-		bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstSum;
+		
+		foreach(Bloom bloomScript in bloomScriptList)
+			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstSum;
 
 	}
 

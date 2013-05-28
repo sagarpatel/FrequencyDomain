@@ -45,7 +45,7 @@ public class AudioDirectorScript : MonoBehaviour
 				scalingPerDecadeArray[i] = 1.0f;
 	
 		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
-		mainCamera = (Camera)GameObject.Find("Main Camera").GetComponent("Camera");
+		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
 		initialFOV = ( (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
 	}
 	
