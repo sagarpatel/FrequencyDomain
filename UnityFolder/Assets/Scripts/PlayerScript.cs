@@ -59,8 +59,8 @@ public class PlayerScript : MonoBehaviour
 	public float recordingLength = 0;
 
 	public bool isOVR = false;
-	public float ovrHorizontalSpeedScale = 0.01f;
-	public float ovrVerticalSpeedScale = 0.01f;
+	public float ovrHorizontalSpeedScale = 0.4f;
+	public float ovrVerticalSpeedScale = 0.05f;
 	OVRCameraController ovrCameraController;
 
 
@@ -321,7 +321,7 @@ public class PlayerScript : MonoBehaviour
 			float zRotationAngle = mainCameraGameObject.transform.localEulerAngles.z;
 			float zVelocityOVR = 0;
 			if( zRotationAngle < 180)
-				zVelocityOVR = zRotationAngle * ovrHorizontalSpeedScale;
+				zVelocityOVR = -zRotationAngle * ovrHorizontalSpeedScale;
 			else
 				zVelocityOVR = (360 - zRotationAngle) * ovrHorizontalSpeedScale;
 
@@ -330,9 +330,11 @@ public class PlayerScript : MonoBehaviour
 			if( xRotationAngle < 180)
 				xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
 			else
-				xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
+				xVelocityOVR = -(360 - xRotationAngle) * ovrVerticalSpeedScale;
 
 			velocity += new Vector3( -xVelocityOVR, 0, zVelocityOVR);
+
+			Debug.Log(new Vector3( -xVelocityOVR, 0, zVelocityOVR));
 
 		}
 
