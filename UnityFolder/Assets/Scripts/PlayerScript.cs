@@ -59,6 +59,8 @@ public class PlayerScript : MonoBehaviour
 	public float recordingLength = 0;
 
 	public bool isOVR = false;
+	public float ovrHorizontalSpeedScale = 0.01f;
+	public float ovrVerticalSpeedScale = 0.01f;
 	OVRCameraController ovrCameraController;
 
 
@@ -207,7 +209,6 @@ public class PlayerScript : MonoBehaviour
 				{
 					ovrCameraController.SetVerticalFOV(mainCameraComponent.fieldOfView);
 
-					Debug.Log(mainCameraComponent.backgroundColor);
 				}
 
 
@@ -313,6 +314,27 @@ public class PlayerScript : MonoBehaviour
 
 		// apply new force to velocity
 		velocity += new Vector3( -yTranslation, 0 , xTranslation);
+
+		//in Oculus Rift mode, use head tilting to add to velocity
+		if(isOVR)
+		{
+			float zRotationAngle = mainCameraGameObject.transform.localEulerAngles.z;
+			float zVelocityOVR = 0;
+			if( zRotationAngle < 180)
+				zVelocityOVR = zRotationAngle * ovrHorizontalSpeedScale;
+			else
+				zVelocityOVR = (360 - zRotationAngle) * ovrHorizontalSpeedScale;
+
+			float xRotationAngle = mainCameraGameObject.transform.localEulerAngles.x;
+			float xVelocityOVR = 0;
+			if( xRotationAngle < 180)
+				xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
+			else
+				xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
+
+			velocity += new Vector3( -xVelocityOVR, 0, zVelocityOVR);
+
+		}
 
 		// only apply friction to translation, not gravity/velocity
 		velocity.x -= velocity.x * friction * frictionScaling.x * Time.deltaTime;

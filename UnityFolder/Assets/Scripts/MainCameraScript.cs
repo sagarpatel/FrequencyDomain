@@ -29,14 +29,17 @@ public class MainCameraScript : MonoBehaviour
 		//cameraTarget.y = cameraTarget.y/3.0f;
 		cameraTarget.y = transform.parent.position.y/1.5f;
 		
-		transform.LookAt( cameraTarget, Vector3.up );	
+		
 
 		
-		
-		transform.localEulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
-											transform.eulerAngles.y + playerVelocity.z *  yawSensitivity, 
-											transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
-
+		if( ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).isOVR == false )	
+		{
+			transform.LookAt( cameraTarget, Vector3.up );	
+			
+			transform.localEulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
+												transform.eulerAngles.y + playerVelocity.z *  yawSensitivity, 
+												transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
+		}
 		
 
 
