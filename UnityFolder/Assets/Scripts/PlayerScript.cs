@@ -58,6 +58,10 @@ public class PlayerScript : MonoBehaviour
 	bool isRecording = false;
 	public float recordingLength = 0;
 
+	public bool isOVR = false;
+	OVRCameraController ovrCameraController;
+
+
 	GameObject mainCameraGameObject;
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	List<Camera> mainCameraComponentList = new List<Camera>();
@@ -88,7 +92,10 @@ public class PlayerScript : MonoBehaviour
 
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
 		mainCameraGameObject =  GameObject.FindWithTag("MainCamera"); //GameObject.Find("Main Camera");
-	}
+
+		if(isOVR)
+			ovrCameraController = (OVRCameraController)GameObject.Find("OVRCameraController").GetComponent("OVRCameraController");
+	}	
 	
 	// Update is called once per frame
 	void Update () 
@@ -195,6 +202,15 @@ public class PlayerScript : MonoBehaviour
 			{
 				mainCameraComponent.fieldOfView = originalFieldOfView + energyCounter;
 				mainCameraComponent.backgroundColor = new Color(rgbValue,rgbValue,rgbValue,rgbValue);
+
+				if(isOVR)
+				{
+					ovrCameraController.SetVerticalFOV(mainCameraComponent.fieldOfView);
+
+					Debug.Log(mainCameraComponent.backgroundColor);
+				}
+
+
 			}
 
 		}
@@ -306,8 +322,6 @@ public class PlayerScript : MonoBehaviour
 
 	IEnumerator HandlePlayerMovementRotationRecording()
 	{
-
-		Debug.Log("RECORDING COROUTINE ENTERED");
 
 		while(isRecording == true)
 		{

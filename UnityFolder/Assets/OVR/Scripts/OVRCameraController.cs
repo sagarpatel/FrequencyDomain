@@ -205,7 +205,7 @@ public class OVRCameraController : OVRComponent
 		camera.GetComponent<OVRCamera>().EyePosition = EyePosition;		
 					
 		// Background color
-		camera.backgroundColor = BackgroundColor;
+		//camera.backgroundColor = BackgroundColor; // had to comment out to enable warp background color change
 		
 		// Clip Planes
 		camera.nearClipPlane = NearClipPlane;
