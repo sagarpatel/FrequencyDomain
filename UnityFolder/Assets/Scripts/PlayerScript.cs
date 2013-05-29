@@ -60,7 +60,7 @@ public class PlayerScript : MonoBehaviour
 
 	public bool isOVR = false;
 	public float ovrHorizontalSpeedScale = 0.4f;
-	public float ovrVerticalSpeedScale = 0.05f;
+	public float ovrVerticalSpeedScale = 0.03f;
 	OVRCameraController ovrCameraController;
 
 
@@ -318,24 +318,25 @@ public class PlayerScript : MonoBehaviour
 		//in Oculus Rift mode, use head tilting to add to velocity
 		if(isOVR)
 		{
-			float zRotationAngle = mainCameraGameObject.transform.localEulerAngles.z;
-			float zVelocityOVR = 0;
-			if( zRotationAngle < 180)
-				zVelocityOVR = -zRotationAngle * ovrHorizontalSpeedScale;
-			else
-				zVelocityOVR = (360 - zRotationAngle) * ovrHorizontalSpeedScale;
+			if( yTranslation == 0 && xTranslation == 0 )
+			{
+				
+				float zRotationAngle = mainCameraGameObject.transform.localEulerAngles.z;
+				float zVelocityOVR = 0;
+				if( zRotationAngle < 180)
+					zVelocityOVR = -zRotationAngle * ovrHorizontalSpeedScale;
+				else
+					zVelocityOVR = (360 - zRotationAngle) * ovrHorizontalSpeedScale;
 
-			float xRotationAngle = mainCameraGameObject.transform.localEulerAngles.x;
-			float xVelocityOVR = 0;
-			if( xRotationAngle < 180)
-				xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
-			else
-				xVelocityOVR = -(360 - xRotationAngle) * ovrVerticalSpeedScale;
+				float xRotationAngle = mainCameraGameObject.transform.localEulerAngles.x;
+				float xVelocityOVR = 0;
+				if( xRotationAngle < 180)
+					xVelocityOVR = xRotationAngle * ovrVerticalSpeedScale;
+				else
+					xVelocityOVR = -(360 - xRotationAngle) * ovrVerticalSpeedScale;
 
-			velocity += new Vector3( -xVelocityOVR, 0, zVelocityOVR);
-
-			Debug.Log(new Vector3( -xVelocityOVR, 0, zVelocityOVR));
-
+				velocity += new Vector3( -xVelocityOVR, 0, zVelocityOVR);
+			}
 		}
 
 		// only apply friction to translation, not gravity/velocity
