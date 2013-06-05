@@ -172,10 +172,11 @@ public class AudioDirectorScript : MonoBehaviour
 
 
 		// Blue (full), linear slope up
+		// blue is to powerful, going from 1.5f to 1.0f
 		float tempB = 0;
 		for( int i = 60; i < 100; i++)
 		{
-			tempB += pseudoLogArray[i] * Mathf.Clamp( ( (1.5f*(float)i - 60.0f) )/40.0f , 0,1);
+			tempB += pseudoLogArray[i] * Mathf.Clamp( ( (1.0f*(float)i - 60.0f) )/40.0f , 0,1);
 		}
 	
 
