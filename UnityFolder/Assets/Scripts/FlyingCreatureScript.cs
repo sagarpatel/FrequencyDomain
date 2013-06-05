@@ -39,6 +39,7 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	public float spawnPlayerJumpVelocity = 0;
 	List<Vector3> partsRandomStartPositionsList = new List<Vector3>();
+	Color partsStartColor = new Color(1,1,1,1);
 
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
@@ -102,6 +103,8 @@ public class FlyingCreatureScript : MonoBehaviour
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
 
+		partsStartColor =  playerScript.colorRecordingList[0];
+
 		creatureState = CreatureStates.MovingPartsToRandomStartPositions;
 	}
 
@@ -110,8 +113,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		// normal update, move towards start target posotions
 		float velocityRatio = 1.0f - (playerScript.velocity.y/spawnPlayerJumpVelocity);
 		for(int i = 0; i < creaturePartsArray.Length; i++)
-			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], partsRandomStartPositionsList[i], Mathf.SmoothStep(0f,1f,velocityRatio));
-	
+		{
+			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], partsRandomStartPositionsList[i], Mathf.SmoothStep(0f,1f,velocityRatio) );
+		}
 
 		// if starting to fall down,  lock down positions and move to next state
 		if(playerScript.velocity.y < 0)
@@ -143,6 +147,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.position = Vector3.Lerp(creaturePartsOriginalPositionArray[i], transform.position, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio));
 			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, Quaternion.identity, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio) );
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, partsStartColor , 0.75f *Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio) );
 		}
 	}
 
