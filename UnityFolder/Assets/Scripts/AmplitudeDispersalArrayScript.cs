@@ -27,6 +27,9 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 	public float rotationSpeed = 1.0f;
 
+	public float audioAverage = 0;
+	public float audioAverageColorScale = 10.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -60,7 +63,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		}
 		
-		float audioAverage = getAmplitudeAverageOverFrequencyRange();
+		audioAverage = getAmplitudeAverageOverFrequencyRange();
 		//Debug.Log(audioAverage);
 
 		Vector3 tempPosition = positionsList[0];

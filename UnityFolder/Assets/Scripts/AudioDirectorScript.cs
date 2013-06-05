@@ -149,23 +149,25 @@ public class AudioDirectorScript : MonoBehaviour
 		// assuming a pseudo log array of size 100, cuz I'm lazy. It's easy to generalize, but don't feel like doing it now
 		
 		// Red (full), linear slope down, max 1.0
+		// sine sweek test shows linear 1:1 dropoff is too weak, need to make slope less steep
 		float tempR = 0;
 		for( int i = 0; i < 40; i++ )
 		{
-			tempR += pseudoLogArray[i] * (40.0f - (float)i)/40.0f ; // weighted according to position on slope
+			tempR += pseudoLogArray[i] * Mathf.Clamp( (40.0f - 0.75f*(float)i)/40.0f ,0,1) ; // weighted according to position on slope
 		}
 	
 		// Green (first half), linear slope up, max 2/3 --> 0.67 (fromarea under curve calcuation)
+		// sine sweek test shows linear 1:1 dropoff is too weak, need to make slope less steep
 		float tempG  = 0;
 		for( int i = 20; i < 50; i++ )
 		{
-			tempG += pseudoLogArray[i] * 0.67f * ((float)(i - 20))/30.0f;
+			tempG += pseudoLogArray[i] * Mathf.Clamp( 0.6f * ( (1.6f*(float)i - 20.0f) )/30.0f ,0,1);
 		}
 
 		// Green (second half), linear slope down
 		for( int i = 50; i < 80; i++ )
 		{
-			tempG += pseudoLogArray[i] * 0.67f * (30.0f - (float)(i-50))/30.0f;
+			tempG += pseudoLogArray[i] * Mathf.Clamp( 0.6f * (30.0f - 0.8f*(float)(i-50) )/30.0f ,0,1);
 		}
 
 
@@ -173,7 +175,7 @@ public class AudioDirectorScript : MonoBehaviour
 		float tempB = 0;
 		for( int i = 60; i < 100; i++)
 		{
-			tempB += pseudoLogArray[i] * ((float)(i - 60))/40.0f;
+			tempB += pseudoLogArray[i] * Mathf.Clamp( ( (1.5f*(float)i - 60.0f) )/40.0f , 0,1);
 		}
 	
 
