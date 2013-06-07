@@ -298,7 +298,7 @@ public class PlayerScript : MonoBehaviour
 			frictionScaling.x = 2.0f;
 		}
 
-		if( predecitedPosition.x > tdc*xscale && yTranslation < 0)
+		if( predecitedPosition.x > 0.8*tdc*xscale && yTranslation < 0)
 		{
 			yTranslation = 0;
 			frictionScaling.x = 2.0f;
