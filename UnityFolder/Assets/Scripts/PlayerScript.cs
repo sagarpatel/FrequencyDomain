@@ -196,7 +196,14 @@ public class PlayerScript : MonoBehaviour
 			}
 			else
 			{
-				energyCounter -= Time.deltaTime * boostFactor;
+				if( boostStage == 0 )
+					energyCounter -= Time.deltaTime * 1.5f * boostFactor;
+				else if( boostStage == 1)
+					energyCounter -= Time.deltaTime * boostFactor;
+				else if(boostStage == 2)
+					energyCounter -= Time.deltaTime * 2.0f * boostFactor;
+
+
 				if(energyCounter < 0)
 					energyCounter = 0;
 			}
