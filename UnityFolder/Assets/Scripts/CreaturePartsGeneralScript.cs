@@ -29,6 +29,7 @@ public class CreaturePartsGeneralScript : MonoBehaviour
 			transform.parent = originalArrayTransform;
 			transform.localPosition = ownerArrayScript.positionsList[arrayIndex]; 
 			transform.rotation = ownerArrayScript.rotationsList[arrayIndex];
+			// handles the color dimming based on audio
 			Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * ownerArrayScript.audioAverage * ownerArrayScript.audioAverageColorScale;
 			transform.gameObject.renderer.material.color = tempColor;
 		}

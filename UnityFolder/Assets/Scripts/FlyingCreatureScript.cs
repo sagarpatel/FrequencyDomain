@@ -44,11 +44,13 @@ public class FlyingCreatureScript : MonoBehaviour
 	PlayerScript playerScript;
 	CreatureManagerScript creatureManagerScript;
 
+	public float frameOfBirth;
+
 
 	// Use this for initialization
 	void Start () 
 	{
-
+		frameOfBirth = Time.frameCount;
 	}
 	
 	// Update is called once per frame
@@ -103,9 +105,11 @@ public class FlyingCreatureScript : MonoBehaviour
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
 
-		partsStartColor =  playerScript.colorRecordingList[0];
+		
 
 		creatureState = CreatureStates.MovingPartsToRandomStartPositions;
+
+	
 	}
 
 	void MovePartsToRandomStartPositions()
@@ -126,20 +130,26 @@ public class FlyingCreatureScript : MonoBehaviour
 			creatureState = CreatureStates.AssemblingParts;
 		}
 
+
+
 	}
 
 	void AssembleCreature()
 	{
+		partsStartColor =  playerScript.colorRecordingList[0];
+
 		// player hits the ground., need to complete creature formation
-		if(playerScript.oldVelocity.y < 0 && playerScript.velocity.y == 0)
+		if( playerScript.velocity.y == 0 || playerScript.oldVelocity.y == 0  )
 		{
-			//Debug.Log("Hit Ground");
+			Debug.Log("Hit Ground");
 			for(int i = 0; i < creaturePartsArray.Length; i++)
 			{
 				creaturePartsArray[i].transform.position = transform.position;
 				creaturePartsArray[i].transform.rotation = Quaternion.identity;
 			}
 			creatureState = CreatureStates.CollectingPathData;
+			Debug.Log("Player HIT GROUND_ASSEBLE");
+			Debug.Log("Framecount: " + Time.frameCount.ToString() );
 		}
 
 		// ordinary update
@@ -149,10 +159,16 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, Quaternion.identity, Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio) );
 			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, partsStartColor , 0.75f *Mathf.SmoothStep(0f,1f,playerScript.moveTowardsRatio) );
 		}
+
+
 	}
 
 	void CollectPathData()
 	{
+
+		Debug.Log("Player HIT GROUND_COLLECTDATA");
+		Debug.Log("Framecount: " + Time.frameCount.ToString() );
+
 		// get the data from the original list in the player
 		positionsRecordingsList = new List<Vector3>( playerScript.positionRecordingList );
 		rotationsRecordingsList = new List<Quaternion>( playerScript.rotationRecordingList );

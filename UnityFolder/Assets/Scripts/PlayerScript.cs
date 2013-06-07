@@ -12,7 +12,7 @@ public class PlayerScript : MonoBehaviour
 
 	public Vector3 velocity = new Vector3();
 	public Vector3 oldVelocity = new Vector3();
-	Vector3 oldPosition = new Vector3();
+	public Vector3 oldPosition = new Vector3();
 	public float friction = 0.0f;
 	public float gravity = 0.0f;
 	public float rampUpFactor = 1.0f;
@@ -140,6 +140,9 @@ public class PlayerScript : MonoBehaviour
 					recordingLength = 0;
 					StartCoroutine(HandlePlayerMovementRotationRecording()); // start logging position
 					
+					Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
+					Debug.Log("Framecount: " + Time.frameCount.ToString() );
+
 					creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
 				}
 			}
@@ -221,7 +224,8 @@ public class PlayerScript : MonoBehaviour
 	void HandleBloomBurst()
 	{
 		if(oldVelocity.y < 0 && velocity.y == 0 && jumpHeight > bloomBurstMinimumHeight) // moment of impact with ground
-		{				
+		{	
+			Debug.Log("Player HIT GROUND");
 			//bloomBurstValue = -oldVelocity.y * bloomBurstScale;
 			bloomBurstValue = hangtimeCounter * bloomBurstScale;
 			activeCoroutineCounter++;
@@ -350,12 +354,20 @@ public class PlayerScript : MonoBehaviour
 
 		while(isRecording == true)
 		{
+			//Debug.Log("Framecount: " + Time.frameCount.ToString() );
+
+			//Debug.Log("Counter: " + recordingUpdateIntervalCounter.ToString() );
+			//Debug.Log("Interval: " + recordingUpdateInterval.ToString() );
+
+
 			if(recordingUpdateIntervalCounter > recordingUpdateInterval)
 			{
 				recordingUpdateIntervalCounter -= recordingUpdateInterval;
 				positionRecordingList.Add(mainCameraGameObject.transform.position);
 				rotationRecordingList.Add(mainCameraGameObject.transform.rotation);
 				colorRecordingList.Add(meshFieldGeneratorScript.currentColor);
+
+				//Debug.Log(positionRecordingList.Count);
 			}
 			recordingUpdateIntervalCounter += Time.deltaTime;
 			recordingLength += Time.deltaTime;
