@@ -22,18 +22,15 @@ public class CreaturePartsGeneralScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-
+		/*
 		// when in array with, act accordingly
 		if(isPartOfCreature == false)
 		{
-			transform.parent = originalArrayTransform;
-			transform.localPosition = ownerArrayScript.positionsList[arrayIndex]; 
-			transform.rotation = ownerArrayScript.rotationsList[arrayIndex];
-			// handles the color dimming based on audio
-			Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * ownerArrayScript.audioAverage * ownerArrayScript.audioAverageColorScale;
-			transform.gameObject.renderer.material.color = tempColor;
+			
+			
 		}
-	
+		*/
+		
 	}
 
 

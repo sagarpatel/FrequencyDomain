@@ -12,6 +12,9 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 	public List<Quaternion> rotationsList = new List<Quaternion>();
 	List<Vector3> velocitiesList = new List<Vector3>();
 
+	List<GameObject> owenedPartsList = new List<GameObject>();
+	List<CreaturePartsGeneralScript> owenedPartsScriptsList = new List<CreaturePartsGeneralScript>();
+
 	AudioDirectorScript audioDirector;
 
 	public int frequencyMinIndex; // min 0
@@ -44,6 +47,9 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 			tempGameObject.transform.parent = transform;
 			((CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript")).arrayIndex = i;
 			((CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript")).ownerArrayScript = this;
+
+			owenedPartsList.Add(tempGameObject);
+			owenedPartsScriptsList.Add( (CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript") );
 
 		}
 
@@ -89,11 +95,22 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 			positionsList[i] = tempPosition;
 		}
 
-		//update roations list
+		//update roations list and color
 		for(int i = 0; i < rotationsList.Count; i++)
 		{
 			Quaternion tempRotation = Quaternion.AngleAxis(positionsList[i].y * Time.deltaTime * rotationSpeed, Vector3.forward);
 			rotationsList[i] *= tempRotation;
+
+			// do parts update (not in craeture)
+			if( owenedPartsScriptsList[i].isPartOfCreature == false )
+			{
+				owenedPartsList[i].transform.parent = transform;
+				owenedPartsList[i].transform.localPosition = positionsList[i]; 
+				owenedPartsList[i].transform.rotation = rotationsList[i];
+				// handles the color dimming based on audio
+				Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * audioAverage * audioAverageColorScale;
+				owenedPartsList[i].renderer.sharedMaterial.color = tempColor;
+			}
 		}
 
 

@@ -141,15 +141,15 @@ public class FlyingCreatureScript : MonoBehaviour
 		// player hits the ground., need to complete creature formation
 		if( playerScript.velocity.y == 0 || playerScript.oldVelocity.y == 0  )
 		{
-			Debug.Log("Hit Ground");
+			//Debug.Log("Hit Ground");
 			for(int i = 0; i < creaturePartsArray.Length; i++)
 			{
 				creaturePartsArray[i].transform.position = transform.position;
 				creaturePartsArray[i].transform.rotation = Quaternion.identity;
 			}
 			creatureState = CreatureStates.CollectingPathData;
-			Debug.Log("Player HIT GROUND_ASSEBLE");
-			Debug.Log("Framecount: " + Time.frameCount.ToString() );
+			//Debug.Log("Player HIT GROUND_ASSEBLE");
+			//Debug.Log("Framecount: " + Time.frameCount.ToString() );
 		}
 
 		// ordinary update
@@ -166,8 +166,8 @@ public class FlyingCreatureScript : MonoBehaviour
 	void CollectPathData()
 	{
 
-		Debug.Log("Player HIT GROUND_COLLECTDATA");
-		Debug.Log("Framecount: " + Time.frameCount.ToString() );
+		//Debug.Log("Player HIT GROUND_COLLECTDATA");
+		//Debug.Log("Framecount: " + Time.frameCount.ToString() );
 
 		// get the data from the original list in the player
 		positionsRecordingsList = new List<Vector3>( playerScript.positionRecordingList );
@@ -188,7 +188,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		playerScript.positionRecordingList.Clear();
 		playerScript.rotationRecordingList.Clear();
 		playerScript.colorRecordingList.Clear();
-		Debug.Log("CLEARED DATA");
+		//Debug.Log("CLEARED DATA");
 		// change state
 		creatureState = CreatureStates.FollowingPath;	
 
