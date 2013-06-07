@@ -33,9 +33,13 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 	public float audioAverage = 0;
 	public float audioAverageColorScale = 10.0f;
 
+	Material arraySharedMaterial; 
+
 	// Use this for initialization
 	void Start () 
 	{
+
+		arraySharedMaterial = new Material(Shader.Find("Parallax Diffuse"));
 
 		for(int i = 0; i < partsCount; i++)
 		{
@@ -47,6 +51,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 			tempGameObject.transform.parent = transform;
 			((CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript")).arrayIndex = i;
 			((CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript")).ownerArrayScript = this;
+
+			tempGameObject.renderer.sharedMaterial = arraySharedMaterial;
 
 			owenedPartsList.Add(tempGameObject);
 			owenedPartsScriptsList.Add( (CreaturePartsGeneralScript)tempGameObject.GetComponent("CreaturePartsGeneralScript") );
@@ -96,6 +102,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 		}
 
 		//update roations list and color
+		Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * audioAverage * audioAverageColorScale;
+		arraySharedMaterial.color = tempColor;
 		for(int i = 0; i < rotationsList.Count; i++)
 		{
 			Quaternion tempRotation = Quaternion.AngleAxis(positionsList[i].y * Time.deltaTime * rotationSpeed, Vector3.forward);
@@ -108,8 +116,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 				owenedPartsList[i].transform.localPosition = positionsList[i]; 
 				owenedPartsList[i].transform.rotation = rotationsList[i];
 				// handles the color dimming based on audio
-				Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * audioAverage * audioAverageColorScale;
-				owenedPartsList[i].renderer.sharedMaterial.color = tempColor;
+				
+				owenedPartsList[i].renderer.sharedMaterial = arraySharedMaterial;
 			}
 		}
 
