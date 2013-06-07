@@ -13,8 +13,8 @@ public class LevelSelectDirectorScript : MonoBehaviour
 		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
 
 		nextLevelIndex =  Application.loadedLevel + 1;
-		if( nextLevelIndex > 3 )
-			nextLevelIndex = 1;
+		if( nextLevelIndex > 5 )
+			nextLevelIndex = 0;
 	
 	}
 	
@@ -38,13 +38,13 @@ public class LevelSelectDirectorScript : MonoBehaviour
 
 		if( Input.GetKey("3") )
 			Application.LoadLevel(3);
-/*
+
 		if( Input.GetKey("4") )
 			Application.LoadLevel(4);
 
 		if( Input.GetKey("5") )
 			Application.LoadLevel(5);
-
+/*
 		if( Input.GetKey("6") )
 			Application.LoadLevel(6);
 
