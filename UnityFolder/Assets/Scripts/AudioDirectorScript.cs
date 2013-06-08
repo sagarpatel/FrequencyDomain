@@ -10,6 +10,7 @@ public class AudioDirectorScript : MonoBehaviour
 	public AudioSource[] audioSourceArray = new AudioSource[maxTrackCount];
 
 	public float[] pseudoLogArray = new float[100];
+	public int sampleStartIndex= 0;
 	public int[] samplesPerDecadeArray = new int[10];
 	public float[] scalingPerDecadeArray = new float[10];
 
@@ -72,7 +73,7 @@ public class AudioDirectorScript : MonoBehaviour
 		
 		// doing the pseudo log scale
 		int decadeIndex = 0;
-		int fftSampleCounter = 0;
+		int fftSampleCounter = sampleStartIndex;//0;
 		for(int i = 0; i < pseudoLogArray.Length; i++)
 		{
 			if( i != 0 && i%10 == 0)
