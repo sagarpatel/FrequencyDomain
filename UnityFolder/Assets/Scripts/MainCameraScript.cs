@@ -10,7 +10,10 @@ public class MainCameraScript : MonoBehaviour
 	public float yawSensitivity = 0.05f;
 	public float pitchSensitivity = 0.2f;
 
-	
+	float rsHorizontalSensitivity = 200.0f;
+	float rsVerticalSensitibity = 200.0f;
+	Vector3 lookAtOffsetPosition = new Vector3();
+	float lookAtOffsetFriction = 2f;
 
 
 	// Use this for initialization
@@ -28,9 +31,17 @@ public class MainCameraScript : MonoBehaviour
 		//cameraTarget.y = playerVelocity.y* 0.1f;
 		//cameraTarget.y = cameraTarget.y/3.0f;
 		cameraTarget.y = transform.parent.position.y/1.5f;
-		
-		
 
+
+		// apply right stick camera control
+		float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
+		float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 5) * rsVerticalSensitibity * Time.deltaTime ;
+
+		lookAtOffsetPosition += new Vector3( 0, -yLookAtOffset, zLookAtOffset );
+		lookAtOffsetPosition -= lookAtOffsetPosition * lookAtOffsetFriction * Time.deltaTime;
+
+		
+		cameraTarget += lookAtOffsetPosition;
 		
 		if( ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).isOVR == false )	
 		{
