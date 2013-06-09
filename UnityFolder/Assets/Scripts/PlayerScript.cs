@@ -190,7 +190,7 @@ public class PlayerScript : MonoBehaviour
 			float boostFactor = 0;
 			boostFactor = boostFactorArray[boostStage];
 
-			if( Input.GetButton("Fire1") || Input.GetButton("Jump") )
+			if( Input.GetButton("Warp")  )
 			{
 				energyCounter += Time.deltaTime * boostFactor;
 			}
