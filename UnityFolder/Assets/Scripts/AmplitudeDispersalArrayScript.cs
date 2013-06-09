@@ -103,6 +103,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		//update roations list and color
 		Color tempColor = (new Color(1.0f,1.0f,1.0f,1.0f) ) * audioAverage * audioAverageColorScale;
+		tempColor = new Color( Mathf.Pow(tempColor.r,2), Mathf.Pow(tempColor.g,2), Mathf.Pow(tempColor.b,2), Mathf.Pow(tempColor.a,2) ); // square the value, more violent change
 		arraySharedMaterial.color = tempColor;
 		for(int i = 0; i < rotationsList.Count; i++)
 		{
