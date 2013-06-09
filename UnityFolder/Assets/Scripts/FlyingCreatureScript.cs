@@ -29,7 +29,8 @@ public class FlyingCreatureScript : MonoBehaviour
 	float originalPathTimeLength;
 	float currentPathTimeCounter = 0;
 
-	public float forwardSpeed;
+	public float forwardSpeedStart;
+	public float forwardSpeedEnd;
 	Vector3 positionDisplacement;
 	Vector3 initialPositionOffset;
 
@@ -216,6 +217,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		creaturePartsArray[0].renderer.material.color = Color.Lerp( colorsRecordingsList[currentPathNodeIndex], colorsRecordingsList[currentPathNodeIndex +1], ratioToNextPathNode );
 
 		//update the position displacement
+		float forwardSpeed = Mathf.Lerp( forwardSpeedStart, forwardSpeedEnd,  Mathf.Sqrt( Mathf.Sqrt(pathProgressionRatio) ) );
 		positionDisplacement += new Vector3(-forwardSpeed * Time.deltaTime * plabackTimeScale,0,0);
 		//displace the head with the speed/position displacement vector
 		creaturePartsArray[0].transform.position += positionDisplacement + initialPositionOffset;

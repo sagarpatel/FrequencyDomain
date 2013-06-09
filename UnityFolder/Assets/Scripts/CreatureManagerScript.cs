@@ -13,7 +13,9 @@ public class CreatureManagerScript : MonoBehaviour
 
 	public float playerMinimumJumpVelocity = 10.0f;
 
-	public float creatureForwardSpeed = 1.0f;
+	public float creatureForwardSpeedStart = 100.0f;
+	public float creatureForwardSpeedEnd = 100.0f;
+
 	public float creaturePlaybackTimeScale = 1.0f;
 
 	public Vector3 creatureSpawnPositionOffset = new Vector3(-150,0,0);
@@ -117,7 +119,8 @@ public class CreatureManagerScript : MonoBehaviour
 			
 			GameObject newCreature = (GameObject)Instantiate( flyingCreaturePrefab, playerPosition, Quaternion.identity);
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).AquireCreatureParts(partsForNewCreatureArray);
-			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeed = creatureForwardSpeed;
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeedStart = creatureForwardSpeedStart;
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeedEnd = creatureForwardSpeedEnd;
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).plabackTimeScale = creaturePlaybackTimeScale;
 
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).spawnPlayerJumpVelocity = playerJumpVelocity;
