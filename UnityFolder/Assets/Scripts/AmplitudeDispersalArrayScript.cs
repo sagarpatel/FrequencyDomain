@@ -43,7 +43,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		for(int i = 0; i < partsCount; i++)
 		{
-			positionsList.Add(new Vector3( 400.0f * Mathf.Cos( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ), 0 , -800.0f * Mathf.Sin( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ) ) );
+			positionsList.Add(new Vector3( 300.0f * Mathf.Cos( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ), 0 , -800.0f * Mathf.Sin( (Mathf.PI/2) + (Mathf.PI/2) * ((float)i/(float)partsCount) ) ) );
 			rotationsList.Add(Quaternion.identity);
 			//Debug.Log(positionsList[i]);
 			velocitiesList.Add(new Vector3());
