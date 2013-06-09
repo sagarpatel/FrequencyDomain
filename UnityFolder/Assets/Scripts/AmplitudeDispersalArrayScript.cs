@@ -119,6 +119,8 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 				
 				owenedPartsList[i].renderer.sharedMaterial = arraySharedMaterial;
 			}
+
+			owenedPartsScriptsList[i].partsArrayColor = tempColor;
 		}
 
 

@@ -11,6 +11,8 @@ public class CreaturePartsGeneralScript : MonoBehaviour
 
 	public Vector3 calculatedWorldPosition;
 
+	public Color partsArrayColor;
+
 	// Use this for initialization
 	void Start () 
 	{

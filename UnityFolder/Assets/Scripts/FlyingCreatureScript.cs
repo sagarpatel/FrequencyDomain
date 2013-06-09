@@ -280,9 +280,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	void AnimateDeath_SendoffParts()
 	{
 		float sendoffSpeedScale = 1.5f;
-
-		float deltaCounter = 0;
-		Color targetColor = new Color(1,1,1,1);
+		float deltaCounter = 0;		
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
 			//update final location
@@ -294,15 +292,16 @@ public class FlyingCreatureScript : MonoBehaviour
 
 			// lerp to target rotation
 			Quaternion anchorRotation = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).ownerArrayScript.rotationsList[aIndex];
-			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, anchorRotation, sendoffSpeedScale * Time.deltaTime);
+			creaturePartsArray[i].transform.rotation = Quaternion.Slerp( creaturePartsArray[i].transform.rotation, anchorRotation, sendoffSpeedScale * Time.deltaTime);	
 
+			// lerp color
+			Color targetColor =  ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).partsArrayColor ;
+			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , sendoffSpeedScale * Time.deltaTime);
 
 			deltaCounter += Vector3.Distance( creaturePartsArray[i].transform.position, anchorPosition);
-
-			creaturePartsArray[i].renderer.material.color = Color.Lerp( creaturePartsArray[i].renderer.material.color, targetColor , 0.5f * Time.deltaTime);
 		}
 		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
-		if(deltaAverage < 10)
+		if(deltaAverage < 5)
 			creatureState = CreatureStates.RelinquishingParts;
 	}
 
@@ -313,7 +312,7 @@ public class FlyingCreatureScript : MonoBehaviour
 		{
 			creaturePartsArray[i].transform.parent = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).originalArrayTransform;
 			((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = false;
-			creaturePartsArray[i].renderer.material.color = new Color(1,1,1,1);
+			creaturePartsArray[i].renderer.material.color = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).partsArrayColor ;
 		}
 		// destroy
 		Object.Destroy(this.gameObject);
