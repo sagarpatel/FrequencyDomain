@@ -20,6 +20,9 @@ public class MainCameraScript : MonoBehaviour
 	void Start () 
 	{
 		playerVelocity = ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).velocity;
+
+		Screen.showCursor = false;
+		Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame
@@ -34,8 +37,12 @@ public class MainCameraScript : MonoBehaviour
 
 
 		// apply right stick camera control
+		// hacked up mouse, not good but there anyways
 		float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
+		zLookAtOffset += Input.GetAxis("Mouse X") * Time.deltaTime * 150.0f;
+
 		float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 5) * rsVerticalSensitibity * Time.deltaTime ;
+		yLookAtOffset += -Input.GetAxis("Mouse Y") * Time.deltaTime * 150.0f;
 
 		lookAtOffsetPosition += new Vector3( 0, -yLookAtOffset, zLookAtOffset );
 		lookAtOffsetPosition -= lookAtOffsetPosition * lookAtOffsetFriction * Time.deltaTime;
