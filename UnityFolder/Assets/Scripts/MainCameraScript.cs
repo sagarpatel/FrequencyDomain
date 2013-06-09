@@ -41,7 +41,7 @@ public class MainCameraScript : MonoBehaviour
 		float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
 		zLookAtOffset += Input.GetAxis("Mouse X") * Time.deltaTime * 150.0f;
 
-		float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 5) * rsVerticalSensitibity * Time.deltaTime ;
+		float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 3) * rsVerticalSensitibity * Time.deltaTime ;
 		yLookAtOffset += -Input.GetAxis("Mouse Y") * Time.deltaTime * 150.0f;
 
 		lookAtOffsetPosition += new Vector3( 0, -yLookAtOffset, zLookAtOffset );
