@@ -21,8 +21,8 @@ public class MainCameraScript : MonoBehaviour
 	{
 		playerVelocity = ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).velocity;
 
-		Screen.showCursor = false;
-		Screen.lockCursor = true;
+		//Screen.showCursor = false;
+		//Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame

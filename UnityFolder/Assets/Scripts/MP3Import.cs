@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using System.Collections;
  
 using System;
@@ -33,10 +33,57 @@ public class MP3Import : MonoBehaviour
         private const float const_1_div_32768_ = 1.0f / 32768.0f; // 16 bit multiplier
         private const double const_1_div_2147483648_ = 1.0 / 2147483648.0; // 32 bit
      #endregion
+
+/// File Broswer STARTS HERE \\\\\\\\\\\\\\
+
+    // From: http://wiki.unity3d.com/index.php?title=ImprovedFileBrowser
+
+        protected FileBrowser m_fileBrowser;
+        protected Texture2D m_directoryImage, m_fileImage;
+
+        protected void OnGUI () 
+        {
+            if (m_fileBrowser != null) {
+                m_fileBrowser.OnGUI();
+            } else {
+                OnGUIMain();
+            }
+        }
+     
+        protected void OnGUIMain() 
+        {
+     
+            GUILayout.BeginHorizontal();
+                GUILayout.Label("Text File", GUILayout.Width(100));
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(mPath ?? "none selected");
+                if (GUILayout.Button("...", GUILayout.ExpandWidth(false))) {
+                    m_fileBrowser = new FileBrowser(
+                        new Rect(100, 100, 600, 500),
+                        "Choose Text File",
+                        FileSelectedCallback
+                    );
+                    m_fileBrowser.SelectionPattern = "*.txt";
+                    m_fileBrowser.DirectoryImage = m_directoryImage;
+                    m_fileBrowser.FileImage = m_fileImage;
+                }
+            GUILayout.EndHorizontal();
+        }
+     
+        protected void FileSelectedCallback(string path) 
+        {
+            m_fileBrowser = null;
+            mPath = path;
+        }
+
+/// File Broswer ENDS HERE \\\\\\\\\\\\\
+ 
        
         public void StartImport()
         {
-                mPath = EditorUtility.OpenFilePanel ("Open MP3", "", "mp3");   
+                //mPath = EditorUtility.OpenFilePanel ("Open MP3", "", "mp3");   
+
+
                                
                 audioSource = (AudioSource)gameObject.GetComponent(typeof(AudioSource));
                 if(audioSource==null)audioSource=(AudioSource)gameObject.AddComponent("AudioSource");
