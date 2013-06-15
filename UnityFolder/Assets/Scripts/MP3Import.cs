@@ -1,3 +1,7 @@
+// From: http://answers.unity3d.com/questions/380838/is-there-any-converter-mp3-to-ogg-.html
+// and: http://pastebin.com/Cwd1CJcg
+// needs this: http://pastebin.com/WbqLVKJz
+
 using UnityEngine;
 //using UnityEditor;
 using System.Collections;
