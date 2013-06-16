@@ -25,6 +25,10 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+
+		// check input to activate button
+		if(  Input.GetButton("Display Music Browser Button") == true )
+			isActive = true;
 	
 	}
 
@@ -68,10 +72,19 @@ public class FileBrowserGameObjectScript : MonoBehaviour
         //if() CHECK FOR FILE IS VALID
         //THEN
         isActive = false;
+
+
+
+        mp3Importer = (MP3Import)GetComponent("MP3Import");
+
+
         mp3Importer.StartImport(filePath);
 
         audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
         audioDirector.audioSourceArray[0].Play();
+
+        // fixes memory leaked cause by unsed audio clips (occurs when loading new songs)
+        Resources.UnloadUnusedAssets();
     }
 
 
