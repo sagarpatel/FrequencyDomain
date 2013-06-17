@@ -18,7 +18,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 	public bool isActive = false;
 
-	float amplitudeIncrement = 0.05f;
+	float amplitudeIncrement = 0.03f;
 	float minAmplitude = 0.1f;
 	float maxAmplitude = 10.0f;
 
@@ -125,22 +125,23 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 	}
 
-	float GetMaxAmplitudeScale()
+
+	void AdjustRangeMarkerScale()
 	{
+
 		float tempMax = 0;
+		float sum = 0;
 		foreach( float scale in audioDirector.scalingPerDecadeArray)
 		{
 			if(scale > tempMax)
 				tempMax = scale;
+			sum += scale;
 		}
+		float average = sum/10.0f;
 
-		return tempMax;
-	}
 
-	void AdjustRangeMarkerScale()
-	{
-		float maxValue = GetMaxAmplitudeScale();
-		float scaleRatio = audioDirector.scalingPerDecadeArray[currentIndex]/maxValue;
+		float maxValue = tempMax;
+		float scaleRatio = 2.0f* audioDirector.scalingPerDecadeArray[currentIndex]/maxAmplitude; //average;//maxValue;
 
 		Vector3 markerScale = rangeMarker.transform.localScale;
 		markerScale.y = scaleRatio;
