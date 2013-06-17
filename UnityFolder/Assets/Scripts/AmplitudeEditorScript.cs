@@ -14,6 +14,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 	public GameObject rangeMarker;
 	Vector3 rangeMarkerPosition = new Vector3();
 
+	public GUISkin guiSkin;
 
 	public bool isActive = false;
 
@@ -49,6 +50,12 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 	
 	}
+
+ 	void OnGUI() 
+ 	{
+ 		if(isActive)
+    		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.3f*Screen.height), "Hello World!", guiSkin.label );
+    }
 
 
 	void HandleInputs()
