@@ -71,6 +71,8 @@ public class PlayerScript : MonoBehaviour
 	List<Light> meshLightsList = new List<Light>();
 	CreatureManagerScript creatureManagerScript;
 
+	GeneralEditorScript editor;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -97,6 +99,8 @@ public class PlayerScript : MonoBehaviour
 
 		if(isOVR)
 			ovrCameraController = (OVRCameraController)GameObject.Find("OVRCameraController").GetComponent("OVRCameraController");
+
+		editor = (GeneralEditorScript)GameObject.Find("EditorManager").GetComponent("GeneralEditorScript");
 	}	
 	
 	// Update is called once per frame
@@ -107,61 +111,64 @@ public class PlayerScript : MonoBehaviour
 
 		HandleControls();
 
-		
+		if(editor.isActive == false)
+		{
 
-		//Get New Height
-		newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x - 0, transform.position.z);
-		newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z) )/4.0f;
-		newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -2, transform.position.z) )/8.0f;
-		//newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -3, transform.position.z) )/8.0f;
-		
-		if( oldPosition.y < newHeight) // ramping up
-		{
-			rampUpCounter += (newHeight - oldPosition.y) * Time.deltaTime ; // keep track of of much height is gained
-			velocity.y = 0;
-			oldPosition.y = newHeight; // hug mesh
-			isRecording  = false;
-		}
-		else if( oldPosition.y > newHeight) // flying in the air
-		{
-			if( rampUpCounter > 0 ) // the first moment in the air, should not have consecutive enters
+			//Get New Height
+			newHeight = meshFieldGeneratorScript.getHeightFromPosition(transform.position.x - 0, transform.position.z);
+			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z) )/4.0f;
+			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -2, transform.position.z) )/8.0f;
+			//newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -3, transform.position.z) )/8.0f;
+			
+			if( oldPosition.y < newHeight) // ramping up
 			{
-				jumpHeight = transform.position.y;
-				velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
-				rampUpCounter = 0; // reset it
-				moveTowardsRatio = 0;
-				jumpPosition = transform.position;
-				jumpApexHeight = 0;
-				jumpVelocity = velocity.y;
-				isFlyingUpward = true;
-				if( jumpVelocity > creatureManagerScript.playerMinimumJumpVelocity)
-				{
-					isRecording = true;
-					recordingLength = 0;
-					StartCoroutine(HandlePlayerMovementRotationRecording()); // start logging position
-					
-					Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
-					Debug.Log("Framecount: " + Time.frameCount.ToString() );
-
-					creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
-				}
+				rampUpCounter += (newHeight - oldPosition.y) * Time.deltaTime ; // keep track of of much height is gained
+				velocity.y = 0;
+				oldPosition.y = newHeight; // hug mesh
+				isRecording  = false;
 			}
-			else // in free fall
+			else if( oldPosition.y > newHeight) // flying in the air
 			{
-				velocity.y -= gravity * Time.deltaTime; // apply gravity 
-				hangtimeCounter += Time.deltaTime;
-				if( velocity.y < 0 )
+				if( rampUpCounter > 0 ) // the first moment in the air, should not have consecutive enters
 				{
-					if(isFlyingUpward == true) 
+					jumpHeight = transform.position.y;
+					velocity.y += rampUpCounter * rampUpFactor; // apply velocity gained from ramp
+					rampUpCounter = 0; // reset it
+					moveTowardsRatio = 0;
+					jumpPosition = transform.position;
+					jumpApexHeight = 0;
+					jumpVelocity = velocity.y;
+					isFlyingUpward = true;
+					if( jumpVelocity > creatureManagerScript.playerMinimumJumpVelocity)
 					{
-						isFlyingUpward = false;
-						jumpApexHeight = transform.position.y;
-						jumpVelocity = 0;
+						isRecording = true;
+						recordingLength = 0;
+						StartCoroutine(HandlePlayerMovementRotationRecording()); // start logging position
+						
+						Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
+						Debug.Log("Framecount: " + Time.frameCount.ToString() );
+
+						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
 					}
-					else
-						moveTowardsRatio = (jumpApexHeight - oldPosition.y )/jumpApexHeight; // 0 means at the top, 1 means touching ground
+				}
+				else // in free fall
+				{
+					velocity.y -= gravity * Time.deltaTime; // apply gravity 	
+					hangtimeCounter += Time.deltaTime;
+					if( velocity.y < 0 )
+					{
+						if(isFlyingUpward == true) 
+						{
+							isFlyingUpward = false;
+							jumpApexHeight = transform.position.y;
+							jumpVelocity = 0;
+						}
+						else
+							moveTowardsRatio = (jumpApexHeight - oldPosition.y )/jumpApexHeight; // 0 means at the top, 1 means touching ground
+					}
 				}
 			}
+
 		}
 
 		// if oldPosition.y and newHeight are equal, oldPosition stays untouched.
