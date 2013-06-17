@@ -17,7 +17,7 @@ public enum FileBrowserType {
 public class FileBrowser {
  
 	// Called when the user clicks cancel or select
-	public delegate void FinishedCallback(string path);
+	public delegate void FinishedCallback(string path, string directory);
 	// Defaults to working directory
 	public string CurrentDirectory {
 		get {
@@ -26,7 +26,7 @@ public class FileBrowser {
 		set {
 			SetNewDirectory(value);
 			SwitchDirectoryNow();
-		}
+		}	
 	}
 	protected string m_currentDirectory;
 	// Optional pattern for filtering selectable files/folders. See:
@@ -119,12 +119,18 @@ public class FileBrowser {
 	protected FinishedCallback m_callback;
  
 	// Browsers need at least a rect, name and callback
-	public FileBrowser(Rect screenRect, string name, FinishedCallback callback) {
+	public FileBrowser(Rect screenRect, string name, FinishedCallback callback, string lastUsedDirectory) 
+	{
 		m_name = name;
 		m_screenRect = screenRect;
 		m_browserType = FileBrowserType.File;
 		m_callback = callback;
-		SetNewDirectory(Directory.GetCurrentDirectory());
+		
+		if(lastUsedDirectory == null)
+			SetNewDirectory(Directory.GetCurrentDirectory());
+		else
+			SetNewDirectory(lastUsedDirectory);
+		
 		SwitchDirectoryNow();
 	}
  
@@ -297,7 +303,7 @@ public class FileBrowser {
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
 				if (GUILayout.Button("Cancel", GUILayout.Width(50))) {
-					m_callback(null);
+					m_callback(null,null);
 				}
 				if (BrowserType == FileBrowserType.File) {
 					GUI.enabled = m_selectedFile > -1;
@@ -315,12 +321,12 @@ public class FileBrowser {
 				}
 				if (GUILayout.Button("Select", GUILayout.Width(50))) {
 					if (BrowserType == FileBrowserType.File) {
-						m_callback(Path.Combine(m_currentDirectory, m_files[m_selectedFile]));
+						m_callback(Path.Combine(m_currentDirectory, m_files[m_selectedFile]), m_currentDirectory );
 					} else {
 						if (m_selectedDirectory > -1) {
-							m_callback(Path.Combine(m_currentDirectory, m_directories[m_selectedDirectory]));
+							m_callback(Path.Combine(m_currentDirectory, m_directories[m_selectedDirectory]), m_currentDirectory );
 						} else {
-							m_callback(m_currentDirectory);
+							m_callback(m_currentDirectory, m_currentDirectory);
 						}
 					}
 				}
@@ -335,7 +341,7 @@ public class FileBrowser {
  
 	protected void FileDoubleClickCallback(int i) {
 		if (BrowserType == FileBrowserType.File) {
-			m_callback(Path.Combine(m_currentDirectory, m_files[i]));
+			m_callback(Path.Combine(m_currentDirectory, m_files[i]), m_currentDirectory );
 		}
 	}
  

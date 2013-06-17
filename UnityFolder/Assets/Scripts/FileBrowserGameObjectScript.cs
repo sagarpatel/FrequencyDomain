@@ -12,6 +12,8 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	public string filePath;
 	public bool isActive = true;
 
+	string lastUsedDirectory = null;
+
 	MP3Import mp3Importer;
 	AudioDirectorScript audioDirector;
 
@@ -27,8 +29,13 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	{
 
 		// check input to activate button
-		if(  Input.GetButton("Display Music Browser Button") == true )
-			isActive = true;
+		if(  Input.GetButtonDown("Display Music Browser Button") == true )
+		{
+			if(isActive)
+				isActive = false;
+			else
+				isActive = true;
+		}
 	
 	}
 
@@ -56,7 +63,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
         GUILayout.Label(filePath ?? "none selected");
         if( GUILayout.Button("Browse Button!", GUILayout.ExpandWidth(false)) ) 
         {
-            m_fileBrowser = new FileBrowser( new Rect(100, 100, 600, 500), "Choose Music (mp3) File", FileSelectedCallback);
+            m_fileBrowser = new FileBrowser( new Rect(100, 100, 600, 500), "Choose Music (mp3) File", FileSelectedCallback, lastUsedDirectory);
             m_fileBrowser.SelectionPattern = "*.mp3";
             m_fileBrowser.DirectoryImage = m_directoryImage;
             m_fileBrowser.FileImage = m_fileImage;
@@ -64,27 +71,29 @@ public class FileBrowserGameObjectScript : MonoBehaviour
         GUILayout.EndHorizontal();
     }
  
-    protected void FileSelectedCallback(string path) 
+    protected void FileSelectedCallback(string path, string directory) 
     {
         m_fileBrowser = null;
+        
         filePath = path;
-
-        //if() CHECK FOR FILE IS VALID
-        //THEN
+        lastUsedDirectory = directory;
+ 
         isActive = false;
 
+        if(filePath != null)
+        {
+	        mp3Importer = (MP3Import)GetComponent("MP3Import");
 
 
-        mp3Importer = (MP3Import)GetComponent("MP3Import");
+	        mp3Importer.StartImport(filePath);
 
+	        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
+	        audioDirector.audioSourceArray[0].Play();
 
-        mp3Importer.StartImport(filePath);
+	        // fixes memory leaked cause by unsed audio clips (occurs when loading new songs)
+	        Resources.UnloadUnusedAssets();
 
-        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
-        audioDirector.audioSourceArray[0].Play();
-
-        // fixes memory leaked cause by unsed audio clips (occurs when loading new songs)
-        Resources.UnloadUnusedAssets();
+	    }
     }
 
 
