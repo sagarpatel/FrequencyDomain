@@ -22,6 +22,8 @@ public class AmplitudeEditorScript : MonoBehaviour
 	float minAmplitude = 0.1f;
 	float maxAmplitude = 10.0f;
 
+	Color markerColor = new Color(1,0,0, 0.7f);
+
 	AudioDirectorScript audioDirector;
 	GeneralEditorScript generalEditor;
 
@@ -45,7 +47,10 @@ public class AmplitudeEditorScript : MonoBehaviour
 			HandleInputs();
 
 			foreach (Transform child in rangeMarker.transform)
+			{
 				child.gameObject.renderer.enabled = true;
+				child.gameObject.renderer.material.color = markerColor;
+			}
 			
 			rangeMarkerPosition = new Vector3(0,0, 40 * currentIndex );
 			rangeMarker.transform.position = rangeMarkerPosition;

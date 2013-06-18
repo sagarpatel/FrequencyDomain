@@ -20,6 +20,8 @@ public class FrequencyEditorScript : MonoBehaviour
 	int minSamples = 1;
 	int maxSamples = 512;
 
+	Color markerColor = new Color(0,1,0, 0.7f);
+
 	AudioDirectorScript audioDirector;
 	GeneralEditorScript generalEditor;
 
@@ -44,7 +46,10 @@ public class FrequencyEditorScript : MonoBehaviour
 			HandleInputs();
 
 			foreach (Transform child in rangeMarker.transform)
+			{
 				child.gameObject.renderer.enabled = true;
+				child.gameObject.renderer.material.color = markerColor;
+			}
 			
 			rangeMarkerPosition = new Vector3(0,0, 40 * currentIndex );
 			rangeMarker.transform.position = rangeMarkerPosition;
@@ -127,6 +132,25 @@ public class FrequencyEditorScript : MonoBehaviour
 
 	void AdjustRangeMarkerScale()
 	{
+
+		float tempMax = 0;
+		float sum = 0;
+		foreach( float scale in audioDirector.samplesPerDecadeArray)
+		{
+			if(scale > tempMax)
+				tempMax = scale;
+			sum += scale;
+		}
+		float average = sum/10.0f;
+
+		Debug.Log(average);
+
+		float maxValue = tempMax;
+		float scaleRatio =  Mathf.Sqrt( audioDirector.samplesPerDecadeArray[currentIndex]/average ); //average;//maxValue;
+
+		Vector3 markerScale = rangeMarker.transform.localScale;
+		markerScale.y = scaleRatio;
+		rangeMarker.transform.localScale = markerScale;
 
 
 	}
