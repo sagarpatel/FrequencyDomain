@@ -22,7 +22,7 @@ public class FrequencyEditorScript : MonoBehaviour
 
 	AudioDirectorScript audioDirector;
 
-	
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -37,10 +37,36 @@ public class FrequencyEditorScript : MonoBehaviour
 	void Update () 
 	{
 
+		if(isActive)
+		{
+			HandleInputs();
+
+			foreach (Transform child in rangeMarker.transform)
+				child.gameObject.renderer.enabled = true;
+			
+			rangeMarkerPosition = new Vector3(0,0, 40 * currentIndex );
+			rangeMarker.transform.position = rangeMarkerPosition;
+			AdjustRangeMarkerScale();
+		}
+		else
+		{
+			foreach (Transform child in rangeMarker.transform)
+				child.gameObject.renderer.enabled = false;
+		}
 
 
 	
 	}
+
+	void OnGUI() 
+ 	{
+ 		if(isActive)
+ 		{
+    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
+    		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Samples: " + audioDirector.samplesPerDecadeArray[currentIndex].ToString(), guiSkin.label );
+
+    	}
+    }
 
 
 	void HandleInputs()
@@ -93,6 +119,12 @@ public class FrequencyEditorScript : MonoBehaviour
 			
 
 		}
+
+
+	}
+
+	void AdjustRangeMarkerScale()
+	{
 
 
 	}

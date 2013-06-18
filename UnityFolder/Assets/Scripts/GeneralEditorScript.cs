@@ -12,6 +12,7 @@ public class GeneralEditorScript : MonoBehaviour
 	float lerpValue = 0;
 
 	AmplitudeEditorScript amplitudeEditor;
+	FrequencyEditorScript frequencyEditor;
 	GameObject playerObject;
 
 	// Use this for initialization
@@ -19,6 +20,7 @@ public class GeneralEditorScript : MonoBehaviour
 	{
 
 		amplitudeEditor = (AmplitudeEditorScript)GetComponent("AmplitudeEditorScript");
+		frequencyEditor = (FrequencyEditorScript)GetComponent("FrequencyEditorScript");
 		playerObject = GameObject.FindGameObjectWithTag("Player");
 	
 	}
@@ -28,17 +30,6 @@ public class GeneralEditorScript : MonoBehaviour
 	{
 
 		HandleInputs();
-
-
-		if(isActive)
-		{
-			amplitudeEditor.isActive = true;
-		}
-		else
-		{
-			amplitudeEditor.isActive = false;
-		}
-
 	
 	}
 
@@ -57,6 +48,11 @@ public class GeneralEditorScript : MonoBehaviour
 
 		if(isActive)
 		{
+
+			// Handle player position
+
+			/// START
+
 			Vector3 tempPosition = playerObject.transform.position;
 			// handle player height
 			// gamepad controls
@@ -75,6 +71,39 @@ public class GeneralEditorScript : MonoBehaviour
 			tempPosition.y = Mathf.Lerp( playerMinHeight, playerMaxHeight, lerpValue);
 
 			playerObject.transform.position = tempPosition;
+
+			/// END
+
+
+			// Handle edit modes toggles
+
+			if( Input.GetButtonDown("Toggle Amplitude Edit") )
+			{
+				if( amplitudeEditor.isActive )
+				{
+					amplitudeEditor.isActive = false;
+				}
+				else
+				{
+					amplitudeEditor.isActive = true;
+					frequencyEditor.isActive = false;
+				}
+			}
+
+			if( Input.GetButtonDown("Toggle Frequency Edit") )
+			{
+				if( frequencyEditor.isActive )
+				{
+					frequencyEditor.isActive = false;
+				}
+				else
+				{
+					frequencyEditor.isActive = true;
+					amplitudeEditor.isActive = false;
+				}
+
+			}
+
 
 		}
 
