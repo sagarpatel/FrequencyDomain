@@ -6,7 +6,7 @@ public class GeneralEditorScript : MonoBehaviour
 
 	public bool isActive = false;
 
-	float playerMinHeight = 10;
+	float playerMinHeight = 0;
 	float playerMaxHeight = 400;
 	float playerUpDownSpeed = 0.7f;
 	float lerpValue = 0;
@@ -59,10 +59,17 @@ public class GeneralEditorScript : MonoBehaviour
 		{
 			Vector3 tempPosition = playerObject.transform.position;
 			// handle player height
+			// gamepad controls
 			if( Input.GetAxis("LeftTrigger") > 0 )
 				lerpValue -= Input.GetAxis("LeftTrigger") * playerUpDownSpeed * Time.deltaTime;
 			if( Input.GetAxis("RightTrigger") < 0 )
 				lerpValue -= Input.GetAxis("RightTrigger") * playerUpDownSpeed * Time.deltaTime;
+
+			// keboard controls
+			if( Input.GetKey("q") )
+				lerpValue -=  playerUpDownSpeed * Time.deltaTime;
+			if( Input.GetKey("e") )
+				lerpValue +=  playerUpDownSpeed * Time.deltaTime;
 
 			lerpValue = Mathf.Clamp( lerpValue, 0, 1.0f);
 			tempPosition.y = Mathf.Lerp( playerMinHeight, playerMaxHeight, lerpValue);
