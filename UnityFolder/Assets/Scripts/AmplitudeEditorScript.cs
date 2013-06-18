@@ -11,6 +11,10 @@ public class AmplitudeEditorScript : MonoBehaviour
 	float inputCooldown = 0.2f;
 	float cooldownCounter = 0;
 
+	float incrementCooldown = 0.2f;
+	float incrementCooldownCounter = 0;
+	float incrementHeldDownDurationCounter = 0;
+
 	public GameObject rangeMarker;
 	Vector3 rangeMarkerPosition = new Vector3();
 
@@ -18,7 +22,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 	public bool isActive = false;
 
-	float amplitudeIncrement = 0.03f;
+	float amplitudeIncrement = 0.05f;
 	float minAmplitude = 0.1f;
 	float maxAmplitude = 10.0f;
 
@@ -112,21 +116,35 @@ public class AmplitudeEditorScript : MonoBehaviour
 		// handle incrementing
 		if( Input.GetAxis("Editor Vertical") != 0)
 		{
-			float tempAmplitude = audioDirector.scalingPerDecadeArray[currentIndex];
-			
-			if( Input.GetAxis("Editor Vertical") > 0)
-				tempAmplitude += amplitudeIncrement;
-			else if( Input.GetAxis("Editor Vertical") < 0)
-				tempAmplitude -= amplitudeIncrement;
 
-			if (tempAmplitude < minAmplitude)
-				tempAmplitude = minAmplitude;
-			else if(tempAmplitude > maxAmplitude)
-				tempAmplitude = maxAmplitude;
+			if( incrementCooldownCounter > (incrementCooldown - incrementHeldDownDurationCounter/10.0f) )
+			{
+				float tempAmplitude = audioDirector.scalingPerDecadeArray[currentIndex];
+				
+				if( Input.GetAxis("Editor Vertical") > 0)
+					tempAmplitude += amplitudeIncrement;
+				else if( Input.GetAxis("Editor Vertical") < 0)
+					tempAmplitude -= amplitudeIncrement;
 
-			audioDirector.scalingPerDecadeArray[currentIndex] = tempAmplitude;
-			
+				if (tempAmplitude < minAmplitude)
+					tempAmplitude = minAmplitude;
+				else if(tempAmplitude > maxAmplitude)
+					tempAmplitude = maxAmplitude;
 
+				audioDirector.scalingPerDecadeArray[currentIndex] = tempAmplitude;
+
+				incrementCooldownCounter = 0;
+			}
+			else
+				incrementCooldownCounter += Time.deltaTime;
+
+			incrementHeldDownDurationCounter += Time.deltaTime;
+
+		}
+		else
+		{
+			incrementCooldownCounter += Time.deltaTime;
+			incrementHeldDownDurationCounter = 0;
 		}
 
 

@@ -11,6 +11,10 @@ public class FrequencyEditorScript : MonoBehaviour
 	float inputCooldown = 0.2f;
 	float cooldownCounter = 0;
 
+	float incrementCooldown = 0.2f;
+	float incrementCooldownCounter = 0;
+	float incrementHeldDownDurationCounter = 0;
+
 	public GameObject rangeMarker;
 	Vector3 rangeMarkerPosition = new Vector3();
 
@@ -109,22 +113,38 @@ public class FrequencyEditorScript : MonoBehaviour
 
 		// handle incrementing
 		if( Input.GetAxis("Editor Vertical") != 0)
+		{	
+
+			if( incrementCooldownCounter > (incrementCooldown - incrementHeldDownDurationCounter/10.0f) )
+			{
+				int tempSampleCount = audioDirector.samplesPerDecadeArray[currentIndex];
+				
+				if( Input.GetAxis("Editor Vertical") > 0)
+					tempSampleCount += 1;
+				else if( Input.GetAxis("Editor Vertical") < 0)
+					tempSampleCount -= 1;
+
+				if (tempSampleCount < minSamples)
+					tempSampleCount = minSamples;
+				else if(tempSampleCount > maxSamples)
+					tempSampleCount = maxSamples;
+
+				audioDirector.samplesPerDecadeArray[currentIndex] = tempSampleCount;
+
+				incrementCooldownCounter = 0;
+			}
+			else
+				incrementCooldownCounter += Time.deltaTime;
+
+
+			incrementHeldDownDurationCounter += Time.deltaTime;
+			
+
+		}
+		else
 		{
-			int tempSampleCount = audioDirector.samplesPerDecadeArray[currentIndex];
-			
-			if( Input.GetAxis("Editor Vertical") > 0)
-				tempSampleCount += 1;
-			else if( Input.GetAxis("Editor Vertical") < 0)
-				tempSampleCount -= 1;
-
-			if (tempSampleCount < minSamples)
-				tempSampleCount = minSamples;
-			else if(tempSampleCount > maxSamples)
-				tempSampleCount = maxSamples;
-
-			audioDirector.samplesPerDecadeArray[currentIndex] = tempSampleCount;
-			
-
+			incrementCooldownCounter += Time.deltaTime;
+			incrementHeldDownDurationCounter = 0;
 		}
 
 
@@ -146,7 +166,7 @@ public class FrequencyEditorScript : MonoBehaviour
 		Debug.Log(average);
 
 		float maxValue = tempMax;
-		float scaleRatio =  Mathf.Sqrt( audioDirector.samplesPerDecadeArray[currentIndex]/average ); //average;//maxValue;
+		float scaleRatio = 0.5f * Mathf.Sqrt( audioDirector.samplesPerDecadeArray[currentIndex]/average ); //average;//maxValue;
 
 		Vector3 markerScale = rangeMarker.transform.localScale;
 		markerScale.y = scaleRatio;
