@@ -11,6 +11,8 @@ public class GeneralEditorScript : MonoBehaviour
 	float playerUpDownSpeed = 0.7f;
 	float lerpValue = 0;
 
+	public GUISkin guiSkin;
+
 	AmplitudeEditorScript amplitudeEditor;
 	FrequencyEditorScript frequencyEditor;
 	GameObject playerObject;
@@ -32,6 +34,21 @@ public class GeneralEditorScript : MonoBehaviour
 		HandleInputs();
 	
 	}
+
+	void OnGUI() 
+ 	{
+ 		if(isActive)
+ 		{
+    		
+ 			if(amplitudeEditor.isActive)
+ 				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "AMPLITUDE EDIT MODE" , guiSkin.label );
+ 			else if(frequencyEditor.isActive)
+ 				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "FREQUENCY EDIT MODE" , guiSkin.label );
+ 			else
+ 				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "GENERAL EDIT MODE" , guiSkin.label );
+
+    	}
+    }
 
 	void HandleInputs()
 	{

@@ -23,6 +23,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 	float maxAmplitude = 10.0f;
 
 	AudioDirectorScript audioDirector;
+	GeneralEditorScript generalEditor;
 
 	// Use this for initialization
 	void Start () 
@@ -31,6 +32,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 		rangeMarker = (GameObject)Instantiate(rangeMarker, new Vector3(), Quaternion.identity);
 
 		audioDirector =  (AudioDirectorScript)GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		generalEditor = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 	}
 	
 	// Update is called once per frame
@@ -38,7 +40,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 	{
 
 
-		if(isActive)
+		if(isActive && generalEditor.isActive)
 		{
 			HandleInputs();
 
@@ -62,7 +64,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 
  	void OnGUI() 
  	{
- 		if(isActive)
+ 		if(isActive && generalEditor.isActive)
  		{
     		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
     		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Amplitude Scale: " + audioDirector.scalingPerDecadeArray[currentIndex].ToString(), guiSkin.label );

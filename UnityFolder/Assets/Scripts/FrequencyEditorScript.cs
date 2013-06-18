@@ -21,6 +21,7 @@ public class FrequencyEditorScript : MonoBehaviour
 	int maxSamples = 512;
 
 	AudioDirectorScript audioDirector;
+	GeneralEditorScript generalEditor;
 
 
 	// Use this for initialization
@@ -30,6 +31,7 @@ public class FrequencyEditorScript : MonoBehaviour
 		rangeMarker = (GameObject)Instantiate(rangeMarker, new Vector3(), Quaternion.identity);
 
 		audioDirector =  (AudioDirectorScript)GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		generalEditor = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 
 	}
 	
@@ -37,7 +39,7 @@ public class FrequencyEditorScript : MonoBehaviour
 	void Update () 
 	{
 
-		if(isActive)
+		if(isActive && generalEditor.isActive)
 		{
 			HandleInputs();
 
@@ -60,7 +62,7 @@ public class FrequencyEditorScript : MonoBehaviour
 
 	void OnGUI() 
  	{
- 		if(isActive)
+ 		if(isActive && generalEditor.isActive)
  		{
     		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
     		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Samples: " + audioDirector.samplesPerDecadeArray[currentIndex].ToString(), guiSkin.label );
