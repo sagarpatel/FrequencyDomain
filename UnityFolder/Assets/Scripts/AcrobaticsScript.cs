@@ -15,7 +15,7 @@ public class AcrobaticsScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		editor = (GeneralEditorScript)GameObject.Find("EditorManager").GetComponent("GeneralEditorScript");
+		editor = (GeneralEditorScript)GameObject.Find("Editor_Importer").GetComponent("GeneralEditorScript");
 	}
 	
 	// Update is called once per frame

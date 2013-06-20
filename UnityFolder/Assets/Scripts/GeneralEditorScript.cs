@@ -17,6 +17,8 @@ public class GeneralEditorScript : MonoBehaviour
 	FrequencyEditorScript frequencyEditor;
 	GameObject playerObject;
 
+	FileBrowserGameObjectScript mainFileBrowserScript;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -24,6 +26,8 @@ public class GeneralEditorScript : MonoBehaviour
 		amplitudeEditor = (AmplitudeEditorScript)GetComponent("AmplitudeEditorScript");
 		frequencyEditor = (FrequencyEditorScript)GetComponent("FrequencyEditorScript");
 		playerObject = GameObject.FindGameObjectWithTag("Player");
+
+		mainFileBrowserScript = (FileBrowserGameObjectScript)GetComponent("FileBrowserGameObjectScript");
 	
 	}
 	
@@ -45,7 +49,16 @@ public class GeneralEditorScript : MonoBehaviour
  			else if(frequencyEditor.isActive)
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "FREQUENCY EDIT MODE" , guiSkin.label );
  			else
+ 			{
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "GENERAL EDIT MODE" , guiSkin.label );
+ 				if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
+        		{
+
+        		}
+
+ 			}
+
+
 
     	}
     }
@@ -57,7 +70,10 @@ public class GeneralEditorScript : MonoBehaviour
 		if(  Input.GetButtonDown("Toggle Edit Mode Button") == true )
 		{
 			if(isActive == false)
+			{
 				isActive = true;
+				mainFileBrowserScript.isActive = false;
+			}
 			else
 				isActive =  false;
 		}
