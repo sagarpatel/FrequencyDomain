@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class FileBrowserGameObjectScript : MonoBehaviour 
 {
@@ -117,6 +118,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 
 		        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
 		        audioDirector.audioSourceArray[0].Play();
+		        audioDirector.currentlyPlayingFileName = Path.GetFileName(path);
 
 		        // fixes memory leaked cause by unsed audio clips (occurs when loading new songs)
 		        Resources.UnloadUnusedAssets();

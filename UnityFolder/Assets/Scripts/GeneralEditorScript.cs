@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System;
+using System.IO;
+using System.Collections.Generic;
 
 public class GeneralEditorScript : MonoBehaviour 
 {
@@ -19,6 +22,8 @@ public class GeneralEditorScript : MonoBehaviour
 
 	FileBrowserGameObjectScript mainFileBrowserScript;
 
+	AudioDirectorScript audioDirector;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -28,6 +33,8 @@ public class GeneralEditorScript : MonoBehaviour
 		playerObject = GameObject.FindGameObjectWithTag("Player");
 
 		mainFileBrowserScript = (FileBrowserGameObjectScript)GetComponent("FileBrowserGameObjectScript");
+
+		audioDirector =  (AudioDirectorScript)GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
 	
 	}
 	
@@ -53,7 +60,9 @@ public class GeneralEditorScript : MonoBehaviour
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "GENERAL EDIT MODE" , guiSkin.label );
  				if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
         		{
-
+        			string dataDirectory = Application.dataPath;
+        			System.IO.File.WriteAllText( dataDirectory + "/testFile.txt", GenerateParametersFileString());
+        			Debug.Log(dataDirectory);
         		}
 
  			}
@@ -140,6 +149,24 @@ public class GeneralEditorScript : MonoBehaviour
 
 		}
 
+
+	}
+
+
+	string GenerateParametersFileString()
+	{
+
+		string tempString = null;
+
+		tempString += "Frequency Domain v0.5\n";
+		tempString += "by Sagar Patel\n\n";
+		tempString += "This parameters file was generated on" + DateTime.Now + "\n";
+		tempString += "Music file being played at the time: " + audioDirector.currentlyPlayingFileName;
+
+
+		tempString = tempString.Replace("\n", Environment.NewLine);
+		
+		return tempString;
 
 	}
 

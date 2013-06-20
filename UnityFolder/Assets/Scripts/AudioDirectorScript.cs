@@ -30,6 +30,9 @@ public class AudioDirectorScript : MonoBehaviour
 	// Low Pass Filter Parameters
 	public float initialLPFCutoffFrequency = 20000;
 	float initialFOV;
+
+	public string currentlyPlayingFileName = null;
+
 	AudioLowPassFilter lowPassFilter;
 	Camera mainCamera;
 
@@ -44,6 +47,9 @@ public class AudioDirectorScript : MonoBehaviour
 		for(int i = 0; i < scalingPerDecadeArray.Length; i++)
 			if(scalingPerDecadeArray[i] == 0)
 				scalingPerDecadeArray[i] = 1.0f;
+
+		if(audioSourceArray[0].clip != null)
+			currentlyPlayingFileName = audioSourceArray[0].clip.name;
 	
 		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
 		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
@@ -192,6 +198,8 @@ public class AudioDirectorScript : MonoBehaviour
 		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio)/2.0f;
 
 	}
+
+
 
 
 }

@@ -1,0 +1,5 @@
+Frequency Domain v0.5
+by Sagar Patel
+
+This parameters file was generated on6/20/2013 12:26:33 AM
+Music file being played at the time: myClip
