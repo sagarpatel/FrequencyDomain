@@ -58,6 +58,7 @@ public class PlayerScript : MonoBehaviour
 	bool isRecording = false;
 	public float recordingLength = 0;
 
+
 	public bool isOVR = false;
 	public float ovrHorizontalSpeedScale = 0.4f;
 	public float ovrVerticalSpeedScale = 0.03f;
@@ -179,6 +180,8 @@ public class PlayerScript : MonoBehaviour
 		HandleMeshLights();
 		
 	}
+
+
 
 	void HandleBoost()
 	{

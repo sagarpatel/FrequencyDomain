@@ -15,6 +15,8 @@ public class MainCameraScript : MonoBehaviour
 	Vector3 lookAtOffsetPosition = new Vector3();
 	float lookAtOffsetFriction = 2f;
 
+	public bool isWireFrameMode = false;
+
 
 	// Use this for initialization
 	void Start () 
@@ -54,16 +56,34 @@ public class MainCameraScript : MonoBehaviour
 			transform.LookAt( cameraTarget, Vector3.up );	
 			
 			transform.localEulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 
-												transform.eulerAngles.y + playerVelocity.z *  yawSensitivity, 
-												transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
+													transform.eulerAngles.y + playerVelocity.z *  yawSensitivity, 
+													transform.eulerAngles.z + -playerVelocity.z * rollSensitivity);
 		}
 		
 
 
-		//Debug.Log( Input.GetAxis("LeftTrigger") );
-		//Debug.Log( Input.GetAxis("RightTrigger") );
-		//Debug.Log( Input.GetAxis("Horizontal") );
+		if(Input.GetButtonDown("Toggle WireFrame Mode"))
+		{
+			if(isWireFrameMode == true)
+				isWireFrameMode = false;
+			else
+				isWireFrameMode = true;
+		}
 
+	}
+
+
+	// based off code seen in OVRCamera.cs
+	void OnPreRender()
+	{
+		if(isWireFrameMode == true)
+			GL.wireframe = true;
+	}
+
+	void OnPostRender()
+	{
+		if(isWireFrameMode == true)
+			GL.wireframe = false;
 	}
 
 }
