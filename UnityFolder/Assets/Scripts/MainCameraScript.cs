@@ -35,23 +35,22 @@ public class MainCameraScript : MonoBehaviour
 		//cameraTarget.y = cameraTarget.y/3.0f;
 		cameraTarget.y = transform.parent.position.y/1.5f;
 
-
-		// apply right stick camera control
-		// hacked up mouse, not good but there anyways
-		float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
-		zLookAtOffset += Input.GetAxis("Mouse X") * Time.deltaTime * 150.0f;
-
-		float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 3) * rsVerticalSensitibity * Time.deltaTime ;
-		yLookAtOffset += -Input.GetAxis("Mouse Y") * Time.deltaTime * 150.0f;
-
-		lookAtOffsetPosition += new Vector3( 0, -yLookAtOffset, zLookAtOffset );
-		lookAtOffsetPosition -= lookAtOffsetPosition * lookAtOffsetFriction * Time.deltaTime;
-
 		
 		cameraTarget += lookAtOffsetPosition;
 		
 		if( ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).isOVR == false )	
 		{
+			// apply right stick camera control
+			// hacked up mouse, not good but there anyways
+			float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
+			zLookAtOffset += Input.GetAxis("Mouse X") * Time.deltaTime * 150.0f;
+
+			float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 3) * rsVerticalSensitibity * Time.deltaTime ;
+			yLookAtOffset += -Input.GetAxis("Mouse Y") * Time.deltaTime * 150.0f;
+
+			lookAtOffsetPosition += new Vector3( 0, -yLookAtOffset, zLookAtOffset );
+			lookAtOffsetPosition -= lookAtOffsetPosition * lookAtOffsetFriction * Time.deltaTime;
+
 			transform.LookAt( cameraTarget, Vector3.up );	
 			
 			transform.localEulerAngles = new Vector3(transform.eulerAngles.x + -playerVelocity.x * pitchSensitivity , 

@@ -354,6 +354,16 @@ public class PlayerScript : MonoBehaviour
 					xVelocityOVR = -(360 - xRotationAngle) * ovrVerticalSpeedScale;
 
 				velocity += new Vector3( -xVelocityOVR, 0, zVelocityOVR);
+
+				// hacked up bounding, blargh
+				if(oldPosition.x < 0.42f * tdc * xscale)
+					oldPosition.x =  0.42f * tdc * xscale;
+				else if(oldPosition.x > 0.9 * tdc * xscale)
+					oldPosition.x = 0.5f * tdc * xscale;
+				else if(oldPosition.z < 0)
+					oldPosition.z = 0;
+				else if(oldPosition.z > fdc * zscale)
+					oldPosition.z = fdc * zscale;
 			}
 		}
 
