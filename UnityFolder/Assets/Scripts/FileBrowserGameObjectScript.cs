@@ -116,6 +116,9 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 		        mp3Importer = (MP3Import)GetComponent("MP3Import");
 		        mp3Importer.StartImport(filePathmp3);
 
+		        audioDirector.audioSourceArray[0].Stop();
+		        audioDirector.audioSourceArray[0] = null;
+
 		        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
 		        audioDirector.audioSourceArray[0].Play();
 		        audioDirector.currentlyPlayingFileName = Path.GetFileName(path);
