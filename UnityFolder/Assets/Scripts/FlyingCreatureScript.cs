@@ -184,6 +184,12 @@ public class FlyingCreatureScript : MonoBehaviour
 		// get original flight duration
 		originalPathTimeLength = playerScript.recordingLength;
 		// get spawn offset
+		// CHEAP HACKED FIX, TODO, BETTER FIX
+		if(positionsRecordingsList.Count == 0)
+		{
+			creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
+			return;
+		}
 		initialPositionOffset = transform.position - positionsRecordingsList[0];
 		// wipe the original
 		playerScript.positionRecordingList.Clear();
