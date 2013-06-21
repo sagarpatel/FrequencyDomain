@@ -61,7 +61,7 @@ public class GeneralEditorScript : MonoBehaviour
  				if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
         		{
         			string dataDirectory = Application.dataPath;
-        			System.IO.File.WriteAllText( dataDirectory + "/testFile.txt", GenerateParametersFileString());
+        			System.IO.File.WriteAllText( dataDirectory + "/Parameters_for_" + audioDirector.currentlyPlayingFileName.Split('.')[0] + ".txt", GenerateParametersFileString());
         			Debug.Log(dataDirectory);
         		}
 
@@ -161,11 +161,38 @@ public class GeneralEditorScript : MonoBehaviour
 		tempString += "Frequency Domain v0.5\n";
 		tempString += "by Sagar Patel\n\n";
 		tempString += "This parameters file was generated on" + DateTime.Now + "\n";
-		tempString += "Music file being played at the time: " + audioDirector.currentlyPlayingFileName;
+		tempString += "Music file being played at the time: " + audioDirector.currentlyPlayingFileName + "\n\n";
+
+		tempString += "The numbers below represent the parameters list. They are listed in the following order:\n";
+		tempString += "<Amplitude scales distribution>\n";
+		tempString += "<Frequency start sample index>\n";
+		tempString += "<Frequency samples distribution>\n\n";
+
+
+		tempString += "|";
+		for(int i =0; i < audioDirector.scalingPerDecadeArray.Length; i++)
+		{
+			tempString +=  audioDirector.scalingPerDecadeArray[i].ToString() + ",";
+		}
+		tempString += "\n";
+
+		tempString += "|";
+		tempString += audioDirector.sampleStartIndex.ToString();
+		tempString += "\n";
+
+		tempString += "|";
+		for(int i =0; i < audioDirector.samplesPerDecadeArray.Length; i++)
+		{
+			tempString +=  audioDirector.samplesPerDecadeArray[i].ToString() + ",";
+		}
+		tempString += "\n";
+
+
+
 
 
 		tempString = tempString.Replace("\n", Environment.NewLine);
-		
+
 		return tempString;
 
 	}
