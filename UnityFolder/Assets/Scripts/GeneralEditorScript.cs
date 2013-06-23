@@ -67,9 +67,9 @@ public class GeneralEditorScript : MonoBehaviour
 
  			}
 
-
-
     	}
+
+
     }
 
 	void HandleInputs()
@@ -82,9 +82,15 @@ public class GeneralEditorScript : MonoBehaviour
 			{
 				isActive = true;
 				mainFileBrowserScript.isActive = false;
+				Screen.showCursor = true;
+				Screen.lockCursor = false;
 			}
 			else
+			{
 				isActive =  false;
+				Screen.showCursor = false;
+				Screen.lockCursor = true;
+			}
 		}
 
 

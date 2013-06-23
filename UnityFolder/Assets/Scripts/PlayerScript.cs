@@ -102,6 +102,9 @@ public class PlayerScript : MonoBehaviour
 			ovrCameraController = (OVRCameraController)GameObject.Find("OVRCameraController").GetComponent("OVRCameraController");
 
 		editor = (GeneralEditorScript)GameObject.Find("Editor_Importer").GetComponent("GeneralEditorScript");
+
+		Screen.showCursor = false;
+		Screen.lockCursor = true;
 	}	
 	
 	// Update is called once per frame

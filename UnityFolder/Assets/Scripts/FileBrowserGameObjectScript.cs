@@ -32,6 +32,12 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
 		audioListener = (AudioListener) GameObject.Find("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
+
+		if(isActive)
+		{
+			Screen.showCursor = true;
+			Screen.lockCursor = false;
+		}
 	}
 	
 	// Update is called once per frame
@@ -42,11 +48,17 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 		if(  Input.GetButtonDown("Display Music Browser Button") == true )
 		{
 			if(isActive)
+			{
 				isActive = false;
+				Screen.showCursor = false;
+				Screen.lockCursor = true;
+			}
 			else
 			{
 				isActive = true;
 				genralEditorScript.isActive = false;
+				Screen.showCursor = true;
+				Screen.lockCursor = false;
 			}
 		}
 	
