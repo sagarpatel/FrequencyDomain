@@ -123,6 +123,10 @@ public class PlayerScript : MonoBehaviour
 			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z) )/4.0f;
 			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -2, transform.position.z) )/8.0f;
 			//newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -3, transform.position.z) )/8.0f;
+
+			// add a bit from either side
+			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z-1) )/5.0f;
+			newHeight += ( meshFieldGeneratorScript.getHeightFromPosition(transform.position.x -1, transform.position.z+1) )/5.0f;
 			
 			if( oldPosition.y < newHeight) // ramping up
 			{
