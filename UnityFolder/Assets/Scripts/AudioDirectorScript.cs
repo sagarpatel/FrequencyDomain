@@ -96,7 +96,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 		CalculateRBG();
 
-		HandleLowPassFilter(); // does not affect the landscape
+		HandleLowPassFilter(); // does affect the landscape
 
 
 		//update buffer
@@ -196,6 +196,7 @@ public class AudioDirectorScript : MonoBehaviour
 		float currentFOV = mainCamera.fieldOfView;
 		float progressRatio = ( currentFOV - initialFOV )/(180.0f - initialFOV);
 		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio)/2.0f;
+		Debug.Log(lowPassFilter.cutoffFrequency);
 
 	}
 

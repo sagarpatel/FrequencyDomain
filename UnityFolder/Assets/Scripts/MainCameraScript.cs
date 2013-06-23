@@ -15,7 +15,7 @@ public class MainCameraScript : MonoBehaviour
 	Vector3 lookAtOffsetPosition = new Vector3();
 	float lookAtOffsetFriction = 2f;
 
-	public bool isWireFrameMode = false;
+	bool isWireFrameMode = true;
 
 
 	// Use this for initialization

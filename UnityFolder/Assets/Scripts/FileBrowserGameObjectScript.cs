@@ -22,6 +22,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 
 	MP3Import mp3Importer;
 	AudioDirectorScript audioDirector;
+	AudioListener audioListener;
 	GeneralEditorScript genralEditorScript;
 
 	// Use this for initialization
@@ -29,6 +30,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	{
 		mp3Importer = (MP3Import)GetComponent("MP3Import");
 		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioListener = (AudioListener) GameObject.Find("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 	}
 	
@@ -122,6 +124,10 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 		        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
 		        audioDirector.audioSourceArray[0].Play();
 		        audioDirector.currentlyPlayingFileName = Path.GetFileName(path);
+
+		        // fix for low pass filter not working on loaded songs
+		        audioListener.enabled = false;
+		        audioListener.enabled = true;
 
 		        // fixes memory leaked cause by unsed audio clips (occurs when loading new songs)
 		        Resources.UnloadUnusedAssets();
