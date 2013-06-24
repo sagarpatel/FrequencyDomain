@@ -9,6 +9,21 @@ public class GeneralEditorScript : MonoBehaviour
 
 	public bool isActive = false;
 
+	int minIndex = 0;
+	int maxIndex = 2;
+	public int currentIndex;
+
+	float inputCooldown = 0.2f;
+	float cooldownCounter = 0;
+
+	float incrementCooldown = 0.2f;
+	float incrementCooldownCounter = 0;
+	float incrementHeldDownDurationCounter = 0;
+
+	float colorScaleIncrement = 0.005f;
+	float minColorScale = 0.01f;
+	float maxColorScale = 1.0f;
+
 	float playerMinHeight = 0;
 	float playerMaxHeight = 400;
 	float playerUpDownSpeed = 0.7f;
@@ -58,14 +73,23 @@ public class GeneralEditorScript : MonoBehaviour
  			else
  			{
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "GENERAL EDIT MODE" , guiSkin.label );
- 				if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
-        		{
-        			string dataDirectory = Application.dataPath;
-        			System.IO.File.WriteAllText( dataDirectory + "/Parameters_for_" + audioDirector.currentlyPlayingFileName.Split('.')[0] + ".txt", GenerateParametersFileString());
-        			Debug.Log(dataDirectory);
-        		}
+
+ 				if(currentIndex == 0)
+					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Red Scale Factor: " + audioDirector.rScale.ToString() , guiSkin.label );
+				else if(currentIndex == 1)
+					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Green Scale Factor: " + audioDirector.gScale.ToString() , guiSkin.label );
+				else if(currentIndex == 2)
+					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Blue Scale Factor: " + audioDirector.bScale.ToString() , guiSkin.label );
 
  			}
+
+ 			
+			if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
+    		{
+    			string dataDirectory = Application.dataPath;
+    			System.IO.File.WriteAllText( dataDirectory + "/Parameters_for_" + audioDirector.currentlyPlayingFileName.Split('.')[0] + ".txt", GenerateParametersFileString());
+    			Debug.Log(dataDirectory);
+    		}
 
     	}
 
@@ -152,9 +176,92 @@ public class GeneralEditorScript : MonoBehaviour
 
 			}
 
+			if(amplitudeEditor.isActive == false && frequencyEditor.isActive == false)
+				HandleGeneralParametersInputs();
+
+
+			
 
 		}
 
+
+	}
+
+	void HandleGeneralParametersInputs()
+	{
+		// Handle parameters controls
+		// handle range selection
+		if( Input.GetAxis("Editor Horizontal") != 0)
+		{
+			if( cooldownCounter > inputCooldown )
+			{
+				// actually apply input
+				if( Input.GetAxis("Editor Horizontal") > 0)
+					currentIndex += 1;
+				else if ( Input.GetAxis("Editor Horizontal") < 0)
+					currentIndex -= 1;
+
+				cooldownCounter = 0;
+
+			}
+			else
+				cooldownCounter += Time.deltaTime;
+
+		}
+		else
+			cooldownCounter += Time.deltaTime;
+
+
+		if( currentIndex < minIndex )
+			currentIndex = minIndex;
+		else if( currentIndex > maxIndex )
+			currentIndex = maxIndex;			
+
+
+		// handle incrementing
+		if( Input.GetAxis("Editor Vertical") != 0)
+		{
+			if( incrementCooldownCounter > (incrementCooldown - incrementHeldDownDurationCounter/10.0f) )
+			{
+				float tempColorScale = 0;
+				if(currentIndex == 0)
+					tempColorScale = audioDirector.rScale;
+				else if(currentIndex == 1)
+					tempColorScale = audioDirector.gScale;
+				else if(currentIndex == 2)
+					tempColorScale = audioDirector.bScale;
+				
+				if( Input.GetAxis("Editor Vertical") > 0)
+					tempColorScale += colorScaleIncrement;
+				else if( Input.GetAxis("Editor Vertical") < 0)
+					tempColorScale -= colorScaleIncrement;
+
+				if (tempColorScale < minColorScale)
+					tempColorScale = minColorScale;
+				else if(tempColorScale > maxColorScale)
+					tempColorScale = maxColorScale;
+
+				
+				if(currentIndex == 0)
+					audioDirector.rScale = tempColorScale;
+				else if(currentIndex == 1)
+					audioDirector.gScale = tempColorScale;
+				else if(currentIndex == 2)
+					audioDirector.bScale = tempColorScale;
+	
+
+				incrementCooldownCounter = 0;
+			}
+			else
+				incrementCooldownCounter += Time.deltaTime;
+
+			incrementHeldDownDurationCounter += Time.deltaTime;
+		}
+		else
+		{
+			incrementCooldownCounter += Time.deltaTime;
+			incrementHeldDownDurationCounter = 0;
+		}
 
 	}
 
@@ -172,7 +279,8 @@ public class GeneralEditorScript : MonoBehaviour
 		tempString += "The numbers below represent the parameters list. They are listed in the following order:\n";
 		tempString += "<Amplitude scales distribution>\n";
 		tempString += "<Frequency start sample index>\n";
-		tempString += "<Frequency samples distribution>\n\n";
+		tempString += "<Frequency samples distribution>\n";
+		tempString += "<RGB Color scale factors>\n\n";
 
 
 		tempString += "|";
@@ -193,8 +301,10 @@ public class GeneralEditorScript : MonoBehaviour
 		}
 		tempString += "\n";
 
-
-
+		tempString += "|";
+		tempString += audioDirector.rScale.ToString() + ",";
+		tempString += audioDirector.gScale.ToString() + ",";
+		tempString += audioDirector.bScale.ToString() + ",";
 
 
 		tempString = tempString.Replace("\n", Environment.NewLine);
