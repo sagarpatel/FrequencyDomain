@@ -67,21 +67,41 @@ public class GeneralEditorScript : MonoBehaviour
  		{
     		
  			if(amplitudeEditor.isActive)
+ 			{
+ 				GUI.color = Color.red;
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "AMPLITUDE EDIT MODE" , guiSkin.label );
+ 			}
  			else if(frequencyEditor.isActive)
+ 			{
+ 				GUI.color = Color.green;
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "FREQUENCY EDIT MODE" , guiSkin.label );
+ 			}
  			else
  			{
  				GUI.Label(new Rect(0.0f, 0.02f*Screen.height, Screen.width, 0.2f*Screen.height), "GENERAL EDIT MODE" , guiSkin.label );
+ 				
 
  				if(currentIndex == 0)
+ 				{
+ 					GUI.color = Color.red;
 					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Red Scale Factor: " + audioDirector.rScale.ToString() , guiSkin.label );
+				}
 				else if(currentIndex == 1)
+				{
+					GUI.color = Color.green;
 					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Green Scale Factor: " + audioDirector.gScale.ToString() , guiSkin.label );
+				}
 				else if(currentIndex == 2)
+				{
+					GUI.color = Color.blue  + Color.green * 0.4f;
 					GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Blue Scale Factor: " + audioDirector.bScale.ToString() , guiSkin.label );
+				}
 
+				
  			}
+
+ 			GUI.color = Color.white;
+
 
  			
 			if( GUILayout.Button("Save Parameters File!", GUILayout.ExpandWidth(false)) ) 
