@@ -33,6 +33,10 @@ public class AudioDirectorScript : MonoBehaviour
 
 	public string currentlyPlayingFileName = null;
 
+	public bool isLiveAudio = false;
+	public AudioSource liveAudioSource;
+	public 
+
 	AudioLowPassFilter lowPassFilter;
 	Camera mainCamera;
 
@@ -54,25 +58,46 @@ public class AudioDirectorScript : MonoBehaviour
 		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
 		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
 		initialFOV = ( (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
+
+		if(isLiveAudio)
+		{
+			Debug.Log(Microphone.devices[0]);
+			liveAudioSource = gameObject.AddComponent<AudioSource>();
+			liveAudioSource.loop = true;
+			liveAudioSource.mute = true;
+			liveAudioSource.playOnAwake = true;
+
+			liveAudioSource.clip = Microphone.Start(Microphone.devices[0], true, 4, 44100);
+			liveAudioSource.Play();
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		// get raw FFT data 
-		//audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
-		AudioListener.GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);
-
-		// get colume data, from --> http://answers.unity3d.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
-		AudioListener.GetOutputData(outputDataArray, 0);
-		float outputSumSq = 0;
-		for(int i = 0; i < outputDataArray.Length; i++)
+		if( isLiveAudio == false)
 		{
-			outputSumSq = outputDataArray[i] * outputDataArray[i]; 
-		}
-		rmsValue = Mathf.Sqrt(outputSumSq/outputDataArray.Length);
-		dbValue = 20 * Mathf.Log10(rmsValue/refRMSValue);
+			// get raw FFT data 
+			//audioSourceArray[0].GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);//Rectangular);
+			AudioListener.GetSpectrumData(sampleArrayFreqBH, 0, FFTWindow.BlackmanHarris);
 
+			// get colume data, from --> http://answers.unity3d.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
+			AudioListener.GetOutputData(outputDataArray, 0);
+			float outputSumSq = 0;
+			for(int i = 0; i < outputDataArray.Length; i++)
+			{
+				outputSumSq = outputDataArray[i] * outputDataArray[i]; 
+			}
+			rmsValue = Mathf.Sqrt(outputSumSq/outputDataArray.Length);
+			dbValue = 20 * Mathf.Log10(rmsValue/refRMSValue);
+		}
+		else
+		{
+
+			//float sampleTime = Mathf.Clamp(Time.deltaTime, 0.0f, 1.0f);
+			liveAudioSource.GetSpectrumData(sampleArrayFreqBH, 0 , FFTWindow.BlackmanHarris);
+			//liveAudioSource.Play();
+		}
 		// cleanup pseudolog array first
 		for(int i = 0; i < pseudoLogArray.Length; i++)
 			pseudoLogArray[i] = 0;
@@ -196,7 +221,7 @@ public class AudioDirectorScript : MonoBehaviour
 		float currentFOV = mainCamera.fieldOfView;
 		float progressRatio = ( currentFOV - initialFOV )/(180.0f - initialFOV);
 		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio)/2.0f;
-		Debug.Log(lowPassFilter.cutoffFrequency);
+		//Debug.Log(lowPassFilter.cutoffFrequency);
 
 	}
 
