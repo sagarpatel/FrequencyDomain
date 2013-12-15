@@ -64,10 +64,11 @@ public class AudioDirectorScript : MonoBehaviour
 			Debug.Log(Microphone.devices[0]);
 			liveAudioSource = gameObject.AddComponent<AudioSource>();
 			liveAudioSource.loop = true;
-			liveAudioSource.mute = true;
+			liveAudioSource.volume = 1.0f;
+			liveAudioSource.mute = false;
 			liveAudioSource.playOnAwake = true;
 
-			liveAudioSource.clip = Microphone.Start(Microphone.devices[0], true, 4, 44100);
+			liveAudioSource.clip = Microphone.Start(Microphone.devices[0], true, 1, 44100);
 			liveAudioSource.Play();
 		}
 	}
