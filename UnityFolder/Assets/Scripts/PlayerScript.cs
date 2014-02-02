@@ -153,8 +153,8 @@ public class PlayerScript : MonoBehaviour
 						recordingLength = 0;
 						StartCoroutine(HandlePlayerMovementRotationRecording()); // start logging position
 						
-						Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
-						Debug.Log("Framecount: " + Time.frameCount.ToString() );
+						//Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
+						//Debug.Log("Framecount: " + Time.frameCount.ToString() );
 
 						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
 					}

@@ -15,6 +15,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	void Start () 
 	{
 		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
+		devicesArray = Microphone.devices;
 	}
 	
 	// Update is called once per frame
