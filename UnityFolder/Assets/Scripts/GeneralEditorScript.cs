@@ -35,7 +35,7 @@ public class GeneralEditorScript : MonoBehaviour
 	FrequencyEditorScript frequencyEditor;
 	GameObject playerObject;
 
-	FileBrowserGameObjectScript mainFileBrowserScript;
+	public ParametersFilesImportScript mainFileBrowserScript;
 
 	AudioDirectorScript audioDirector;
 
@@ -47,7 +47,7 @@ public class GeneralEditorScript : MonoBehaviour
 		frequencyEditor = (FrequencyEditorScript)GetComponent("FrequencyEditorScript");
 		playerObject = GameObject.FindWithTag("Player");
 
-		mainFileBrowserScript = (FileBrowserGameObjectScript)GetComponent("FileBrowserGameObjectScript");
+		mainFileBrowserScript = (ParametersFilesImportScript)GetComponent("ParametersFilesImportScript");
 
 		audioDirector =  (AudioDirectorScript)GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 	
