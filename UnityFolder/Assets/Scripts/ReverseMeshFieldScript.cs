@@ -19,7 +19,7 @@ public class ReverseMeshFieldScript : MonoBehaviour
         mesh = GetComponent<MeshFilter>().mesh;
         meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
 
-        audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+        audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 		
 	}
 	

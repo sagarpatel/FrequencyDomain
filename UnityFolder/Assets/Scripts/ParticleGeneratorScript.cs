@@ -34,7 +34,7 @@ public class ParticleGeneratorScript : MonoBehaviour
 			}
 		}
 
-		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
+		playerScript = (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript");
 	
 	}
 	

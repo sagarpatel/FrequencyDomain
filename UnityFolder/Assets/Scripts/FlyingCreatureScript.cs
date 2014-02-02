@@ -89,7 +89,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	public void AquireCreatureParts(GameObject[] partsArray)
 	{
 
-		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
+		playerScript = (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript");
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
 
 		List<GameObject> creaturePartsList = new List<GameObject>();

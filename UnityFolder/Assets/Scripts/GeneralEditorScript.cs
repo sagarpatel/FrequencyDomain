@@ -45,11 +45,11 @@ public class GeneralEditorScript : MonoBehaviour
 
 		amplitudeEditor = (AmplitudeEditorScript)GetComponent("AmplitudeEditorScript");
 		frequencyEditor = (FrequencyEditorScript)GetComponent("FrequencyEditorScript");
-		playerObject = GameObject.FindGameObjectWithTag("Player");
+		playerObject = GameObject.FindWithTag("Player");
 
 		mainFileBrowserScript = (FileBrowserGameObjectScript)GetComponent("FileBrowserGameObjectScript");
 
-		audioDirector =  (AudioDirectorScript)GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioDirector =  (AudioDirectorScript)GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 	
 	}
 	

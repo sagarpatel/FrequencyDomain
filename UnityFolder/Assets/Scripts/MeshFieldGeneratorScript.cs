@@ -121,7 +121,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		GenerateCalculationsMiniMesh();
 	
-		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 	}
 	
 	

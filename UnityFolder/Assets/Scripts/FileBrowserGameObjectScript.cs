@@ -29,8 +29,8 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	void Start () 
 	{
 		mp3Importer = (MP3Import)GetComponent("MP3Import");
-		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
-		audioListener = (AudioListener) GameObject.Find("AudioDirector").GetComponent("AudioListener");
+		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
+		audioListener = (AudioListener) GameObject.FindWithTag("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 
 		if(isActive)

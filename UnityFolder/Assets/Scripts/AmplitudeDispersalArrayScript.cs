@@ -59,7 +59,7 @@ public class AmplitudeDispersalArrayScript : MonoBehaviour
 
 		}
 
-		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 
 	
 	}

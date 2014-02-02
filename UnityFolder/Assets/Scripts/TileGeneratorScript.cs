@@ -43,7 +43,7 @@ public class TileGeneratorScript : MonoBehaviour
 
 		}
 
-		playerScript = (PlayerScript)GameObject.FindGameObjectWithTag("Player").GetComponent("PlayerScript");
+		playerScript = (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript");
 
 
 		//last step, activate children combination

@@ -37,7 +37,7 @@ public class AmplitudeEditorScript : MonoBehaviour
 		currentIndex = minIndex;
 		rangeMarker = (GameObject)Instantiate(rangeMarker, new Vector3(), Quaternion.identity);
 
-		audioDirector =  (AudioDirectorScript)GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioDirector =  (AudioDirectorScript)GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 		generalEditor = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 	}
 	

@@ -19,7 +19,7 @@ public class CreaturePartsAudioScalingScript : MonoBehaviour
 	{
 		originalPrefabScale = transform.localScale;
 		
-		audioDirector = (AudioDirectorScript) GameObject.Find("AudioDirector").GetComponent("AudioDirectorScript");
+		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 	}
 	
 	// Update is called once per frame
