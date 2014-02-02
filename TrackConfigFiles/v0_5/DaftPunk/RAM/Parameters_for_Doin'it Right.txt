@@ -1,0 +1,16 @@
+Frequency Domain v0.5
+by Sagar Patel
+
+This parameters file was generated on6/24/2013 5:00:33 PM
+Music file being played at the time: 12 Doin'it Right
+
+The numbers below represent the parameters list. They are listed in the following order:
+<Amplitude scales distribution>
+<Frequency start sample index>
+<Frequency samples distribution>
+<RGB Color scale factors>
+
+|1,1,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,
+|12
+|1,6,4,4,8,10,12,16,32,64,
+|0.07499997,0.07499997,0.07499997,

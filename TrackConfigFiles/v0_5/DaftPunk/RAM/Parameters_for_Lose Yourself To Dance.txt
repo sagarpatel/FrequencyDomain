@@ -1,0 +1,16 @@
+Frequency Domain v0.5
+by Sagar Patel
+
+This parameters file was generated on6/24/2013 4:35:20 PM
+Music file being played at the time: 06 Lose Yourself To Dance
+
+The numbers below represent the parameters list. They are listed in the following order:
+<Amplitude scales distribution>
+<Frequency start sample index>
+<Frequency samples distribution>
+<RGB Color scale factors>
+
+|1.5,1.5,1,1,1.45,1.5,1.5,2.5,2.4,1.5,
+|0
+|2,4,10,10,12,18,16,26,64,261,
+|0.06999997,0.06999997,0.06999997,

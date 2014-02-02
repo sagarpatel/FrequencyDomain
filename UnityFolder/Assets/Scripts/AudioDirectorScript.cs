@@ -34,8 +34,12 @@ public class AudioDirectorScript : MonoBehaviour
 	public string currentlyPlayingFileName = null;
 
 	public bool isLiveAudio = false;
-	public AudioSource liveAudioSource;
-	public 
+	public AudioSource liveAudioSource; 
+	AudioClip liveAudioClip;
+	int liveAudioSampleRate = 44100; 
+	int liveAudioClipLength = 1;
+	float liveAudioAnalysisWindow = 0.2f;
+	string currentLiveDeviceName;
 
 	AudioLowPassFilter lowPassFilter;
 	Camera mainCamera;
@@ -65,11 +69,12 @@ public class AudioDirectorScript : MonoBehaviour
 			liveAudioSource = gameObject.AddComponent<AudioSource>();
 			liveAudioSource.loop = true;
 			liveAudioSource.volume = 1.0f;
-			liveAudioSource.mute = false;
-			liveAudioSource.playOnAwake = true;
+			liveAudioSource.mute = true;
+			liveAudioSource.playOnAwake = false;
 
-			liveAudioSource.clip = Microphone.Start(Microphone.devices[0], true, 1, 44100);
-			liveAudioSource.Play();
+			currentLiveDeviceName = Microphone.devices[0];
+
+			StartCoroutine("LaunchLiveAudioSource");
 		}
 	}
 	
@@ -226,7 +231,48 @@ public class AudioDirectorScript : MonoBehaviour
 
 	}
 
+	// based on VJkit's VJMicrohpone.cs
+	public void HandleLiveInputSwitch( string newDeviceName )
+	{
+		// Clean up the old one
+		liveAudioSource.Stop();
+		liveAudioSource.clip = null;
+		Microphone.End(currentLiveDeviceName);
+		StopCoroutine("LaunchLiveAudioSource");
 
 
+		// Start the new one
+		// Update the sample rate for the new device
+		int newDeviceMinFreq = 0;
+		int newDeviceMaxFreq = 0;
+		Microphone.GetDeviceCaps(newDeviceName, out newDeviceMinFreq, out newDeviceMaxFreq);
+		if (newDeviceMinFreq > 0 && newDeviceMaxFreq > 0) 
+			liveAudioSampleRate = Mathf.Clamp(liveAudioSampleRate, newDeviceMinFreq, newDeviceMaxFreq);
+		
+		currentLiveDeviceName = newDeviceName;
+		StartCoroutine("LaunchLiveAudioSource");
+
+	}
+
+	IEnumerator LaunchLiveAudioSource()
+	{
+		liveAudioSource.clip = Microphone.Start(currentLiveDeviceName, true, liveAudioClipLength, liveAudioSampleRate);
+		liveAudioSource.Play();
+
+		float[] liveAudioSamplesArray = new float[ (int)(liveAudioAnalysisWindow * liveAudioSampleRate)];
+		// start position adjustment "thread"
+		while(true)
+		{
+			int livePosition = Microphone.GetPosition(currentLiveDeviceName);
+			if (livePosition < liveAudioSamplesArray.Length) 
+				livePosition += liveAudioClipLength * liveAudioSampleRate;
+
+			liveAudioSource.clip.GetData(liveAudioSamplesArray, livePosition - liveAudioSamplesArray.Length);
+			liveAudioSource.timeSamples = livePosition;
+
+			yield return null;
+		}
+
+	}
 
 }

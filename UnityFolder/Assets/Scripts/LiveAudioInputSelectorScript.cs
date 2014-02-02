@@ -9,11 +9,12 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	public bool isActive = false;
 	float textVerticalOffset = 100.0f;
 
+	AudioDirectorScript audioDirector;
+
 	// Use this for initialization
 	void Start () 
 	{
-
-	
+		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 	}
 	
 	// Update is called once per frame
@@ -27,6 +28,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 					currentlySelectedDeviceIndex += 1;
 
 			// Call Audiodirector function with new device
+			audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
 		}
 	
 	}

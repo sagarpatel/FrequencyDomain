@@ -20,13 +20,14 @@ public class ParametersFilesImportScript : MonoBehaviour
 	AudioDirectorScript audioDirector;
 	AudioListener audioListener;
 	GeneralEditorScript genralEditorScript;
-
+	LiveAudioInputSelectorScript liveAudioInputSelector;
 	// Use this for initialization
 	void Start () 
 	{
 		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 		audioListener = (AudioListener) GameObject.FindWithTag("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
+		liveAudioInputSelector = GetComponent<LiveAudioInputSelectorScript>();
 
 		if(isActive)
 		{
@@ -45,12 +46,14 @@ public class ParametersFilesImportScript : MonoBehaviour
 			if(isActive)
 			{
 				isActive = false;
+				liveAudioInputSelector.isActive = false;
 				Screen.showCursor = false;
 				Screen.lockCursor = true;
 			}
 			else
 			{
 				isActive = true;
+				liveAudioInputSelector.isActive = true;
 				genralEditorScript.isActive = false;
 				Screen.showCursor = true;
 				Screen.lockCursor = false;
