@@ -102,31 +102,35 @@ public class ParametersFilesImportScript : MonoBehaviour
     	lastUsedDirectorytxt = directory;
     	filePathtxt = path;
 
-    	// load parameters text file into string
-    	string rawFileString = File.ReadAllText(filePathtxt);
-    	string[] rawSplit = rawFileString.Split('|');
-    	string amplitudeListString = rawSplit[1];
-    	string frequencyStartString = rawSplit[2];
-    	string frequencyListString = rawSplit[3];
-    	string rgbColorScaleFactorsString = rawSplit[4];
+    	if(path != null)
+	 	{
+
+	 	 	// load parameters text file into string
+	    	string rawFileString = File.ReadAllText(filePathtxt);
+	    	string[] rawSplit = rawFileString.Split('|');
+	    	string amplitudeListString = rawSplit[1];
+	    	string frequencyStartString = rawSplit[2];
+	    	string frequencyListString = rawSplit[3];
+	    	string rgbColorScaleFactorsString = rawSplit[4];
 
 
-    	// copy over amplitudes
-    	for(int i = 0; i < audioDirector.scalingPerDecadeArray.Length; i++)
-    		audioDirector.scalingPerDecadeArray[i] = float.Parse( amplitudeListString.Split(',')[i] );
- 		
- 		// copy over frequency start index
- 		audioDirector.sampleStartIndex = int.Parse( frequencyStartString.Trim() );
+	    	// copy over amplitudes
+	    	for(int i = 0; i < audioDirector.scalingPerDecadeArray.Length; i++)
+	    		audioDirector.scalingPerDecadeArray[i] = float.Parse( amplitudeListString.Split(',')[i] );
+	 		
+	 		// copy over frequency start index
+	 		audioDirector.sampleStartIndex = int.Parse( frequencyStartString.Trim() );
 
- 		// copy over frequency distribution
- 		for(int i = 0; i < audioDirector.samplesPerDecadeArray.Length; i++)
- 			audioDirector.samplesPerDecadeArray[i] = int.Parse( frequencyListString.Split(',')[i] );
+	 		// copy over frequency distribution
+	 		for(int i = 0; i < audioDirector.samplesPerDecadeArray.Length; i++)
+	 			audioDirector.samplesPerDecadeArray[i] = int.Parse( frequencyListString.Split(',')[i] );
 
- 		// copy over rgb scale values
- 		audioDirector.rScale = float.Parse( rgbColorScaleFactorsString.Split(',')[0] );
- 		audioDirector.gScale = float.Parse( rgbColorScaleFactorsString.Split(',')[1] );
- 		audioDirector.bScale = float.Parse( rgbColorScaleFactorsString.Split(',')[2] );
- 
+	 		// copy over rgb scale values
+	 		audioDirector.rScale = float.Parse( rgbColorScaleFactorsString.Split(',')[0] );
+	 		audioDirector.gScale = float.Parse( rgbColorScaleFactorsString.Split(',')[1] );
+	 		audioDirector.bScale = float.Parse( rgbColorScaleFactorsString.Split(',')[2] );
+	 	}
+	 
         //isActive = false;       
     }
 
