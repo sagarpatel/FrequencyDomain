@@ -259,6 +259,9 @@ public class AudioDirectorScript : MonoBehaviour
 		liveAudioSource.clip = Microphone.Start(currentLiveDeviceName, true, liveAudioClipLength, liveAudioSampleRate);
 		liveAudioSource.Play();
 
+		// testing out to see if liveAudioAnalysisWindow should be frame time instead of a fixed 0.2f
+		liveAudioAnalysisWindow = Time.deltaTime;
+
 		float[] liveAudioSamplesArray = new float[ (int)(liveAudioAnalysisWindow * liveAudioSampleRate)];
 		// start position adjustment "thread"
 		while(true)
