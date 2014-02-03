@@ -4,7 +4,7 @@ using System.Collections;
 public class AmplitudeEditorScript : MonoBehaviour 
 {
 
-	int minIndex = 0;
+	int minIndex = -1;
 	int maxIndex = 9;
 	public int currentIndex;
 
@@ -75,10 +75,18 @@ public class AmplitudeEditorScript : MonoBehaviour
  	{
  		if(isActive && generalEditor.isActive)
  		{
-    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
-    		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Amplitude Scale: " + audioDirector.scalingPerDecadeArray[currentIndex].ToString(), guiSkin.label );
+ 			if( currentIndex != -1)
+ 			{
+				GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
+				GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Amplitude Scale: " + audioDirector.scalingPerDecadeArray[currentIndex].ToString(), guiSkin.label );
+			}
+			else
+			{
+				GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Overall Amplitude Multiplier: " + audioDirector.overallAmplitudeScaler.ToString(), guiSkin.label );
+			}
 
     	}
+
     }
 
 
@@ -119,19 +127,38 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 			if( incrementCooldownCounter > (incrementCooldown - incrementHeldDownDurationCounter/10.0f) )
 			{
-				float tempAmplitude = audioDirector.scalingPerDecadeArray[currentIndex];
-				
-				if( Input.GetAxis("Editor Vertical") > 0)
-					tempAmplitude += amplitudeIncrement;
-				else if( Input.GetAxis("Editor Vertical") < 0)
-					tempAmplitude -= amplitudeIncrement;
+				if(currentIndex != -1) // normal scaling per decade
+				{
+					float tempAmplitude = audioDirector.scalingPerDecadeArray[currentIndex];
+					
+					if( Input.GetAxis("Editor Vertical") > 0)
+						tempAmplitude += amplitudeIncrement;
+					else if( Input.GetAxis("Editor Vertical") < 0)
+						tempAmplitude -= amplitudeIncrement;
 
-				if (tempAmplitude < minAmplitude)
-					tempAmplitude = minAmplitude;
-				else if(tempAmplitude > maxAmplitude)
-					tempAmplitude = maxAmplitude;
+					if (tempAmplitude < minAmplitude)
+						tempAmplitude = minAmplitude;
+					else if(tempAmplitude > maxAmplitude)
+						tempAmplitude = maxAmplitude;
 
-				audioDirector.scalingPerDecadeArray[currentIndex] = tempAmplitude;
+					audioDirector.scalingPerDecadeArray[currentIndex] = tempAmplitude;
+				}
+				else // overall scaling
+				{
+					float tempOverallAmplitudeScaler = audioDirector.overallAmplitudeScaler;
+
+					if( Input.GetAxis("Editor Vertical") > 0)
+						tempOverallAmplitudeScaler += amplitudeIncrement;
+					else if( Input.GetAxis("Editor Vertical") < 0)
+						tempOverallAmplitudeScaler -= amplitudeIncrement;
+
+					if (tempOverallAmplitudeScaler < minAmplitude)
+						tempOverallAmplitudeScaler = minAmplitude;
+					else if(tempOverallAmplitudeScaler > 2.0f *maxAmplitude)
+						tempOverallAmplitudeScaler = 2.0f*  maxAmplitude;
+
+					audioDirector.overallAmplitudeScaler = tempOverallAmplitudeScaler;
+				}
 
 				incrementCooldownCounter = 0;
 			}
@@ -154,23 +181,32 @@ public class AmplitudeEditorScript : MonoBehaviour
 	void AdjustRangeMarkerScale()
 	{
 
-		float tempMax = 0;
-		float sum = 0;
-		foreach( float scale in audioDirector.scalingPerDecadeArray)
+		if(currentIndex != -1)
 		{
-			if(scale > tempMax)
-				tempMax = scale;
-			sum += scale;
+			float tempMax = 0;
+			float sum = 0;
+			foreach( float scale in audioDirector.scalingPerDecadeArray)
+			{
+				if(scale > tempMax)
+					tempMax = scale;
+				sum += scale;
+			}
+			float average = sum/10.0f;
+
+
+			float maxValue = tempMax;
+			float scaleRatio = 2.0f* audioDirector.scalingPerDecadeArray[currentIndex]/maxAmplitude; //average;//maxValue;
+
+			Vector3 markerScale = rangeMarker.transform.localScale;
+			markerScale.y = scaleRatio;
+			rangeMarker.transform.localScale = markerScale;
 		}
-		float average = sum/10.0f;
-
-
-		float maxValue = tempMax;
-		float scaleRatio = 2.0f* audioDirector.scalingPerDecadeArray[currentIndex]/maxAmplitude; //average;//maxValue;
-
-		Vector3 markerScale = rangeMarker.transform.localScale;
-		markerScale.y = scaleRatio;
-		rangeMarker.transform.localScale = markerScale;
+		else
+		{
+			Vector3 markerScale = rangeMarker.transform.localScale;
+			markerScale.y = audioDirector.overallAmplitudeScaler/10.0f;
+			rangeMarker.transform.localScale = markerScale;
+		}
 
 	}
 

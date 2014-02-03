@@ -13,6 +13,7 @@ public class AudioDirectorScript : MonoBehaviour
 	public int sampleStartIndex= 0;
 	public int[] samplesPerDecadeArray = new int[10];
 	public float[] scalingPerDecadeArray = new float[10];
+	public float overallAmplitudeScaler = 1.0f;
 
 	public float[] pseudoLogArrayBuffer = new float[100];
 
@@ -118,7 +119,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 			for(int j = 0; j < samplesPerDecadeArray[decadeIndex]; j++ )
 			{
-				pseudoLogArray[i] += sampleArrayFreqBH[fftSampleCounter] * scalingPerDecadeArray[decadeIndex];
+				pseudoLogArray[i] += sampleArrayFreqBH[fftSampleCounter] * scalingPerDecadeArray[decadeIndex] * overallAmplitudeScaler;
 				fftSampleCounter++;
 			}
 		}
