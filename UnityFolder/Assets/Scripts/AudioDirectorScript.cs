@@ -262,7 +262,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 		// testing out to see if liveAudioAnalysisWindow should be frame time instead of a fixed 0.2f
 		liveAudioAnalysisWindow = Time.deltaTime;
-
+		Debug.Log(liveAudioSampleRate);
 		float[] liveAudioSamplesArray = new float[ (int)(liveAudioAnalysisWindow * liveAudioSampleRate)];
 		// start position adjustment "thread"
 		while(true)

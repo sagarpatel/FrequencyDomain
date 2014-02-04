@@ -21,15 +21,18 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetButtonDown("Warp"))
+		if(isActive)
 		{
-			if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
-					currentlySelectedDeviceIndex = 0;
-				else
-					currentlySelectedDeviceIndex += 1;
+			if(Input.GetButtonDown("Warp"))
+			{
+				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
+						currentlySelectedDeviceIndex = 0;
+					else
+						currentlySelectedDeviceIndex += 1;
 
-			// Call Audiodirector function with new device
-			audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
+				// Call Audiodirector function with new device
+				audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
+			}
 		}
 	
 	}
