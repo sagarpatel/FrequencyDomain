@@ -78,12 +78,21 @@ public class FrequencyEditorScript : MonoBehaviour
  		{
  			if( currentIndex != -1)
  			{
-	    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Range Index: " + currentIndex.ToString(), guiSkin.label );
-	    		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Samples: " + audioDirector.samplesPerDecadeArray[currentIndex].ToString(), guiSkin.label );
+ 				// Calculate frequency range of current decade
+ 				float minFrequency = 0;
+ 				float maxFrequency = 0;
+ 				CalculateDecadeFrequencyRange(currentIndex, out minFrequency, out maxFrequency);
+
+	    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Decade Frequency Range: " + minFrequency.ToString() + "Hz to " + maxFrequency.ToString() + "Hz", guiSkin.label );
+	    		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Samples in Current Decade: " + audioDirector.samplesPerDecadeArray[currentIndex].ToString(), guiSkin.label );
 	    	}
 	    	else
 	    	{
-	    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Current Frequency Start Sample: " +  audioDirector.sampleStartIndex.ToString(), guiSkin.label );
+	    		float sampleCount = (float)audioDirector.sampleArrayFreqBH.Length;
+				float sampleRate = (float)audioDirector.currentSampleRate;
+
+				float startFrequency = ( (float)audioDirector.sampleStartIndex * sampleRate/2.0f )/sampleCount;
+	    		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Start Frequency: " + startFrequency.ToString() + "Hz", guiSkin.label );
 	    	}
 
     	}
@@ -209,8 +218,26 @@ public class FrequencyEditorScript : MonoBehaviour
 			markerScale.y = audioDirector.sampleStartIndex/40.0f;
 			rangeMarker.transform.localScale = markerScale;
 		}
+	}
 
+	// THANK YOU --> // http://answers.unity3d.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
+	void CalculateDecadeFrequencyRange(int decadeIndex, out float minFrequency, out float maxFrequency)
+	{
+		int decadeMinBinIndex = 0;
+		int decadeMaxBinIndex; // should be more than 0
 
+		// should never enter the loop if decadeIndex == 0, should leave decadeMinBinIndex as 0
+		for(int i = 0; i < decadeIndex; i++)
+			decadeMinBinIndex += 10 * audioDirector.samplesPerDecadeArray[i] + audioDirector.sampleStartIndex; // multiplied by 10 because of the decade system
+
+		// calculate max bin index 
+		decadeMaxBinIndex = decadeMinBinIndex + 10 * audioDirector.samplesPerDecadeArray[decadeIndex];
+
+		float sampleCount = (float)audioDirector.sampleArrayFreqBH.Length;
+		float sampleRate = (float)audioDirector.currentSampleRate;
+
+		minFrequency = ( (float)decadeMinBinIndex * sampleRate/2.0f )/sampleCount;
+		maxFrequency = ( (float)decadeMaxBinIndex * sampleRate/2.0f )/sampleCount;
 	}
 
 
