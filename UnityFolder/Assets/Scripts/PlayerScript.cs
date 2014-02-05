@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour 
 {
+	public GameObject mainCameraModulePrefab;
+	public GameObject ovrCameraControllerModulePrefab;
+
 	public float hControlSpeed = 1.0f;
 	public float vControlSpeed = 1.0f;
 
@@ -60,12 +63,13 @@ public class PlayerScript : MonoBehaviour
 
 
 	public bool isOVR = false;
+	bool wasOVR = false;
 	public float ovrHorizontalSpeedScale = 0.4f;
 	public float ovrVerticalSpeedScale = 0.03f;
 	OVRCameraController ovrCameraController;
 
 
-	GameObject mainCameraGameObject;
+	public GameObject mainCameraGameObject;
 	MeshFieldGeneratorScript meshFieldGeneratorScript;
 	List<Camera> mainCameraComponentList = new List<Camera>();
 	List<Bloom> bloomScriptList = new List<Bloom>();
@@ -74,9 +78,12 @@ public class PlayerScript : MonoBehaviour
 
 	GeneralEditorScript editor;
 
+
 	// Use this for initialization
 	void Start () 
 	{
+		AttachCorrectCameraModule();
+		
 		meshFieldGeneratorScript = (MeshFieldGeneratorScript)GameObject.Find("MainMeshField").GetComponent("MeshFieldGeneratorScript");
 		
 		GameObject[] tempCameraObjectArray =  GameObject.FindGameObjectsWithTag("MainCamera");
@@ -96,10 +103,6 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
-		mainCameraGameObject =  GameObject.FindWithTag("MainCamera"); //GameObject.Find("Main Camera");
-
-		if(isOVR)
-			ovrCameraController = (OVRCameraController)GameObject.Find("OVRCameraController").GetComponent("OVRCameraController");
 
 		editor = (GeneralEditorScript)GameObject.FindWithTag("Editor").GetComponent("GeneralEditorScript");
 
@@ -110,6 +113,17 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+
+		// Check for camera type change
+
+
+
+		if( isOVR != wasOVR)
+			AttachCorrectCameraModule();
+
+		wasOVR = isOVR;
+
+
 		oldPosition = transform.position;
 		oldVelocity = velocity;
 
@@ -188,10 +202,49 @@ public class PlayerScript : MonoBehaviour
 		
 	}
 
+	public void AttachCorrectCameraModule()
+	{
+		GameObject cameraHolder = GameObject.FindWithTag("CameraHolder");
+		// Cleanup up previous camera (if it exists)
+		if( cameraHolder.transform.childCount > 0)
+			Destroy(cameraHolder.transform.GetChild(0).gameObject, 0.0f);
 
+		
+		// Add correct camera module
+		if(isOVR)
+		{
+			GameObject ovrModule = (GameObject)Instantiate(ovrCameraControllerModulePrefab, new Vector3(), Quaternion.identity);
+			//ovrModule.transform.Rotate(new Vector3(0, -90, 0), Space.Self);
+			ovrModule.transform.parent = cameraHolder.transform;
+			ovrModule.transform.localPosition = new Vector3();
+			ovrCameraController = (OVRCameraController)GameObject.FindWithTag("OVRCameraController").GetComponent("OVRCameraController");
+			mainCameraGameObject =  GameObject.FindWithTag("MainCamera");
+			
+			GameObject[] tempCameraObjectArray =  GameObject.FindGameObjectsWithTag("MainCamera");
+			mainCameraComponentList.Clear();
+			for(int i = 0; i < tempCameraObjectArray.Length; i++)
+				mainCameraComponentList.Add( (Camera)tempCameraObjectArray[i].GetComponent("Camera") );
+
+		}
+		else
+		{
+			GameObject normalCameraModule = (GameObject)Instantiate(mainCameraModulePrefab, new Vector3(), Quaternion.identity);
+			//normalCameraModule.transform.Rotate(new Vector3(0, -90, 0), Space.Self);
+			normalCameraModule.transform.parent = cameraHolder.transform;
+			normalCameraModule.transform.localPosition = new Vector3();
+			mainCameraGameObject =  GameObject.FindWithTag("MainCamera"); //GameObject.Find("Main Camera");
+		}
+
+	}
 
 	void HandleBoost()
 	{
+		// hack fix by pasting object find before every use
+		// shouldn't need to do this since new one gets assigned in AttachCorrectCameraModule, isn't the function atomic?
+		GameObject[] tempCameraObjectArray =  GameObject.FindGameObjectsWithTag("MainCamera");
+		mainCameraComponentList.Clear();
+		for(int i = 0; i < tempCameraObjectArray.Length; i++)
+			mainCameraComponentList.Add( (Camera)tempCameraObjectArray[i].GetComponent("Camera") );
 
 		foreach(Camera mainCameraComponent in mainCameraComponentList)
 		{
@@ -237,12 +290,8 @@ public class PlayerScript : MonoBehaviour
 					ovrCameraController.SetVerticalFOV(mainCameraComponent.fieldOfView);
 
 				}
-
-
 			}
-
 		}
-
 	}
 
 	void HandleBloomBurst()
@@ -348,6 +397,9 @@ public class PlayerScript : MonoBehaviour
 		{
 			if( yTranslation == 0 && xTranslation == 0 )
 			{
+				// hack fix by pasting object find before every use
+				// shouldn't need to do this since new one gets assigned in AttachCorrectCameraModule, isn't the function atomic?
+				mainCameraGameObject =  GameObject.FindWithTag("MainCamera");
 				
 				float zRotationAngle = mainCameraGameObject.transform.localEulerAngles.z;
 				float zVelocityOVR = 0;
@@ -393,6 +445,9 @@ public class PlayerScript : MonoBehaviour
 			//Debug.Log("Counter: " + recordingUpdateIntervalCounter.ToString() );
 			//Debug.Log("Interval: " + recordingUpdateInterval.ToString() );
 
+			// hack fix by pasting object find before every use
+			// shouldn't need to do this since new one gets assigned in AttachCorrectCameraModule, isn't the function atomic?
+			mainCameraGameObject =  GameObject.FindWithTag("MainCamera");
 
 			if(recordingUpdateIntervalCounter > recordingUpdateInterval)
 			{

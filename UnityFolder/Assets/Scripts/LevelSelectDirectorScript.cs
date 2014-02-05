@@ -21,6 +21,8 @@ public class LevelSelectDirectorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		// recheck here because camera might have changed (OVR swap)
+		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera");
 
 		float fov = mainCamera.fieldOfView;
 

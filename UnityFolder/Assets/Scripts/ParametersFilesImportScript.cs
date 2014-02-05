@@ -21,6 +21,8 @@ public class ParametersFilesImportScript : MonoBehaviour
 	AudioListener audioListener;
 	GeneralEditorScript genralEditorScript;
 	LiveAudioInputSelectorScript liveAudioInputSelector;
+	CameraTypeSelectorScript cameraTypeSelector;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -28,6 +30,7 @@ public class ParametersFilesImportScript : MonoBehaviour
 		audioListener = (AudioListener) GameObject.FindWithTag("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
 		liveAudioInputSelector = GetComponent<LiveAudioInputSelectorScript>();
+		cameraTypeSelector = GetComponent<CameraTypeSelectorScript>();
 
 		if(isActive)
 		{
@@ -46,15 +49,20 @@ public class ParametersFilesImportScript : MonoBehaviour
 			if(isActive)
 			{
 				isActive = false;
+
 				liveAudioInputSelector.isActive = false;
+				cameraTypeSelector.isActive = false;
 				Screen.showCursor = false;
 				Screen.lockCursor = true;
 			}
 			else
 			{
 				isActive = true;
-				liveAudioInputSelector.isActive = true;
 				genralEditorScript.isActive = false;
+
+				liveAudioInputSelector.isActive = true;
+				cameraTypeSelector.isActive = true;
+
 				Screen.showCursor = true;
 				Screen.lockCursor = false;
 			}

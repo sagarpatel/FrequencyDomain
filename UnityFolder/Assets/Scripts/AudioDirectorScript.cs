@@ -227,6 +227,9 @@ public class AudioDirectorScript : MonoBehaviour
 
 	void HandleLowPassFilter()
 	{
+		// recheck here because camera might have changed (OVR swap)
+		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera");
+
 		float currentFOV = mainCamera.fieldOfView;
 		float progressRatio = ( currentFOV - initialFOV )/(180.0f - initialFOV);
 		lowPassFilter.cutoffFrequency = initialLPFCutoffFrequency * (1.0f - progressRatio)/2.0f;
