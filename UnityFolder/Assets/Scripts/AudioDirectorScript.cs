@@ -63,7 +63,7 @@ public class AudioDirectorScript : MonoBehaviour
 			currentlyPlayingFileName = audioSourceArray[0].clip.name;
 	
 		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
-		mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
+		//mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
 		initialFOV = ( (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
 
 		if(isLiveAudio)

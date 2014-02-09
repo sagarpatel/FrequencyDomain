@@ -18,9 +18,12 @@ public class CameraTypeSelectorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetButtonDown("Toggle Camera Type"))
+		if(isActive)
 		{
-			playerScript.isOVR = !playerScript.isOVR;
+			if(Input.GetButtonDown("Toggle Camera Type"))
+			{
+				playerScript.isOVR = !playerScript.isOVR;
+			}
 		}
 	}
 
