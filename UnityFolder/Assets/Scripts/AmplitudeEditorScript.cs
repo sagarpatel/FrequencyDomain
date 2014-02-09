@@ -154,8 +154,8 @@ public class AmplitudeEditorScript : MonoBehaviour
 
 					if (tempOverallAmplitudeScaler < minAmplitude)
 						tempOverallAmplitudeScaler = minAmplitude;
-					else if(tempOverallAmplitudeScaler > 2.0f *maxAmplitude)
-						tempOverallAmplitudeScaler = 2.0f*  maxAmplitude;
+					else if(tempOverallAmplitudeScaler > 4.0f *maxAmplitude)
+						tempOverallAmplitudeScaler = 4.0f*  maxAmplitude;
 
 					audioDirector.overallAmplitudeScaler = tempOverallAmplitudeScaler;
 				}
