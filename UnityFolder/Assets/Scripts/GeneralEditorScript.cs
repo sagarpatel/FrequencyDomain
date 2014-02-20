@@ -39,6 +39,9 @@ public class GeneralEditorScript : MonoBehaviour
 
 	AudioDirectorScript audioDirector;
 
+	public bool isInMenu = false;
+	GameObject fpsDisplayObject;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -50,7 +53,7 @@ public class GeneralEditorScript : MonoBehaviour
 		mainFileBrowserScript = (ParametersFilesImportScript)GetComponent("ParametersFilesImportScript");
 
 		audioDirector =  (AudioDirectorScript)GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
-	
+		fpsDisplayObject = GameObject.FindWithTag("FPSDisplay");
 	}
 	
 	// Update is called once per frame
@@ -58,6 +61,15 @@ public class GeneralEditorScript : MonoBehaviour
 	{
 
 		HandleInputs();
+
+		// This is really stupid, can't be bothered to make a parent class
+		isInMenu = false;
+		isInMenu |= isActive;
+		isInMenu |= amplitudeEditor.isActive;
+		isInMenu |= frequencyEditor.isActive;
+		isInMenu |= mainFileBrowserScript.isActive;	
+		if(fpsDisplayObject != null)
+			fpsDisplayObject.SetActive(isInMenu);
 	
 	}
 
