@@ -266,7 +266,7 @@ public class AudioDirectorScript : MonoBehaviour
 		liveAudioSource.Play();
 
 		// testing out to see if liveAudioAnalysisWindow should be frame time instead of a fixed 0.2f
-		liveAudioAnalysisWindow = Time.deltaTime;
+		//liveAudioAnalysisWindow = Time.deltaTime;
 		Debug.Log(liveAudioSampleRate);
 		// http://answers.unity3d.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
 		float maxF = (8191.0f * ((float)liveAudioSampleRate)/2.0f) / 8192.0f;
