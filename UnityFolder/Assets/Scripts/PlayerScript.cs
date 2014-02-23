@@ -127,7 +127,10 @@ public class PlayerScript : MonoBehaviour
 		oldPosition = transform.position;
 		oldVelocity = velocity;
 
-		HandleControls();
+		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
+		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
+
+		HandleControls( xTranslation, yTranslation );
 
 		if(editor.isActive == false)
 		{
@@ -350,7 +353,7 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList[i].range = originalLightsRange + bloomBurstSum * meshLightsScale;
 	}
 
-	void HandleControls()
+	public void HandleControls( float xTranslation, float yTranslation )
 	{
 		// check if input would put player out of bounds
 		Vector3 predecitedPosition =  oldPosition + velocity * Time.deltaTime;
@@ -358,10 +361,6 @@ public class PlayerScript : MonoBehaviour
 		float tdc = meshFieldGeneratorScript.verticesTimeDepthCount;
 		float xscale = meshFieldGeneratorScript.xScale;
 		float zscale = meshFieldGeneratorScript.zScale;
-
-
-		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
-		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
 
 		Vector3 frictionScaling = new Vector3(1,1,1);
 
