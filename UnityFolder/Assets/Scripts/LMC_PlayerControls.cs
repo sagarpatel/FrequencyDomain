@@ -9,6 +9,14 @@ public class LMC_PlayerControls : MonoBehaviour
 
 	Controller controller;
 
+	public float hMoveScale = 1.0f;
+	public float vMoveScale = 1.0f;
+	public float hLookScale = 1.0f;
+
+	public float horizontalMove;
+	public float verticalMove;
+	public float horizontalLook;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -23,30 +31,25 @@ public class LMC_PlayerControls : MonoBehaviour
 	{
 		
 		Frame currentFrame = controller.Frame();
-		
-		// using points translation
-		/*
-		Vector3 translationLMC = UnityVectorExtension.ToUnityScaled(currentFrame.Translation( controller.Frame(1) ) ) ;
-		Debug.Log( translationLMC );
-		transform.Translate(translationLMC, Space.Self);
-
-		playerScript.HandleControls(translationLMC.x, translationLMC.y);
-		*/
 
 		// using palm / hand 
-
+		
 		Hand firstHand = currentFrame.Hands[0];
 		if(firstHand.IsValid)
 		{
+			horizontalMove =  hMoveScale * firstHand.PalmNormal.Roll / Mathf.PI ;
+			verticalMove =  vMoveScale * firstHand.Direction.Pitch / Mathf.PI;
+			horizontalLook = hLookScale * firstHand.Direction.Yaw / Mathf.PI;
 
-			float LMCValue  = Quaternion.LookRotation(firstHand.Direction.ToUnity(), -firstHand.PalmNormal.ToUnity()).eulerAngles.z;
-
-			//Debug.Log(  firstHand.PalmNormal.Yaw );
-			Vector3 palmNormal = UnityVectorExtension.ToUnity( firstHand.Direction );
-			Debug.DrawLine(transform.position, transform.position + new Vector3(firstHand.PalmNormal.Roll , 0, 0) * 2.150f, Color.green, 0, false);
-			Debug.DrawLine(transform.position, transform.position + new Vector3(0 , firstHand.Direction.Pitch, 0) * 2.150f, Color.blue, 0, false);
-			Debug.DrawLine(transform.position, transform.position + new Vector3(0 , 0, firstHand.Direction.Yaw) * 2.150f, Color.red, 0, false);
+			// debug visualization
+			//Debug.DrawLine(transform.position, transform.position + new Vector3(firstHand.PalmNormal.Roll , 0, 0) * 2.150f, Color.green, 0, false);
+			//Debug.DrawLine(transform.position, transform.position + new Vector3(0 , firstHand.Direction.Pitch, 0) * 2.150f, Color.blue, 0, false);
+			//Debug.DrawLine(transform.position, transform.position + new Vector3(0 , 0, firstHand.Direction.Yaw) * 2.150f, Color.red, 0, false);
 		}
+
+		playerScript.HandleControls(-horizontalMove, -verticalMove);
+
+
 
 	}
 

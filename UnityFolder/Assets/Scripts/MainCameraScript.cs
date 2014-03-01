@@ -17,12 +17,13 @@ public class MainCameraScript : MonoBehaviour
 
 	bool isWireFrameMode = true;
 
+	LMC_PlayerControls lmcPlayerControls;
 
 	// Use this for initialization
 	void Start () 
 	{
 		playerVelocity = ((PlayerScript)( (GameObject.FindWithTag("Player")).GetComponent("PlayerScript"))).velocity;
-
+		lmcPlayerControls = (LMC_PlayerControls)GameObject.FindWithTag("LMC").GetComponent<LMC_PlayerControls>();
 		//Screen.showCursor = false;
 		//Screen.lockCursor = true;
 	}
@@ -46,6 +47,7 @@ public class MainCameraScript : MonoBehaviour
 			// hacked up mouse, not good but there anyways
 			float zLookAtOffset = Mathf.Pow( Input.GetAxis("RSHorizontal"), 5) * rsHorizontalSensitivity * Time.deltaTime;
 			zLookAtOffset += Input.GetAxis("Mouse X") * Time.deltaTime * 150.0f;
+			zLookAtOffset += lmcPlayerControls.horizontalLook * rsHorizontalSensitivity * Time.deltaTime;
 
 			float yLookAtOffset = Mathf.Pow( Input.GetAxis("RSVertical"), 3) * rsVerticalSensitibity * Time.deltaTime ;
 			yLookAtOffset += -Input.GetAxis("Mouse Y") * Time.deltaTime * 150.0f;
