@@ -41,12 +41,11 @@ public class LMC_PlayerControls : MonoBehaviour
 
 			float LMCValue  = Quaternion.LookRotation(firstHand.Direction.ToUnity(), -firstHand.PalmNormal.ToUnity()).eulerAngles.z;
 
-			Debug.Log(  firstHand.PalmNormal.Roll );
+			//Debug.Log(  firstHand.PalmNormal.Yaw );
 			Vector3 palmNormal = UnityVectorExtension.ToUnity( firstHand.Direction );
 			Debug.DrawLine(transform.position, transform.position + new Vector3(firstHand.PalmNormal.Roll , 0, 0) * 2.150f, Color.green, 0, false);
-
-			//Debug.DrawLine(transform.position, transform.position + firstHand.Direction.ToUnity() * 2.150f, Color.green, 0, false);
-			//Debug.DrawLine(transform.position, transform.position + -firstHand.PalmNormal.ToUnity() * 2.150f, Color.red, 0, false);
+			Debug.DrawLine(transform.position, transform.position + new Vector3(0 , firstHand.Direction.Pitch, 0) * 2.150f, Color.blue, 0, false);
+			Debug.DrawLine(transform.position, transform.position + new Vector3(0 , 0, firstHand.Direction.Yaw) * 2.150f, Color.red, 0, false);
 		}
 
 	}
