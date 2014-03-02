@@ -17,6 +17,11 @@ public class LMC_PlayerControls : MonoBehaviour
 	public float verticalMove;
 	public float horizontalLook;
 
+	float[] sphereRadiusRollingAverageArray;
+	int sphereRadiusRollingAverageLength = 10;	
+	int sphereRadusRollingAverageCurrentIndex = 0;
+	public float sphereRadiusRollingAverage = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -24,6 +29,8 @@ public class LMC_PlayerControls : MonoBehaviour
 		// Leap stuff
 		controller = new Controller();
 		controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
+
+		sphereRadiusRollingAverageArray = new float[sphereRadiusRollingAverageLength];
 
 	}
 	
@@ -68,11 +75,23 @@ public class LMC_PlayerControls : MonoBehaviour
 		if(currentFrameHand.IsValid)
 		{
 			float ballRadius = currentFrameHand.SphereRadius;
-			Debug.Log( ballRadius );
-			if(ballRadius < 80)
+
+			sphereRadiusRollingAverageArray[sphereRadusRollingAverageCurrentIndex] = ballRadius;
+			sphereRadusRollingAverageCurrentIndex += 1;
+			if(sphereRadusRollingAverageCurrentIndex >= sphereRadiusRollingAverageLength)
+				sphereRadusRollingAverageCurrentIndex = 0;
+
+			for(int i =0; i < sphereRadiusRollingAverageArray.Length; i++ )
+			{
+				sphereRadiusRollingAverage += sphereRadiusRollingAverageArray[i]; 
+			}
+			sphereRadiusRollingAverage = sphereRadiusRollingAverage / sphereRadiusRollingAverageArray.Length;
+
+			//Debug.Log( sphereRadiusRollingAverage < 70 );
+			if(sphereRadiusRollingAverage < 70)
 			{
 				playerScript.isLMCWarping = true;
-				playerScript.energyCounter += Time.deltaTime * playerScript.currentBoostFactor;
+				playerScript.energyCounter += 0.25f * Time.deltaTime * playerScript.currentBoostFactor;
 				Debug.Log("WARPING");
 			}
 		}
