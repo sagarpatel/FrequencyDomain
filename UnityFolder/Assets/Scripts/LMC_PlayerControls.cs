@@ -6,6 +6,7 @@ public class LMC_PlayerControls : MonoBehaviour
 {
 
 	PlayerScript playerScript;
+	AcrobaticsScript acrobaticsScript;
 
 	Controller controller;
 
@@ -26,18 +27,20 @@ public class LMC_PlayerControls : MonoBehaviour
 	void Start () 
 	{
 		playerScript = GameObject.FindWithTag("Player").GetComponent<PlayerScript>();
+		acrobaticsScript = GameObject.FindWithTag("CameraHolder").GetComponent<AcrobaticsScript>();
+		
 		// Leap stuff
 		controller = new Controller();
 		controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
+		controller.Config.SetFloat("Gesture.Circle.MinArc", Mathf.PI );
+		controller.Config.Save();
 
 		sphereRadiusRollingAverageArray = new float[sphereRadiusRollingAverageLength];
-
 	}
 	
 	// Update is called once per frame
 	void Update () 
-	{
-		
+	{		
 		Frame currentFrame = controller.Frame();
 
 		// using palm / hand 		
@@ -45,12 +48,11 @@ public class LMC_PlayerControls : MonoBehaviour
 		Hand firstHand = currentFrame.Hands[0];
 		HandleMovement( firstHand );
 
-
 		// warping
 		//Hand secondHand = currentFrame.Hands[1]
 		playerScript.isLMCWarping = false;
 		HandleWarp( firstHand );
-
+		HandleBarrelRoll(currentFrame);
 	}
 
 	void HandleMovement(Hand currentFrameHand)
@@ -92,9 +94,40 @@ public class LMC_PlayerControls : MonoBehaviour
 			{
 				playerScript.isLMCWarping = true;
 				playerScript.energyCounter += 0.25f * Time.deltaTime * playerScript.currentBoostFactor;
-				Debug.Log("WARPING");
+				//Debug.Log("WARPING");
 			}
 		}
+	}
+
+	void HandleBarrelRoll(Frame frame)
+	{
+
+		if(!frame.Gestures().IsEmpty)
+		{
+			Gesture gesture = frame.Gestures()[0];
+			CircleGesture circleGesture = new CircleGesture(gesture);
+
+			float direction = 1.0f;
+			if (circleGesture.Pointable.Direction.AngleTo(circleGesture.Normal) <= Mathf.PI/2) 
+				direction *= 1.0f;
+			else
+				direction *= -1.0f;
+
+
+			//Debug.Log(circleGesture.Progress);
+			//Debug.Log(gesture.IsValid);
+
+			float circleCircumference = 2.0f * Mathf.PI * circleGesture.Radius;
+			float distanceCovered = circleCircumference * circleGesture.Progress;
+
+			float averageSpeed = distanceCovered / gesture.Duration;
+			averageSpeed *= 2000.0f;
+			averageSpeed *= direction;
+		
+			acrobaticsScript.barrelRollTriggerCounter += Time.deltaTime * averageSpeed;
+
+		}
+
 	}
 
 
