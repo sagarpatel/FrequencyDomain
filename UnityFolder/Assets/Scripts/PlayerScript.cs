@@ -21,6 +21,7 @@ public class PlayerScript : MonoBehaviour
 	public float rampUpFactor = 1.0f;
 	public float rampUpCounter = 0;
 
+	public float currentBoostFactor;
 	public float[] boostFactorArray = new float[3];
 	public float[] boostTreasholdArray = new float[2];
 	public int boostStage = 0;
@@ -78,6 +79,7 @@ public class PlayerScript : MonoBehaviour
 
 	GeneralEditorScript editor;
 
+	public bool isLMCWarping = false;
 
 	// Use this for initialization
 	void Start () 
@@ -262,8 +264,9 @@ public class PlayerScript : MonoBehaviour
 
 			float boostFactor = 0;
 			boostFactor = boostFactorArray[boostStage];
+			currentBoostFactor = boostFactor;
 
-			if( Input.GetButton("Warp")  )
+			if( Input.GetButton("Warp") || isLMCWarping == true )
 			{
 				energyCounter += Time.deltaTime * boostFactor;
 			}
@@ -282,6 +285,8 @@ public class PlayerScript : MonoBehaviour
 			}
 
 			float rgbValue =  energyCounter/(181 - originalFieldOfView) ;
+
+			//Debug.Log(energyCounter);
 
 			if( originalFieldOfView + energyCounter < 180 )
 			{
