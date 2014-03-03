@@ -21,7 +21,9 @@ public class LMC_PlayerControls : MonoBehaviour
 	float[] sphereRadiusRollingAverageArray;
 	int sphereRadiusRollingAverageLength = 10;	
 	int sphereRadusRollingAverageCurrentIndex = 0;
-	public float sphereRadiusRollingAverage = 0;
+	public float sphereRadiusRollingAverage = 100;
+
+	float ballRadius = 0;
 
 	// Use this for initialization
 	void Start () 
@@ -57,6 +59,10 @@ public class LMC_PlayerControls : MonoBehaviour
 
 	void HandleMovement(Hand currentFrameHand)
 	{
+		horizontalMove = 0;
+		verticalMove = 0;
+		horizontalLook = 0;
+
 		if(currentFrameHand.IsValid)
 		{
 			horizontalMove =  hMoveScale * currentFrameHand.PalmNormal.Roll / Mathf.PI ;
@@ -69,14 +75,17 @@ public class LMC_PlayerControls : MonoBehaviour
 			//Debug.DrawLine(transform.position, transform.position + new Vector3(0 , 0, currentFrameHand.Direction.Yaw) * 2.150f, Color.red, 0, false);
 		}
 		playerScript.HandleControls(-horizontalMove, -verticalMove);
+
+		//Debug.Log(horizontalMove);
 	}
 
 	void HandleWarp(Hand currentFrameHand)
 	{
+		ballRadius = 0;
 
 		if(currentFrameHand.IsValid)
 		{
-			float ballRadius = currentFrameHand.SphereRadius;
+			ballRadius = currentFrameHand.SphereRadius;
 
 			sphereRadiusRollingAverageArray[sphereRadusRollingAverageCurrentIndex] = ballRadius;
 			sphereRadusRollingAverageCurrentIndex += 1;
@@ -92,8 +101,8 @@ public class LMC_PlayerControls : MonoBehaviour
 			//Debug.Log( sphereRadiusRollingAverage < 70 );
 			if(sphereRadiusRollingAverage < 70)
 			{
-				playerScript.isLMCWarping = true;
-				playerScript.energyCounter += 0.25f * Time.deltaTime * playerScript.currentBoostFactor;
+				//playerScript.isLMCWarping = true;
+				//playerScript.energyCounter += 0.25f * Time.deltaTime * playerScript.currentBoostFactor;
 				//Debug.Log("WARPING");
 			}
 		}
@@ -101,7 +110,8 @@ public class LMC_PlayerControls : MonoBehaviour
 
 	void HandleBarrelRoll(Frame frame)
 	{
-
+		// circle drawing style
+		/*
 		if(!frame.Gestures().IsEmpty)
 		{
 			Gesture gesture = frame.Gestures()[0];
@@ -125,6 +135,18 @@ public class LMC_PlayerControls : MonoBehaviour
 			averageSpeed *= direction;
 		
 			acrobaticsScript.barrelRollTriggerCounter += Time.deltaTime * averageSpeed;
+		}
+		*/
+
+		// ball squeeze style
+		if(sphereRadiusRollingAverage < 70)
+		{
+			Debug.Log(sphereRadiusRollingAverage);
+			if( Mathf.Abs(horizontalMove) > 10.0f )
+			{
+				acrobaticsScript.barrelRollTriggerCounter += -Mathf.Sign(horizontalMove) * Time.deltaTime * 5.0f;
+			}
+
 
 		}
 
