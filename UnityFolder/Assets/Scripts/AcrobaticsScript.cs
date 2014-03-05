@@ -13,11 +13,15 @@ public class AcrobaticsScript : MonoBehaviour
 	GeneralEditorScript editor;
 	PlayerScript playerScript;
 
+	Quaternion initialRotation;
+
 	// Use this for initialization
 	void Start () 
 	{
 		editor = (GeneralEditorScript)GameObject.FindWithTag("Editor").GetComponent("GeneralEditorScript");
 		playerScript = (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript");
+
+		initialRotation = transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -76,6 +80,11 @@ public class AcrobaticsScript : MonoBehaviour
 			eulerRot = transform.eulerAngles;
 		}
 	
+	}
+
+	public void RotateToInitialRotation()
+	{
+		transform.rotation = Quaternion.Slerp(transform.rotation, initialRotation, 1.0f * Time.deltaTime);
 	}
 
 

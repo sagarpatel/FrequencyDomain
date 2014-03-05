@@ -74,9 +74,16 @@ public class LMC_PlayerControls : MonoBehaviour
 			//Debug.DrawLine(transform.position, transform.position + new Vector3(0 , currentFrameHand.Direction.Pitch, 0) * 2.150f, Color.blue, 0, false);
 			//Debug.DrawLine(transform.position, transform.position + new Vector3(0 , 0, currentFrameHand.Direction.Yaw) * 2.150f, Color.red, 0, false);
 		}
-		playerScript.HandleControls(-horizontalMove, -verticalMove);
+		if(Mathf.Abs(horizontalMove) < 5)
+		{
+			acrobaticsScript.RotateToInitialRotation();
+		}
+		else
+		{
+			playerScript.HandleControls(-horizontalMove, -verticalMove);
+		}
 
-		//Debug.Log(horizontalMove);
+		Debug.Log(horizontalMove);
 	}
 
 	void HandleWarp(Hand currentFrameHand)
