@@ -83,7 +83,7 @@ public class LMC_PlayerControls : MonoBehaviour
 			playerScript.HandleControls(-horizontalMove, -verticalMove);
 		}
 
-		Debug.Log(horizontalMove);
+		//Debug.Log(horizontalMove);
 	}
 
 	void HandleWarp(Hand currentFrameHand)
