@@ -9,9 +9,6 @@ public class PVA : MonoBehaviour
 	public Vector3 velocity;
 	public Vector3 acceleration;
 
-	public Vector3 intialVelocity;
-	public Vector3 intialAcceleration;
-
 	[Range(0,0.1f)]
 	public float velocityDecay = 0;
 
@@ -22,9 +19,7 @@ public class PVA : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		position = transform.position; //new Vector3(0, 0, 0);
-		velocity = intialVelocity;
-		acceleration = intialAcceleration;
+		
 	}
 	
 	// Update is called once per frame
