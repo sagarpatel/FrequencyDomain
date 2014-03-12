@@ -16,18 +16,17 @@ public class CreaturePartsEmitter : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if(audioDirector.averageAmplitude > 10.0f)
+		
+		for(int i = 0 ; i < audioDirector.decadesAveragesArray.Length; i += 1)
 		{
-			for(int i = 0 ; i < audioDirector.decadesAveragesArray.Length; i += 1)
+			float decadeAverage = audioDirector.decadesAveragesArray[i];
+			if( decadeAverage > 10.0f)
 			{
-				float decadeAverage = audioDirector.decadesAveragesArray[i];
-				if( decadeAverage > 10.0f)
-				{
-					GameObject newPart = (GameObject)Instantiate(partPrefab, transform.position, Quaternion.identity);
-					newPart.GetComponent<PVA>().velocity = 20.0f * decadeAverage * GetEmissionDirection(i);			
-				}
+				GameObject newPart = (GameObject)Instantiate(partPrefab, transform.position, Quaternion.identity);
+				newPart.GetComponent<PVA>().velocity = 20.0f * decadeAverage * GetEmissionDirection(i);			
 			}
 		}
+	
 
 	}
 
