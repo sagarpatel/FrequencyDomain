@@ -101,16 +101,13 @@ public class FlyingCreatureScript : MonoBehaviour
 			creaturePartsList.Add(partsArray[i]);
 			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);
 
-			partsRandomStartPositionsList.Add( creatureManagerScript.GenerateRandomPointOnSemiSpehere());  // set random target start positions for each part
+			//partsRandomStartPositionsList.Add( creatureManagerScript.GenerateRandomPointOnSemiSpehere());  // set random target start positions for each part
+			partsRandomStartPositionsList.Add( creatureManagerScript.transform.position );
 		}
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
 
-		
-
 		creatureState = CreatureStates.MovingPartsToRandomStartPositions;
-
-	
 	}
 
 	void MovePartsToRandomStartPositions()

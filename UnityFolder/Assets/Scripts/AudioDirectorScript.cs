@@ -44,6 +44,8 @@ public class AudioDirectorScript : MonoBehaviour
 
 	public int currentSampleRate = 44100;
 
+	public float averageAmplitude = 0;
+
 	AudioLowPassFilter lowPassFilter;
 	Camera mainCamera;
 
@@ -129,6 +131,8 @@ public class AudioDirectorScript : MonoBehaviour
 		SpeadLocalMaxima();
 
 		CalculateRBG();
+
+		CalculateAverageAmplitude();
 
 		HandleLowPassFilter(); // does affect the landscape
 
@@ -222,6 +226,18 @@ public class AudioDirectorScript : MonoBehaviour
 	
 
 		calculatedRGB = new Color( tempR * rScale, tempG * gScale, tempB * bScale, 1.0f);
+	}
+
+	void CalculateAverageAmplitude()
+	{
+		float ampl = 0;
+
+		for(int i = 0; i < pseudoLogArray.Length; i++)
+			ampl += pseudoLogArray[i];
+
+		ampl = ampl / (float)pseudoLogArray.Length;
+
+		averageAmplitude = 100.0f *ampl;
 	}
 
 
