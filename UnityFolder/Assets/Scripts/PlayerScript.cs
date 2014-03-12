@@ -75,7 +75,7 @@ public class PlayerScript : MonoBehaviour
 	List<Camera> mainCameraComponentList = new List<Camera>();
 	List<Bloom> bloomScriptList = new List<Bloom>();
 	List<Light> meshLightsList = new List<Light>();
-	CreatureManagerScript creatureManagerScript;
+	CreatureManagerEmittedParts creatureManagerEmittedParts;
 
 	GeneralEditorScript editor;
 
@@ -104,7 +104,7 @@ public class PlayerScript : MonoBehaviour
 			meshLightsList.Add( (Light)(meshLightsObjectsArray[i]).GetComponent("Light") );
 		}
 
-		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
+		creatureManagerEmittedParts = (CreatureManagerEmittedParts)GameObject.FindWithTag("CreatureManager").GetComponent("CreatureManagerEmittedParts");
 
 		editor = (GeneralEditorScript)GameObject.FindWithTag("Editor").GetComponent("GeneralEditorScript");
 
@@ -166,7 +166,7 @@ public class PlayerScript : MonoBehaviour
 					jumpApexHeight = 0;
 					jumpVelocity = velocity.y;
 					isFlyingUpward = true;
-					if( jumpVelocity > creatureManagerScript.playerMinimumJumpVelocity)
+					if( jumpVelocity > creatureManagerEmittedParts.playerMinimumJumpVelocity)
 					{
 						isRecording = true;
 						recordingLength = 0;
@@ -175,7 +175,7 @@ public class PlayerScript : MonoBehaviour
 						//Debug.Log( "Recording length:" + positionRecordingList.Count.ToString() );
 						//Debug.Log("Framecount: " + Time.frameCount.ToString() );
 
-						creatureManagerScript.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
+						creatureManagerEmittedParts.AttemptSpwanCreature(jumpPosition, jumpVelocity); // create creature, does not assemble instantly
 					}
 				}
 				else // in free fall

@@ -35,7 +35,7 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 
 		creatureBodyPartsArray = GameObject.FindGameObjectsWithTag("CreatureBodyPart");
 
-		if(creatureBodyPartsArray.Length == 0)
+		if(creatureBodyPartsArray.Length != 0)
 		{
 			// sort parts
 			sortBodyParts();
