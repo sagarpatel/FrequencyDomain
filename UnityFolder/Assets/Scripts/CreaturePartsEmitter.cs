@@ -25,7 +25,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 			if( decadeAverage > 10.0f)
 			{
 				GameObject newPart = (GameObject)Instantiate(partPrefab, GetEmissionPosition(i), Quaternion.identity);
-				newPart.GetComponent<PVA>().velocity = 20.0f * decadeAverage * GetEmissionDirection(i);			
+				newPart.GetComponent<PVA>().velocity = 20.0f * decadeAverage * GetEmissionDirection(i);	
+				newPart.transform.localScale = newPart.transform.localScale * decadeAverage ;		
 			}
 		}
 	
