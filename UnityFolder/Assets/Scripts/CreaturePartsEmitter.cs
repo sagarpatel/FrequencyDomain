@@ -5,6 +5,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 {
 	public GameObject partPrefab;
 
+	public float emisionRadius = 0.0f;
+
 	AudioDirectorScript audioDirector;
 
 	// Use this for initialization
@@ -22,7 +24,7 @@ public class CreaturePartsEmitter : MonoBehaviour
 			float decadeAverage = audioDirector.decadesAveragesArray[i];
 			if( decadeAverage > 10.0f)
 			{
-				GameObject newPart = (GameObject)Instantiate(partPrefab, transform.position, Quaternion.identity);
+				GameObject newPart = (GameObject)Instantiate(partPrefab, GetEmissionPosition(i), Quaternion.identity);
 				newPart.GetComponent<PVA>().velocity = 20.0f * decadeAverage * GetEmissionDirection(i);			
 			}
 		}
@@ -46,5 +48,21 @@ public class CreaturePartsEmitter : MonoBehaviour
 		return directionVector;
 	}
 
+	Vector3 GetEmissionPosition(int decade)
+	{
+		Vector3 emissionPos = new Vector3(0, 0, 0);
+
+		float angle = (float)decade/10.0f * Mathf.PI;
+		emissionPos.x = emisionRadius * Mathf.Cos(angle);
+		emissionPos.y = emisionRadius * Mathf.Sin(angle);
+
+		// apply rotation of the emitter itself
+		emissionPos = transform.rotation * emissionPos;
+		// apply emitter position offset
+		emissionPos += transform.position;
+
+		return emissionPos;
+
+	}
 
 }
