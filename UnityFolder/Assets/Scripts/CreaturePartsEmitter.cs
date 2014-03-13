@@ -27,9 +27,15 @@ public class CreaturePartsEmitter : MonoBehaviour
 			if( decadeAverage > minDecadeAmplitude)
 			{
 				GameObject newPart = (GameObject)Instantiate(partPrefab, GetEmissionPosition(i), Quaternion.identity);
-				newPart.GetComponent<PVA>().velocity = 1000.0f * GetEmissionDirection(i);	
+				// set rotation
+				newPart.transform.forward = transform.forward;
+				newPart.transform.Rotate(newPart.transform.forward, GetEmissionRotationAngle(i), Space.World);
+				// set scale
 				float scaler = 1.0f + 4.0f *(decadeAverage - minDecadeAmplitude);
 				newPart.transform.localScale = newPart.transform.localScale * scaler; //Mathf.Pow(scaler, 2.0f) ;		
+				// set velocity
+				newPart.GetComponent<PVA>().velocity = 1000.0f * GetEmissionDirection(i);	
+				
 			}
 		}
 	
@@ -67,6 +73,14 @@ public class CreaturePartsEmitter : MonoBehaviour
 
 		return emissionPos;
 
+	}
+
+	float GetEmissionRotationAngle(int decade)
+	{
+		float rotationAngle;
+		float angle = (float)decade/10.0f * Mathf.PI;
+		rotationAngle = - 360.0f * Mathf.Cos(angle)/(2*Mathf.PI) ;
+		return rotationAngle;
 	}
 
 }
