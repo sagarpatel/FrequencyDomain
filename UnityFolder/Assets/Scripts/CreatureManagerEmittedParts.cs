@@ -20,7 +20,7 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 
 	public Vector3 creatureSpawnPositionOffset = new Vector3(-150,0,0);
 
-	GameObject[] creatureBodyPartsArray;
+	public GameObject[] creatureBodyPartsArray;
 
 	// Use this for initialization
 	void Start () 
@@ -38,7 +38,10 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 		if(creatureBodyPartsArray.Length != 0)
 		{
 			// sort parts
-			sortBodyParts();
+			if(creatureBodyPartsArray[0] != null)
+			{
+				//sortBodyParts();
+			}
 		}
 	
 	}
@@ -52,7 +55,10 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 			bool canBuildCreature = false;
 			for(int i = 0; i < creatureBodyPartsArray.Length; i++) 
 			{
-				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureBodyPartsArray[i].GetComponent("CreaturePartsGeneralScript");
+				if(creatureBodyPartsArray[i] == null)
+					continue;
+
+				CreaturePart creaturePartGeneralScript = (CreaturePart)creatureBodyPartsArray[i].GetComponent("CreaturePart");
 				if( creaturePartGeneralScript.isPartOfCreature == false )
 					canBuildCreature = true;
 			}
@@ -73,7 +79,10 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 
 			for(int i = 0; i < creatureBodyPartsArray.Length; i++)  
 			{
-				CreaturePartsGeneralScript creaturePartGeneralScript = (CreaturePartsGeneralScript)creatureBodyPartsArray[i].GetComponent("CreaturePartsGeneralScript");
+				if(creatureBodyPartsArray[i] == null)
+					continue;
+
+				CreaturePart creaturePartGeneralScript = (CreaturePart)creatureBodyPartsArray[i].GetComponent("CreaturePart");
 				if( creaturePartGeneralScript.isPartOfCreature == false )
 				{
 					partsForNewCreatureList.Add(creatureBodyPartsArray[i]);
@@ -116,7 +125,37 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 		return randomPosition;
 	}
 
+	void sortBodyParts()
+	{
+		List<GameObject> tempBodyList = new List<GameObject>();
+		tempBodyList.Add(creatureBodyPartsArray[0]);
+		for(int i = 1; i < creatureBodyPartsArray.Length; i++)
+		{
+			float curentLife = ((CreaturePart)creatureBodyPartsArray[i].GetComponent("CreaturePart")).lifetime;
+			
+			int oldListCount = tempBodyList.Count;
 
+			foreach(GameObject part in tempBodyList)
+			{
+				float comparisonLife = ((CreaturePart)part.GetComponent("CreaturePart")).lifetime;
+				if( curentLife >= comparisonLife ) // oldest at top
+				{
+					tempBodyList.Insert(tempBodyList.IndexOf(part), creatureBodyPartsArray[i]);
+					break;
+				}
+
+			}
+			int newListCount = tempBodyList.Count;
+			if( newListCount == oldListCount ) // if not insterted above anything else
+				tempBodyList.Add(creatureBodyPartsArray[i]);
+		}
+
+		creatureBodyPartsArray = tempBodyList.ToArray();
+
+	}
+
+	// old code, based on the parabolic structure
+	/*
 	void sortBodyParts()
 	{
 		List<GameObject> tempBodyList = new List<GameObject>();
@@ -145,6 +184,7 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 		creatureBodyPartsArray = tempBodyList.ToArray();
 
 	}
+	*/
 
 
 }

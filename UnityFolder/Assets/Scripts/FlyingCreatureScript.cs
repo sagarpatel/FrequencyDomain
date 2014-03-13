@@ -39,11 +39,10 @@ public class FlyingCreatureScript : MonoBehaviour
 	float waitCounter = 0;
 
 	public float spawnPlayerJumpVelocity = 0;
-	List<Vector3> partsRandomStartPositionsList = new List<Vector3>();
+	
 	Color partsStartColor = new Color(1,1,1,1);
 
 	PlayerScript playerScript;
-	CreatureManagerScript creatureManagerScript;
 
 	public float frameOfBirth;
 
@@ -90,19 +89,16 @@ public class FlyingCreatureScript : MonoBehaviour
 	{
 
 		playerScript = (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript");
-		creatureManagerScript = (CreatureManagerScript)GameObject.Find("CreatureManager").GetComponent("CreatureManagerScript");
 
 		List<GameObject> creaturePartsList = new List<GameObject>();
 		List<Vector3> creaturePartsOriginalPositionList = new List<Vector3>();
 		for(int i = 0; i < partsArray.Length; i++ )
 		{
 			partsArray[i].transform.parent = transform;
-			((CreaturePartsGeneralScript)partsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = true;
+			((CreaturePart)partsArray[i].GetComponent("CreaturePart")).isPartOfCreature = true;
+			partsArray[i].GetComponent<PVA>().enabled = false;
 			creaturePartsList.Add(partsArray[i]);
-			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);
-
-			//partsRandomStartPositionsList.Add( creatureManagerScript.GenerateRandomPointOnSemiSpehere());  // set random target start positions for each part
-			partsRandomStartPositionsList.Add( creatureManagerScript.transform.position );
+			creaturePartsOriginalPositionList.Add(partsArray[i].transform.position);;
 		}
 		creaturePartsArray = creaturePartsList.ToArray();
 		creaturePartsOriginalPositionArray = creaturePartsOriginalPositionList.ToArray();
@@ -112,6 +108,18 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void MovePartsToRandomStartPositions()
 	{
+
+
+		// if starting to fall down,  lock down positions and move to next state
+		if(playerScript.velocity.y < 0)
+		{
+			for(int i = 0; i < creaturePartsArray.Length; i++)
+				creaturePartsOriginalPositionArray[i] = creaturePartsArray[i].transform.position;
+	
+			creatureState = CreatureStates.AssemblingParts;
+		}
+
+		/*
 		// normal update, move towards start target posotions
 		float velocityRatio = 1.0f - (playerScript.velocity.y/spawnPlayerJumpVelocity);
 		for(int i = 0; i < creaturePartsArray.Length; i++)
@@ -127,7 +135,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	
 			creatureState = CreatureStates.AssemblingParts;
 		}
-
+		*/
 
 
 	}
@@ -282,6 +290,10 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void AnimateDeath_SendoffParts()
 	{
+
+		creatureState = CreatureStates.RelinquishingParts;
+
+		/*
 		float sendoffSpeedScale = 1.5f;
 		float deltaCounter = 0;		
 		for(int i = 0; i < creaturePartsArray.Length; i++)
@@ -306,6 +318,10 @@ public class FlyingCreatureScript : MonoBehaviour
 		float deltaAverage = deltaCounter/(float)creaturePartsArray.Length;
 		if(deltaAverage < 5)
 			creatureState = CreatureStates.RelinquishingParts;
+
+			*/
+
+
 	}
 
 	void RelinquishParts()
@@ -313,9 +329,9 @@ public class FlyingCreatureScript : MonoBehaviour
 		// relinquish all parts to the creature manager
 		for(int i = 0; i < creaturePartsArray.Length; i++)
 		{
-			creaturePartsArray[i].transform.parent = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).originalArrayTransform;
-			((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).isPartOfCreature = false;
-			creaturePartsArray[i].renderer.material.color = ((CreaturePartsGeneralScript)creaturePartsArray[i].GetComponent("CreaturePartsGeneralScript")).partsArrayColor ;
+			//creaturePartsArray[i].transform.parent = ((CreaturePart)creaturePartsArray[i].GetComponent("CreaturePart")).originalArrayTransform;
+			((CreaturePart)creaturePartsArray[i].GetComponent("CreaturePart")).isPartOfCreature = false;
+			//creaturePartsArray[i].renderer.material.color = ((CreaturePart)creaturePartsArray[i].GetComponent("CreaturePart")).partsArrayColor ;
 		}
 		// destroy
 		Object.Destroy(this.gameObject);

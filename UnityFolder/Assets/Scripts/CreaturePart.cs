@@ -3,7 +3,8 @@ using System.Collections;
 
 public class CreaturePart : MonoBehaviour 
 {
-	float lifetime = 0;
+	public float lifetime = 0;
+	public bool isPartOfCreature = false;
 
 	// Use this for initialization
 	void Start () 
@@ -16,7 +17,10 @@ public class CreaturePart : MonoBehaviour
 	{
 		lifetime += Time.deltaTime;
 
-		if(lifetime > 6.0f)
-			Destroy(gameObject, 0.0f);
+		if(lifetime > 4.0f)
+		{
+			if(isPartOfCreature == false)
+				Destroy(gameObject, 0.0f);
+		}
 	}
 }
