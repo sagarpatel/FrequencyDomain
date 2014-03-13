@@ -267,6 +267,9 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	void AnimateDeath_ShootUpParts()
 	{
+		creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
+		
+		/*
 		Vector3 bottomPosition = finalAliveHeadPosition;
 		Vector3 topPosition = bottomPosition + new Vector3(0, positionsRecordingsList.Count * 1.5f, 0); // rise is proportional to number of parts
 		shootUpLerpCounter += 1f * Time.deltaTime;
@@ -284,7 +287,7 @@ public class FlyingCreatureScript : MonoBehaviour
 			else
 				creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
 		}
-			
+		*/			
 
 	}
 
