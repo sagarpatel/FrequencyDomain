@@ -35,6 +35,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 				newPart.transform.localScale = newPart.transform.localScale * scaler; //Mathf.Pow(scaler, 2.0f) ;		
 				// set velocity
 				newPart.GetComponent<PVA>().velocity = 1000.0f * GetEmissionDirection(i);	
+				// set Color
+				newPart.renderer.material.color = audioDirector.calculatedRGB;
 				
 			}
 		}

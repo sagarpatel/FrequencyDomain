@@ -31,6 +31,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	public Color currentColor;
 
+	public Material mainMeshMaterial;
+
 	GameObject calculationsMiniMeshGameObject;
 	Mesh calculationsMiniMesh;
 	Vector3[] miniVertsArray;
@@ -114,8 +116,9 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 		normalsArray = mesh.normals;
 
-		GetComponent<MeshRenderer>().materials[0].color = Color.green;
-		renderer.material.shader = Shader.Find("Parallax Diffuse");
+		//GetComponent<MeshRenderer>().materials[0].color = Color.green;
+		//renderer.material.shader = Shader.Find("Parallax Diffuse");
+		renderer.material = mainMeshMaterial;
 
 		//GetComponent<MeshCollider>().sharedMesh = mesh;
 
