@@ -105,8 +105,9 @@ public class CreatureManagerEmittedParts : MonoBehaviour
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeedStart = creatureForwardSpeedStart;
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).forwardSpeedEnd = creatureForwardSpeedEnd;
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).plabackTimeScale = creaturePlaybackTimeScale;
-
 			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).spawnPlayerJumpVelocity = playerJumpVelocity;
+
+			((FlyingCreatureScript)newCreature.GetComponent("FlyingCreatureScript")).finalPosition = GameObject.FindWithTag("CreaturePartsEmitter").transform.position;
 		}
 
 

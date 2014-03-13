@@ -46,6 +46,8 @@ public class FlyingCreatureScript : MonoBehaviour
 
 	public float frameOfBirth;
 
+	public Vector3 finalPosition;
+
 
 	// Use this for initialization
 	void Start () 
@@ -202,6 +204,11 @@ public class FlyingCreatureScript : MonoBehaviour
 		playerScript.colorRecordingList.Clear();
 		//Debug.Log("CLEARED DATA");
 		// change state
+
+		positionsRecordingsList.Add(finalPosition);
+		rotationsRecordingsList.Add(Quaternion.identity);
+		colorsRecordingsList.Add(Color.white);
+
 		creatureState = CreatureStates.FollowingPath;	
 
 		// set initial color
@@ -268,7 +275,7 @@ public class FlyingCreatureScript : MonoBehaviour
 	void AnimateDeath_ShootUpParts()
 	{
 		creatureState = CreatureStates.AnimatingDeath_SendingoffParts;
-		
+
 		/*
 		Vector3 bottomPosition = finalAliveHeadPosition;
 		Vector3 topPosition = bottomPosition + new Vector3(0, positionsRecordingsList.Count * 1.5f, 0); // rise is proportional to number of parts
