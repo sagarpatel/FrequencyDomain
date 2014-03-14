@@ -266,6 +266,11 @@ public class PlayerScript : MonoBehaviour
 			boostFactor = boostFactorArray[boostStage];
 			currentBoostFactor = boostFactor;
 
+			if(isOVR)
+			{
+				boostFactor = boostFactor/3.0f;
+			}
+
 			if( Input.GetButton("Warp") || isLMCWarping == true )
 			{
 				energyCounter += Time.deltaTime * boostFactor;
@@ -296,7 +301,7 @@ public class PlayerScript : MonoBehaviour
 				if(isOVR)
 				{
 					ovrCameraController.SetVerticalFOV(1.5f*mainCameraComponent.fieldOfView);
-					ovrCameraController.BackgroundColor = mainCameraComponent.backgroundColor;
+					ovrCameraController.BackgroundColor = 1.5f * mainCameraComponent.backgroundColor;
 				}
 			}
 		}
