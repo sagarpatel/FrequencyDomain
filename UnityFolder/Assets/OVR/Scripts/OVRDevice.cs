@@ -7,13 +7,25 @@ Authors     :   Peter Giokaris
 
 Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Use of this software is subject to the terms of the Oculus LLC license
-agreement provided at the time of installation or download, or which
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 //-------------------------------------------------------------------------------------
@@ -81,13 +93,27 @@ public class OVRDevice : MonoBehaviour
 	[DllImport ("OculusPlugin")]
     private static extern bool OVR_SetSensorPredictionTime(int sensorID, float predictionTime);
 	[DllImport ("OculusPlugin")]
-    private static extern bool OVR_GetSensorAccelGain(int sensorID, ref float accelGain);
-	[DllImport ("OculusPlugin")]
-    private static extern bool OVR_SetSensorAccelGain(int sensorID, float accelGain);
-	[DllImport ("OculusPlugin")]
     private static extern bool OVR_EnableYawCorrection(int sensorID, float enable);
 	[DllImport ("OculusPlugin")]
     private static extern bool OVR_ResetSensorOrientation(int sensorID);	
+	
+	// Latest absolute sensor readings (note: in right-hand co-ordinates)
+	[DllImport ("OculusPlugin")]
+    private static extern bool OVR_GetAcceleration(int sensorID, 
+												   ref float x,
+												   ref float y,
+												   ref float z);
+	[DllImport ("OculusPlugin")]
+    private static extern bool OVR_GetAngularVelocity(int sensorID, 
+												   ref float x,
+												   ref float y,
+												   ref float z);
+	[DllImport ("OculusPlugin")]
+    private static extern bool OVR_GetMagnetometer(int sensorID, 
+												   ref float x,
+												   ref float y,
+												   ref float z);
+	
 	
 	// HMD FUNCTIONS
 	[DllImport ("OculusPlugin")]
@@ -104,6 +130,8 @@ public class OVRDevice : MonoBehaviour
 	private static extern bool OVR_GetInterpupillaryDistance(ref float interpupillaryDistance);
 	[DllImport ("OculusPlugin")]
 	private static extern bool OVR_GetLensSeparationDistance(ref float lensSeparationDistance);
+	[DllImport ("OculusPlugin")]	
+	private static extern bool OVR_GetPlayerEyeHeight(ref float eyeHeight);
 	[DllImport ("OculusPlugin")]
 	private static extern bool OVR_GetEyeOffset(ref float leftEye, ref float rightEye);
 	[DllImport ("OculusPlugin")]
@@ -113,6 +141,8 @@ public class OVRDevice : MonoBehaviour
 														     ref float k1, 
 															 ref float k2, 
 															 ref float k3);
+	[DllImport ("OculusPlugin")]
+	private static extern bool OVR_RenderPortraitMode();
 	
 	// LATENCY TEST FUNCTIONS
 	[DllImport ("OculusPlugin")]
@@ -126,43 +156,25 @@ public class OVRDevice : MonoBehaviour
 	
 	
 	// MAGNETOMETER YAW-DRIFT CORRECTION FUNCTIONS
-	// AUTOMATIC
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_BeginMagAutoCalibraton(int sensor);
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_StopMagAutoCalibraton(int sensor);
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_UpdateMagAutoCalibration(int sensor);
-	// MANUAL
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_BeginMagManualCalibration(int sensor);
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_StopMagManualCalibration(int sensor);
-	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_UpdateMagManualCalibration(int sensor);
-	// SHARED
-	[DllImport ("OculusPlugin")]
-	private static extern int OVR_MagNumberOfSamples(int sensor);
 	[DllImport ("OculusPlugin")]
 	private static extern bool OVR_IsMagCalibrated(int sensor);
 	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_SetMagReference(int sensor);
-	[DllImport ("OculusPlugin")]
 	private static extern bool OVR_EnableMagYawCorrection(int sensor, bool enable);
 	[DllImport ("OculusPlugin")]
-	private static extern bool OVR_IsMagYawCorrectionInProgress(int sensor);
-	[DllImport ("OculusPlugin")]
-	private static extern float OVR_GetYawErrorAngle(int sensor);
+	private static extern bool OVR_IsYawCorrectionEnabled(int sensor);	
 	
+	// Different orientations required for different trackers
+	enum SensorOrientation {Head, Other};
 	
 	// PUBLIC
 	public float InitialPredictionTime 							= 0.05f; // 50 ms
-	public float InitialAccelGain  								= 0.05f; // default value
+	public bool  ResetTrackerOnLoad								= true;  // if off, tracker will not reset when new scene
+																	 	 // is loaded
 	
 	// STATIC
 	private static MessageList MsgList 							= new MessageList(0, 0, 0);
 	private static bool  OVRInit 								= false;
-	
+
 	public static int    SensorCount 					 	    = 0;
 	
 	public static String DisplayDeviceName;
@@ -175,6 +187,9 @@ public class OVRDevice : MonoBehaviour
 	public static float  ScreenVCenter 							= 0.0f;	 // meters 
 	public static float  DistK0, DistK1, DistK2, DistK3 		= 0.0f;
 	
+	// Used to reduce the size of render distortion and give better fidelity
+	public static float  DistortionFitScale 					= 1.0f;  	
+	
 	// The physical offset of the lenses, used for shifting both IPD and lens distortion
 	private static float LensOffsetLeft, LensOffsetRight   		= 0.0f;
 	
@@ -184,25 +199,27 @@ public class OVRDevice : MonoBehaviour
 	
 	// Copied from initialized public variables set in editor
 	private static float PredictionTime 						= 0.0f;
-	private static float AccelGain 								= 0.0f;
 	
-	// Used to reduce the size of render distortion and give better fidelity
-	// Accessed with a public static function
-	private static float  DistortionFitScale 					= 0.7f;  // Optimized for DK1 (7")
-	
+	// We will keep map sensors to different numbers to know which sensor is 
+	// attached to which device
+	private static Dictionary<int,int> SensorList = new Dictionary<int, int>(); 
+	private static Dictionary<int,SensorOrientation> SensorOrientationList = 
+			   new Dictionary<int, SensorOrientation>(); 
 	
 	// * * * * * * * * * * * * *
 
 	// Awake
 	void Awake () 
 	{	
-		OVRInit = OVR_Initialize();
+		// Initialize static Dictionary lists first
+		InitSensorList(false); 
+		InitOrientationSensorList();
 		
+		OVRInit = OVR_Initialize();
+	
 		if(OVRInit == false) 
 			return;
 
-        SensorCount = OVR_GetSensorCount();
-		
 		// * * * * * * *
 		// DISPLAY SETUP
 		
@@ -220,16 +237,14 @@ public class OVRDevice : MonoBehaviour
 		// Distortion fit parameters based on if we are using a 5" (Prototype, DK2+) or 7" (DK1) 
 		if (HScreenSize < 0.140f) 	// 5.5"
 		{
-			DistortionFitX = 0.0f;
-			DistortionFitY = 1.0f;
-			
-			// Don't shrink as much (5.5" has denser pixels)
-			DistortionFitScale = 1.0f;
+			DistortionFitX 		= 0.0f;
+			DistortionFitY 		= 1.0f;
 		}
-    	else 						// 7"
+    	else 						// 7" (DK1)
 		{
-			DistortionFitX = -1.0f;
-			DistortionFitY =  0.0f;
+			DistortionFitX 		= -1.0f;
+			DistortionFitY 		=  0.0f;
+			DistortionFitScale 	=  0.7f;
 		}
 		
 		// Calculate the lens offsets for each eye and store 
@@ -238,18 +253,13 @@ public class OVRDevice : MonoBehaviour
 		// * * * * * * *
 		// SENSOR SETUP
 		
+		SensorCount = OVR_GetSensorCount();
+		
 		// PredictionTime set, to init sensor directly
 		if(PredictionTime > 0.0f)
-            OVR_SetSensorPredictionTime(0, PredictionTime);
+            OVR_SetSensorPredictionTime(SensorList[0], PredictionTime);
 		else
-			SetPredictionTime(0, InitialPredictionTime);	
-		
-		// AcelGain set, used to correct gyro with accel. 
-		// Default value is appropriate for typical use.
-		if(AccelGain > 0.0f)
-            OVR_SetSensorAccelGain(0, AccelGain);
-		else
-			SetAccelGain(0, InitialAccelGain);	
+			SetPredictionTime(SensorList[0], InitialPredictionTime);	
 	}
    
 	// Start (Note: make sure to always have a Start function for classes that have
@@ -312,8 +322,12 @@ public class OVRDevice : MonoBehaviour
 	// OnDestroy
 	void OnDestroy()
 	{
-		OVR_Destroy();
-		OVRInit = false;
+		// We may want to turn this off so that values are maintained between level / scene loads
+		if(ResetTrackerOnLoad == true)
+		{
+			OVR_Destroy();
+			OVRInit = false;
+		}
 	}
 	
 	
@@ -336,31 +350,19 @@ public class OVRDevice : MonoBehaviour
 	// SensorPreset
 	public static bool IsSensorPresent(int sensor)
 	{
-		return OVR_IsSensorPresent(sensor);
+		return OVR_IsSensorPresent(SensorList[sensor]);
 	}
-	
+
 	// GetOrientation
 	public static bool GetOrientation(int sensor, ref Quaternion q)
 	{
 		float w = 0, x = 0, y = 0, z = 0;
 
-        if (OVR_GetSensorOrientation(sensor, ref w, ref x, ref y, ref z) == true)
+        if (OVR_GetSensorOrientation(SensorList[sensor], ref w, ref x, ref y, ref z) == true)
 		{
-			q.w =  w;		
-		
-			// Change the co-ordinate system from right-handed to Unity left-handed
-			/*
-			q.x =  x; 
-			q.y =  y;
-			q.z =  -z; 
-			q = Quaternion.Inverse(q);
-			*/
-		
-			// The following does the exact same conversion as above
-			q.x = -x; 
-			q.y = -y;
-			q.z =  z;	
-		
+			q.w = w; q.x = x; q.y = y; q.z = z;	
+			OrientSensor(sensor, ref q);
+						
 			return true;
 		}
 		
@@ -372,14 +374,11 @@ public class OVRDevice : MonoBehaviour
 	{
 		float w = 0, x = 0, y = 0, z = 0;
 
-        if (OVR_GetSensorPredictedOrientation(sensor, ref w, ref x, ref y, ref z) == true)
+        if (OVR_GetSensorPredictedOrientation(SensorList[sensor], ref w, ref x, ref y, ref z) == true)
 		{
-
-			q.w =  w;		
-			q.x = -x; 
-			q.y = -y;
-			q.z =  z;	
-		
+			q.w = w; q.x = x; q.y = y; q.z = z;	
+			OrientSensor(sensor, ref q);
+	
 			return true;
 		}
 		
@@ -390,7 +389,27 @@ public class OVRDevice : MonoBehaviour
 	// ResetOrientation
 	public static bool ResetOrientation(int sensor)
 	{
-        return OVR_ResetSensorOrientation(sensor);
+        return OVR_ResetSensorOrientation(SensorList[sensor]);
+	}
+	
+	// Latest absolute sensor readings (note: in right-hand co-ordinates)
+	
+	// GetAcceleration
+	public static bool GetAcceleration(int sensor, ref float x, ref float y, ref float z)
+	{
+        return OVR_GetAcceleration(SensorList[sensor], ref x, ref y, ref z);
+	}
+
+	// GetAngularVelocity
+	public static bool GetAngularVelocity(int sensor, ref float x, ref float y, ref float z)
+	{
+        return OVR_GetAngularVelocity(SensorList[sensor], ref x, ref y, ref z);
+	}
+	
+	// GetMagnetometer
+	public static bool GetMagnetometer(int sensor, ref float x, ref float y, ref float z)
+	{
+        return OVR_GetMagnetometer(SensorList[sensor], ref x, ref y, ref z);
 	}
 	
 	// GetPredictionTime
@@ -404,7 +423,7 @@ public class OVRDevice : MonoBehaviour
 	public static bool SetPredictionTime(int sensor, float predictionTime)
 	{
 		if ( (predictionTime > 0.0f) &&
-             (OVR_SetSensorPredictionTime(sensor, predictionTime) == true))
+             (OVR_SetSensorPredictionTime(SensorList[sensor], predictionTime) == true))
 		{
 			PredictionTime = predictionTime;
 			return true;
@@ -412,26 +431,7 @@ public class OVRDevice : MonoBehaviour
 		
 		return false;
 	}
-	
-	// GetAccelGain
-	public static float GetAccelGain(int sensor)
-	{		
-		return AccelGain;
-	}
-
-	// SetAccelGain
-	public static bool SetAccelGain(int sensor, float accelGain)
-	{
-		if ( (accelGain > 0.0f) &&
-             (OVR_SetSensorAccelGain(sensor, accelGain) == true))
-		{
-			AccelGain = accelGain;
-			return true;
-		}
 		
-		return false;
-	}
-	
 	// GetDistortionCorrectionCoefficients
 	public static bool GetDistortionCorrectionCoefficients(ref float k0, 
 														   ref float k1, 
@@ -496,7 +496,7 @@ public class OVRDevice : MonoBehaviour
 		if(Application.isEditor)
 			return (Screen.width * 0.5f) / Screen.height;
 		else
-			return (HResolution * 0.5f) / VResolution;
+			return (HResolution * 0.5f) / VResolution;		
 	}
 	
 	// VerticalFOV
@@ -600,85 +600,90 @@ public class OVRDevice : MonoBehaviour
 	}
 	
 	// MAG YAW-DRIFT CORRECTION FUNCTIONS
-	
-	// AUTO MAG CALIBRATION FUNCTIONS
-	
-	// BeginMagAutoCalibraton
-	public static bool BeginMagAutoCalibration(int sensor)
-	{
-		return OVR_BeginMagAutoCalibraton(sensor);
-	}
-	
-	// StopMagAutoCalibraton
-	public static bool StopMagAutoCalibration(int sensor)
-	{
-		return OVR_StopMagAutoCalibraton(sensor);
-	}
-	
-	// UpdateMagAutoCalibration
-	public static bool UpdateMagAutoCalibration(int sensor)
-	{
-		return OVR_UpdateMagAutoCalibration(sensor);
-	}
-	
-	// MANUAL MAG CALIBRATION FUNCTIONS
-	
-	// BeginMagManualCalibration
-	public static bool BeginMagManualCalibration(int sensor)
-	{
-		return OVR_BeginMagManualCalibration(sensor);
-	}
-	
-	// StopMagManualCalibration
-	public static bool StopMagManualCalibration(int sensor)
-	{
-		return OVR_StopMagManualCalibration(sensor);
-	}
-	
-	// UpdateMagManualCalibration
-	public static bool UpdateMagManualCalibration(int sensor)
-	{
-		return OVR_UpdateMagManualCalibration(sensor);
-	}
-	
-	// SHARED MAG CALIBRATION FUNCTIONS
-	
-	// MagNumberOfSamples
-	// For AUTO mode: number returned is the current number of valid samples while looking around
-	// For MANUAL mode:
-	// 0 = Look Forward, 1 = Look Up, 2 = Look Left, 3 = Look Right, 4 = Calibration Complete
-	public static int MagNumberOfSamples(int sensor)
-	{
-		return OVR_MagNumberOfSamples(sensor);
-	}
-	
+
 	// IsMagCalibrated
 	public static bool IsMagCalibrated(int sensor)
 	{
-		return OVR_IsMagCalibrated(sensor);
-	}
-	
-	// SetMagReference
-	public static bool SetMagReference(int sensor)
-	{
-		return OVR_SetMagReference(sensor);
+		return OVR_IsMagCalibrated(SensorList[sensor]);
 	}
 	
 	// EnableMagYawCorrection
 	public static bool EnableMagYawCorrection(int sensor, bool enable)
 	{
-		return OVR_EnableMagYawCorrection(sensor, enable);
+		return OVR_EnableMagYawCorrection(SensorList[sensor], enable);
 	}
 	
-	// IsMagYawCorrectionInProgress
-	public static bool IsMagYawCorrectionInProgress(int sensor)
+	// OVR_IsYawCorrectionEnabled
+	public static bool IsYawCorrectionEnabled(int sensor)
 	{
-		return OVR_IsMagYawCorrectionInProgress(sensor);
+		return OVR_IsYawCorrectionEnabled(SensorList[sensor]);
 	}
 	
-	// GetYawErrorAngle (in degrees)
-	public static float GetYawErrorAngle(int sensor)
+	// InitSensorList:
+	// We can remap sensors to different parts
+	public static void InitSensorList(bool reverse)
 	{
-		return OVR_GetYawErrorAngle(sensor) * 57.295779513f;
+		SensorList.Clear();
+	
+		if(reverse == true)
+		{
+			SensorList.Add(0,1);
+			SensorList.Add(1,0);
+		}
+		else
+		{
+			SensorList.Add(0,0);
+			SensorList.Add(1,1);
+		}
 	}
+	
+	// InitOrientationSensorList
+	public static void InitOrientationSensorList()
+	{
+		SensorOrientationList.Clear();
+		SensorOrientationList.Add (0, SensorOrientation.Head);
+		SensorOrientationList.Add (1, SensorOrientation.Other);
+	}
+	
+	// OrientSensor
+	// We will set up the sensor based on which one it is
+	public static void OrientSensor(int sensor, ref Quaternion q)
+	{
+		if(SensorOrientationList[sensor] == SensorOrientation.Head)
+		{
+			// Change the co-ordinate system from right-handed to Unity left-handed
+			/*
+			q.x =  x; 
+			q.y =  y;
+			q.z =  -z; 
+			q = Quaternion.Inverse(q);
+			*/
+			
+			// The following does the exact same conversion as above
+			q.x = -q.x; 
+			q.y = -q.y;	
+
+		}
+		else if(SensorOrientationList[sensor] == SensorOrientation.Other)
+		{	
+			// Currently not used 
+			float tmp = q.x;
+			q.x = q.z;
+			q.y = -q.y;
+			q.z = tmp;
+		}
+	}
+	
+	// RenderPortraitMode
+	public static bool RenderPortraitMode()
+	{
+		return OVR_RenderPortraitMode();
+	}
+	
+	// GetPlayerEyeHeight
+	public static bool GetPlayerEyeHeight(ref float eyeHeight)
+	{
+		return OVR_GetPlayerEyeHeight(ref eyeHeight);
+	}
+	
 }

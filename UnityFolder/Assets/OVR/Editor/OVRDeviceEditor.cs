@@ -46,8 +46,8 @@ public class OVRDeviceEditor : Editor
 	{
 		GUI.color = Color.white;
 		{
-			m_Component.InitialPredictionTime = EditorGUILayout.Slider("Prediction Time", m_Component.InitialPredictionTime,	0, 0.1f);
-			m_Component.InitialAccelGain 	  = EditorGUILayout.Slider("Accel Gain",      m_Component.InitialAccelGain, 		0, 0.2f);			
+			m_Component.InitialPredictionTime = EditorGUILayout.Slider("Prediction Time", 		 m_Component.InitialPredictionTime,	0, 0.1f);
+			m_Component.ResetTrackerOnLoad 	  = EditorGUILayout.Toggle("Reset Tracker On Load",  m_Component.ResetTrackerOnLoad);			
 		}
 
 		if (GUI.changed)

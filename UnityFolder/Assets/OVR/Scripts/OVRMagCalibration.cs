@@ -7,9 +7,20 @@ Authors     :   Peter Giokaris
 
 Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Use of this software is subject to the terms of the Oculus LLC license
-agreement provided at the time of installation or download, or which
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 using UnityEngine;
@@ -29,15 +40,9 @@ using System.Collections.Generic;
 // 
 public class OVRMagCalibration
 {
-	public enum MagCalibrationState { MagDisabled, 
-									  MagManualGetReady, 
-									  MagCalibrating, 
-									  MagCalibrated, 
-									  MagReady };
+	public enum MagCalibrationState { MagUncalibrated, MagDisabled, MagReady };
 
-	public bool 	MagAutoCalibrate    = false; 	// Manual mode by default
-	private 		MagCalibrationState	MagCalState = MagCalibrationState.MagDisabled;
-	private float 	MagCalTimerFlash    = 0.5f;
+	private MagCalibrationState	MagCalState = MagCalibrationState.MagUncalibrated;
 	
 	private Vector3 CurEulerRef = Vector3.zero;	
 	
@@ -50,15 +55,21 @@ public class OVRMagCalibration
 	
 	// * * * * * * * * * * * * *
 	
-	// Disabled
-	public bool Disabled()
+	// SetInitialCalibrationState
+	// We call this before we start the Update loop to see if
+	// Mag has been set by Calibration tool
+	public void SetInitialCalibarationState()
 	{
-		if(MagCalState == MagCalibrationState.MagDisabled)
-			return true;
-		
-		return false;
+		if(OVRDevice.IsMagCalibrated(0) && OVRDevice.IsYawCorrectionEnabled(0))
+		{
+			MagCalState = MagCalibrationState.MagReady;
+		}
+		else
+		{
+			MagCalState = MagCalibrationState.MagUncalibrated;
+		}
 	}
-	
+		
 	// SetOVRCameraController
 	public void SetOVRCameraController(ref OVRCameraController cameraController)
 	{
@@ -80,7 +91,6 @@ public class OVRMagCalibration
 		{
 			GeometryReference.SetActive(show);		
 			AttachGeometryToCamera(show, ref GeometryReference);
-			OVRUtils.SetLocalTransformIdentity(ref GeometryReference);
 		}
 		
 		// Load up the prefab
@@ -94,17 +104,26 @@ public class OVRMagCalibration
 		{
 			GeometryCompass.SetActive(show);
 			AttachGeometryToCamera(show, ref GeometryCompass);
-  			OVRUtils.SetLocalTransformIdentity(ref GeometryCompass);
-		}
+  		}
 	}
 	
-	// AttachGeometryToRightCamera
+	// AttachGeometryToCamera
 	public void AttachGeometryToCamera(bool attach, ref GameObject go)
 	{
 		if(CameraController != null)
 		{
 			if(attach == true)
+			{
 				CameraController.AttachGameObjectToCamera(ref go);
+				OVRUtils.SetLocalTransformIdentity(ref go);
+				Vector3 lp = go.transform.localPosition;
+				// we will move the position of everything over to the left, so get
+				// IPD / 2 and position camera towards negative X
+				float ipd = 0.0f;
+				CameraController.GetIPD(ref ipd);
+				lp.x -= ipd * 0.5f;
+				go.transform.localPosition = lp;
+			}
 		}
 	}	
 	
@@ -132,119 +151,32 @@ public class OVRMagCalibration
 		// Set the color of the marker to red if we are calibrating
 		if(GeometryReferenceMarkMat != null)
 		{
-			Color c = Color.green;
-			
-			if(OVRDevice.IsMagYawCorrectionInProgress(0) == true)
-				c = Color.red;
-			
+			Color c = Color.red;
+						
 			GeometryReferenceMarkMat.SetColor("_Color", c);	
 		}
 	}
 	
 	// UpdateMagYawDriftCorrection
 	public void UpdateMagYawDriftCorrection()
-	{
-		if(Input.GetKeyDown (KeyCode.Z) == true) 
+	{	
+		// If uncalibrated, do not bother turning it on or off
+		if(MagCalState == MagCalibrationState.MagUncalibrated)
+			return;
+		
+		if (MagCalState == MagCalibrationState.MagReady)
 		{
-			if(MagCalState == MagCalibrationState.MagDisabled)
+			// Turn off Mag calibration
+			if (Input.GetKeyDown( KeyCode.X))
 			{
-				// Start calibration process
-				if(MagAutoCalibrate == true)
-				{	
-					OVRDevice.BeginMagAutoCalibration(0);
-					MagCalState = MagCalibrationState.MagCalibrating;
-				}
-				else
-				{
-					// Go to pre-manual calibration state (to allow for
-					// setting refrence point)
-					MagCalState = MagCalibrationState.MagManualGetReady;
-					return;
-				}
-			}
-			else if(MagCalState == MagCalibrationState.MagManualGetReady)
-			{
-				OVRDevice.SetMagReference(0);
-				OVRDevice.EnableMagYawCorrection(0,true);
-				
-				Quaternion q = Quaternion.identity;
-				if((CameraController != null) && (CameraController.PredictionOn == true))
-					OVRDevice.GetPredictedOrientation(0, ref q);
-				else
-					OVRDevice.GetOrientation(0, ref q);
-
-				CurEulerRef = q.eulerAngles;
-				
-				// Begin manual calibration
-				OVRDevice.BeginMagManualCalibration(0);
-				MagCalState = MagCalibrationState.MagCalibrating;
-			}
-			else
-			{
-				// Reset calibration process
-				if(MagAutoCalibrate == true)
-					OVRDevice.StopMagAutoCalibration(0);
-				else
-					OVRDevice.StopMagManualCalibration(0);
-					
-				OVRDevice.EnableMagYawCorrection(0,false);
-				
 				MagCalState = MagCalibrationState.MagDisabled;
-				
-				// Do not show geometry
+				OVRDevice.EnableMagYawCorrection(0, false);
 				MagShowGeometry = false;
-				ShowGeometry(MagShowGeometry);
-				
-				return;
+				ShowGeometry (MagShowGeometry);
 			}
-		}		
-		
-		
-		// Check to see if calibration is completed
-		if(MagCalState == MagCalibrationState.MagCalibrating)
-		{
-			if(MagAutoCalibrate == true)
-				OVRDevice.UpdateMagAutoCalibration(0);
-			else
-				OVRDevice.UpdateMagManualCalibration(0);				
-			
-			if(OVRDevice.IsMagCalibrated(0) == true)
-			{
-				if(MagAutoCalibrate == true)
-					MagCalState = MagCalibrationState.MagCalibrated;
-				else
-					// Manual Calibration take account of having set the
-					// reference orientation.
-					MagCalState = MagCalibrationState.MagReady;
-
-			}
-		}
-		
-		// If we are calibrated, we will set mag reference and 
-		// enable yaw correction on a buton press
-		if( (MagCalState == MagCalibrationState.MagCalibrated) || 
-		    (MagCalState == MagCalibrationState.MagReady) )
-		{
-			if(Input.GetKeyDown (KeyCode.X) == true)
-			{
-				OVRDevice.SetMagReference(0);
-				OVRDevice.EnableMagYawCorrection(0,true);
-				MagCalState = MagCalibrationState.MagReady;
-				
-				Quaternion q = Quaternion.identity;
-				if((CameraController != null) && (CameraController.PredictionOn == true))
-					OVRDevice.GetPredictedOrientation(0, ref q);
-					else
-				OVRDevice.GetOrientation(0, ref q);
-
-				CurEulerRef = q.eulerAngles;
-			}				
-				
-			if((MagCalState == MagCalibrationState.MagReady) && 
-			   (Input.GetKeyDown (KeyCode.F6)))
-			{
-			
-				// Toggle showing geometry either on or off	
+			// Toggle showing geometry either on or off	
+			else if (Input.GetKeyDown (KeyCode.F6))
+			{	
 				if(MagShowGeometry == false)
 				{
 					MagShowGeometry = true;
@@ -258,6 +190,15 @@ public class OVRMagCalibration
 			}
 			
 			UpdateGeometry();
+		}
+		else if (MagCalState == MagCalibrationState.MagDisabled)
+		{
+			// Turn on Mag calibration
+			if (Input.GetKeyDown(KeyCode.X))
+			{
+				MagCalState = MagCalibrationState.MagReady;
+				EnableYawCorrection(0);
+			}
 		}
 	}
 	
@@ -273,91 +214,35 @@ public class OVRMagCalibration
 		
 		switch(MagCalState)
 		{
+		case(MagCalibrationState.MagUncalibrated):
+			strMagCal = "Mag Uncalibrated";
+			break;
+			
 		case(MagCalibrationState.MagDisabled):
 			strMagCal = "Mag Calibration OFF";
 			break;
 		
-		case(MagCalibrationState.MagManualGetReady):
-			strMagCal = "Manual Calibration: Look Forward, Press 'Z'..";
-			c = Color.white;
-			xloc -= 40;
-			xwidth += 150;
-			break;
-		
-		case(MagCalibrationState.MagCalibrating):
-			if(MagCalTimerFlash > 0.2f)
-				FormatCalibratingString(ref strMagCal);
-
-			MagCalTimerFlash -= Time.deltaTime;
-			if(MagCalTimerFlash < 0.0f)
-				MagCalTimerFlash += 0.5f;
-			
-			c = Color.white;
-			xloc -= 40;
-			xwidth += 150;
-			break;
-		
-		case(MagCalibrationState.MagCalibrated):
-			strMagCal = "Mag Calibrated";	
-			MagCalTimerFlash -= Time.deltaTime;
-			if(MagCalTimerFlash < 0.0f)
-				MagCalTimerFlash += 0.5f;
-			
-			c = Color.yellow;
-			break;
-		
 		case(MagCalibrationState.MagReady):
-			if(OVRDevice.IsMagYawCorrectionInProgress(0) == true)
-			{
-				if(MagCalTimerFlash > 0.2f)
-				{
-					strMagCal = "Mag CORRECTING...";
-					strMagCal = System.String.Format ("Mag CORRECTING (deg)... {0:F3}", 
-						OVRDevice.GetYawErrorAngle(0));
-				}
-				
-				MagCalTimerFlash -= Time.deltaTime;
-				if(MagCalTimerFlash < 0.0f)
-					MagCalTimerFlash += 0.5f;
-				
-				xloc -= 40;
-			    xwidth += 150;
-	
-				c = Color.red;
-			}
-			else
-			{
-				strMagCal = "Mag Correction ON";
-				c = Color.green;
-			}
-	
+			strMagCal = "Mag Correction ON";
+			c = Color.red;	
 			break;			
 		}
 				
 		guiHelper.StereoBox (xloc, yLoc, xwidth, yWidth, ref strMagCal, c);		
 	}
-	
-	// FormatCalibratingString
-	void FormatCalibratingString(ref string str)
+		
+	// EnableYawCorrection
+	void EnableYawCorrection(int sensor)
 	{
-		if(MagAutoCalibrate == true)
-		{
-			str = System.String.Format ("Mag Calibrating (AUTO)... Point {0} set", 
-						OVRDevice.MagNumberOfSamples(0));
-		}
+		OVRDevice.EnableMagYawCorrection(sensor, true);
+				
+		Quaternion q = Quaternion.identity;
+		if((CameraController != null) && (CameraController.PredictionOn == true))
+			OVRDevice.GetPredictedOrientation(sensor, ref q);
 		else
-		{
-			// Manual Calibration: Make sure to get proper direction
-			str = "Mag Calibrating (MANUAL)... LOOK ";
-			
-			switch(OVRDevice.MagNumberOfSamples(0))
-			{
-				case(0): str += "FORWARD"; break;
-				case(1): str += "UP"; break;
-				case(2): str += "LEFT"; break;
-				case(3): str += "RIGHT"; break;
-			}
-		}
+			OVRDevice.GetOrientation(sensor, ref q);
+
+		CurEulerRef = q.eulerAngles;
 	}
 }
 

@@ -8,9 +8,20 @@ Authors     :   Peter Giokaris
 
 Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Use of this software is subject to the terms of the Oculus LLC license
-agreement provided at the time of installation or download, or which
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 using UnityEngine;
@@ -30,12 +41,10 @@ public class OVRCameraController : OVRComponent
 	// PRIVATE MEMBERS
 	private bool   UpdateCamerasDirtyFlag = false;	
 	private Camera CameraLeft, CameraRight = null;
-	private float  IPD = 0.064f; 							// in millimeters
 	private float  LensOffsetLeft, LensOffsetRight = 0.0f;  // normalized screen space
-	private float  VerticalFOV = 90.0f;	 					// in degrees
 	private float  AspectRatio = 1.0f;						
 	private float  DistK0, DistK1, DistK2, DistK3 = 0.0f; 	// lens distortion parameters
-	
+
 	// Initial orientation of the camera, can be used to always set the zero orientation of
 	// the cameras to follow a set forward facing orientation.
 	private Quaternion OrientationOffset = Quaternion.identity;	
@@ -43,19 +52,50 @@ public class OVRCameraController : OVRComponent
 	private float   YRotation = 0.0f;
 	
 	// PUBLIC MEMBERS
+	
+	// IPD
+	[SerializeField]
+	private float  		ipd 		= 0.064f; 				// in millimeters
+	public 	float 		IPD
+	{
+		get{return ipd;}
+		set{ipd = value; UpdateCamerasDirtyFlag = true;}
+	}
+	
+	// VERTICAL FOV
+	[SerializeField]
+	private float  		verticalFOV = 90.0f;	 			// in degrees
+	public 	float		VerticalFOV
+	{
+		get{return verticalFOV;}
+		set{verticalFOV = value; UpdateCamerasDirtyFlag = true;}
+	}
+	
 	// Camera positioning:
-	// From root of camera to neck (translation only)
+	// CameraRootPosition will be used to calculate NeckPosition and Eye Height
+	public Vector3 		CameraRootPosition = new Vector3(0.0f, 1.0f, 0.0f);					
+	// From CameraRootPosition to neck
 	public Vector3 		NeckPosition      = new Vector3(0.0f, 0.7f,  0.0f);	
-	// From neck to eye (rotation and translation; x will be different for each eye)
+	// From neck to eye (rotation and translation; x will be different for each eye, based on IPD)
 	public Vector3 		EyeCenterPosition = new Vector3(0.0f, 0.15f, 0.09f);
 	
-	// Set this transform with an objec that the camera orientation should follow.
+	// Use player eye height as set in the Rift config tool
+	public bool 		UsePlayerEyeHeight = false;
+	private bool 		PrevUsePlayerEyeHeight = false;
+	
+	// Set this transform with an object that the camera orientation should follow.
 	// NOTE: Best not to set this with the OVRCameraController IF TrackerRotatesY is
 	// on, since this will lead to uncertain output
 	public Transform 	FollowOrientation = null;
 	
 	// Set to true if we want the rotation of the camera controller to be influenced by tracker
 	public bool  		TrackerRotatesY	= false;
+	
+	public bool    		PortraitMode 	 = false; // We currently default to landscape mode for render
+	private bool 		PrevPortraitMode = false;
+	
+	// Use this to enable / disable Tracker orientation
+	public bool         EnableOrientation = true;
 	// Use this to turn on/off Prediction
 	public bool			PredictionOn 	= true;
 	// Use this to decide where tracker sampling should take place
@@ -68,14 +108,33 @@ public class OVRCameraController : OVRComponent
 	// Turn lens distortion on/off; use Chromatic Aberration in lens distortion calculation
 	public bool 		LensCorrection  = true;
 	public bool 		Chromatic		= true;
-
-
+	
 	// UNITY CAMERA FIELDS
 	// Set the background color for both cameras
-	public Color 		BackgroundColor = new Color(0.192f, 0.302f, 0.475f, 1.0f);
+	[SerializeField]
+	private Color 		backgroundColor = new Color(0.192f, 0.302f, 0.475f, 1.0f);
+	public  Color       BackgroundColor
+	{
+		get{return backgroundColor;}
+		set{backgroundColor = value; UpdateCamerasDirtyFlag = true;}
+	}
+	
 	// Set the near and far clip plane for both cameras
-	public float 		NearClipPlane   = 0.15f;
-	public float 		FarClipPlane    = 1000.0f;
+	[SerializeField]
+	private float 		nearClipPlane   = 0.15f;
+	public  float 		NearClipPlane
+	{
+		get{return nearClipPlane;}
+		set{nearClipPlane = value; UpdateCamerasDirtyFlag = true;}
+	}
+	
+	[SerializeField]
+	private float 		farClipPlane    = 1000.0f;  
+	public  float 		FarClipPlane
+	{
+		get{return farClipPlane;}
+		set{farClipPlane = value; UpdateCamerasDirtyFlag = true;}
+	}
 	
 	// * * * * * * * * * * * * *
 		
@@ -117,7 +176,7 @@ public class OVRCameraController : OVRComponent
 	}
 		
 	// Update 
-	new void LateUpdate()
+	new void Update()
 	{
 		base.Update();		
 		UpdateCameras();
@@ -129,7 +188,7 @@ public class OVRCameraController : OVRComponent
 	public void InitCameraControllerVariables()
 	{
 		// Get the IPD value (distance between eyes in meters)
-		OVRDevice.GetIPD(ref IPD);
+		OVRDevice.GetIPD(ref ipd);
 
 		// Get the values for both IPD and lens distortion correction shift. We don't normally
 		// need to set the PhysicalLensOffset once it's been set here.
@@ -143,7 +202,13 @@ public class OVRCameraController : OVRComponent
 		AspectRatio = OVRDevice.CalculateAspectRatio();
 		
 		OVRDevice.GetDistortionCorrectionCoefficients(ref DistK0, ref DistK1, ref DistK2, ref DistK3);
-				
+		
+		// Check to see if we should render in portrait mode
+		if(PortraitMode != true)
+			PortraitMode = OVRDevice.RenderPortraitMode();
+		
+		PrevPortraitMode = false;
+		
 		// Get our initial world orientation of the cameras from the scene (we can grab it from 
 		// the set FollowOrientation object or this OVRCameraController gameObject)
 		if(FollowOrientation != null)
@@ -159,6 +224,13 @@ public class OVRCameraController : OVRComponent
 		if(FollowOrientation != null)
 			OrientationOffset = FollowOrientation.rotation;
 				
+		// Handle Portrait Mode changes to cameras
+		SetPortraitMode();
+		
+		// Handle positioning of eye height and other things here
+		UpdatePlayerEyeHeight();
+		
+		// Handle all other camera updates here
 		if(UpdateCamerasDirtyFlag == false)
 			return;
 		
@@ -182,7 +254,7 @@ public class OVRCameraController : OVRComponent
 		Vector3 EyePosition = EyeCenterPosition;
 				
 		// Vertical FOV
-		camera.fov = VerticalFOV;
+		camera.fieldOfView = VerticalFOV;
 			
 		// Aspect ratio 
 		camera.aspect = AspectRatio;
@@ -190,7 +262,11 @@ public class OVRCameraController : OVRComponent
 		// Centre of lens correction
 		camera.GetComponent<OVRLensCorrection>()._Center.x = distOffset;
 		ConfigureCameraLensCorrection(ref camera);
-
+		
+		// Clip Planes
+   		camera.nearClipPlane = NearClipPlane;
+   		camera.farClipPlane = FarClipPlane;
+		
 		// Perspective offset for image
 		PerspOffset.x = perspOffset;
 		camera.GetComponent<OVRCamera>().SetPerspectiveOffset(ref PerspOffset);
@@ -205,7 +281,7 @@ public class OVRCameraController : OVRComponent
 		camera.GetComponent<OVRCamera>().EyePosition = EyePosition;		
 					
 		// Background color
-		//camera.backgroundColor = BackgroundColor; // had to comment out to enable warp background color change
+		camera.backgroundColor = BackgroundColor;
 		
 		// Clip Planes
 		camera.nearClipPlane = NearClipPlane;
@@ -235,6 +311,63 @@ public class OVRCameraController : OVRComponent
 		lc._HmdWarpParam.x = DistK0;		
 		lc._HmdWarpParam.y = DistK1;
 		lc._HmdWarpParam.z = DistK2;
+	}
+	
+	// SetPortraitMode
+	void SetPortraitMode()
+	{
+		if(PortraitMode != PrevPortraitMode)
+		{
+			Rect r = new Rect(0,0,0,0);
+			
+			if(PortraitMode == true)
+			{
+				r.x 		= 0.0f;
+				r.y 		= 0.5f;
+				r.width 	= 1.0f;
+				r.height 	= 0.5f;
+				CameraLeft.rect = r;
+				
+				r.x 		= 0.0f;
+				r.y 		= 0.0f;
+				r.width 	= 1.0f;
+				r.height 	= 0.499999f;
+				CameraRight.rect = r;
+			}
+			else
+			{
+				r.x 		= 0.0f;
+				r.y 		= 0.0f;
+				r.width 	= 0.5f;
+				r.height 	= 1.0f;
+				CameraLeft.rect = r;
+				
+				r.x 		= 0.5f;
+				r.y 		= 0.0f;
+				r.width 	= 0.499999f;
+				r.height 	= 1.0f;
+				CameraRight.rect = r;
+			}
+		}
+		
+		PrevPortraitMode = PortraitMode;
+	}
+	
+	// UpdatePlayerEyeHeight
+	void UpdatePlayerEyeHeight()
+	{
+		if((UsePlayerEyeHeight == true) && (PrevUsePlayerEyeHeight == false))
+		{
+			// Calculate neck position to use based on Player configuration
+			float  peh = 0.0f;
+			
+			if(OVRDevice.GetPlayerEyeHeight(ref peh) != false)
+			{
+				NeckPosition.y = peh - CameraRootPosition.y - EyeCenterPosition.y;
+			}
+		}
+		
+		PrevUsePlayerEyeHeight = UsePlayerEyeHeight;
 	}
 	
 	///////////////////////////////////////////////////////////
@@ -306,6 +439,17 @@ public class OVRCameraController : OVRComponent
 		UpdateCamerasDirtyFlag = true;
 	}
 	
+	// Get/Set CameraRootPosition
+	public void GetCameraRootPosition(ref Vector3 cameraRootPosition)
+	{
+		cameraRootPosition = CameraRootPosition;
+	}
+	public void SetCameraRootPosition(ref Vector3 cameraRootPosition)
+	{
+		CameraRootPosition = cameraRootPosition;
+		UpdateCamerasDirtyFlag = true;
+	}
+
 	// Get/SetNeckPosition
 	public void GetNeckPosition(ref Vector3 neckPosition)
 	{
@@ -313,8 +457,13 @@ public class OVRCameraController : OVRComponent
 	}
 	public void SetNeckPosition(Vector3 neckPosition)
 	{
-		NeckPosition = neckPosition;
-		UpdateCamerasDirtyFlag = true;
+		// This is locked to the NeckPosition that is set by the
+		// Player profile.
+		if(UsePlayerEyeHeight != true)
+		{
+			NeckPosition = neckPosition;
+			UpdateCamerasDirtyFlag = true;
+		}
 	}
 	
 	// Get/SetEyeCenterPosition
@@ -390,7 +539,15 @@ public class OVRCameraController : OVRComponent
 	
 		return true;
 	}
-
+	
+	// Access camera
+	
+	// GetCamera
+	public void GetCamera(ref Camera camera)
+	{
+		camera = CameraRight;
+	}
+	
 	// AttachGameObjectToCamera
 	public bool AttachGameObjectToCamera(ref GameObject gameObject)
 	{
@@ -412,6 +569,16 @@ public class OVRCameraController : OVRComponent
 		}				
 		
 		return false;
+	}
+	
+	// Get Misc. values from CameraController
+	
+	// GetPlauerEyeHeight
+	public bool GetPlayerEyeHeight(ref float eyeHeight)
+	{
+		eyeHeight = CameraRootPosition.y + NeckPosition.y + EyeCenterPosition.y;  
+		
+		return true;
 	}
 
 	// SetMaximumVisualQuality

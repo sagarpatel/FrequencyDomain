@@ -7,9 +7,20 @@ Authors     :   Peter Giokaris
 
 Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Use of this software is subject to the terms of the Oculus LLC license
-agreement provided at the time of installation or download, or which
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
  Messenger.cs from Unity3d: http://wiki.unity3d.com/index.php/Advanced_CSharp_Messenger
  
@@ -36,23 +47,21 @@ otherwise accompanies this software in either electronic or hard copy form.
  * 
  
 
-************************************************************************************/ 
+************************************************************************************/
 //#define LOG_ALL_MESSAGES
 //#define LOG_ADD_LISTENER
 //#define LOG_BROADCAST_MESSAGE
-#define REQUIRE_LISTENER
+//#define REQUIRE_LISTENER
  
 using System;
 using System.Collections.Generic;
 using UnityEngine;
  
 // Add more delegate types here and implement them the same way below..
-/*
-public delegate void Callback();
-public delegate void Callback<T>(T arg1);
-public delegate void Callback<T, U>(T arg1, U arg2);
-public delegate void Callback<T, U, V>(T arg1, U arg2, V arg3);
-*/
+public delegate void OVRCallback();
+public delegate void OVRCallback<T>(T arg1);
+public delegate void OVRCallback<T, U>(T arg1, U arg2);
+public delegate void OVRCallback<T, U, V>(T arg1, U arg2, V arg3);
 
 static internal class OVRMessenger {
 	#region Internal variables
@@ -185,56 +194,56 @@ static internal class OVRMessenger {
  
 	#region AddListener
 	//No parameters
-    static public void AddListener(string eventType, Callback handler) {
+    static public void AddListener(string eventType, OVRCallback handler) {
         OnListenerAdding(eventType, handler);
-        eventTable[eventType] = (Callback)eventTable[eventType] + handler;
+        eventTable[eventType] = (OVRCallback)eventTable[eventType] + handler;
     }
  
 	//Single parameter
-	static public void AddListener<T>(string eventType, Callback<T> handler) {
+	static public void AddListener<T>(string eventType, OVRCallback<T> handler) {
         OnListenerAdding(eventType, handler);
-        eventTable[eventType] = (Callback<T>)eventTable[eventType] + handler;
+        eventTable[eventType] = (OVRCallback<T>)eventTable[eventType] + handler;
     }
  
 	//Two parameters
-	static public void AddListener<T, U>(string eventType, Callback<T, U> handler) {
+	static public void AddListener<T, U>(string eventType, OVRCallback<T, U> handler) {
         OnListenerAdding(eventType, handler);
-        eventTable[eventType] = (Callback<T, U>)eventTable[eventType] + handler;
+        eventTable[eventType] = (OVRCallback<T, U>)eventTable[eventType] + handler;
     }
  
 	//Three parameters
-	static public void AddListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
+	static public void AddListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) {
         OnListenerAdding(eventType, handler);
-        eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
+        eventTable[eventType] = (OVRCallback<T, U, V>)eventTable[eventType] + handler;
     }
 	#endregion
  
 	#region RemoveListener
 	//No parameters
-    static public void RemoveListener(string eventType, Callback handler) {
+    static public void RemoveListener(string eventType, OVRCallback handler) {
         OnListenerRemoving(eventType, handler);   
-        eventTable[eventType] = (Callback)eventTable[eventType] - handler;
+        eventTable[eventType] = (OVRCallback)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
 	//Single parameter
-	static public void RemoveListener<T>(string eventType, Callback<T> handler) {
+	static public void RemoveListener<T>(string eventType, OVRCallback<T> handler) {
         OnListenerRemoving(eventType, handler);
-        eventTable[eventType] = (Callback<T>)eventTable[eventType] - handler;
+        eventTable[eventType] = (OVRCallback<T>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
 	//Two parameters
-	static public void RemoveListener<T, U>(string eventType, Callback<T, U> handler) {
+	static public void RemoveListener<T, U>(string eventType, OVRCallback<T, U> handler) {
         OnListenerRemoving(eventType, handler);
-        eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
+        eventTable[eventType] = (OVRCallback<T, U>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
 	//Three parameters
-	static public void RemoveListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
+	static public void RemoveListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) {
         OnListenerRemoving(eventType, handler);
-        eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
+        eventTable[eventType] = (OVRCallback<T, U, V>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
 	#endregion
@@ -249,7 +258,7 @@ static internal class OVRMessenger {
  
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
-            Callback callback = d as Callback;
+            OVRCallback callback = d as OVRCallback;
  
             if (callback != null) {
                 callback();
@@ -268,7 +277,7 @@ static internal class OVRMessenger {
  
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
-            Callback<T> callback = d as Callback<T>;
+            OVRCallback<T> callback = d as OVRCallback<T>;
  
             if (callback != null) {
                 callback(arg1);
@@ -287,7 +296,7 @@ static internal class OVRMessenger {
  
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
-            Callback<T, U> callback = d as Callback<T, U>;
+            OVRCallback<T, U> callback = d as OVRCallback<T, U>;
  
             if (callback != null) {
                 callback(arg1, arg2);
@@ -306,7 +315,7 @@ static internal class OVRMessenger {
  
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
-            Callback<T, U, V> callback = d as Callback<T, U, V>;
+            OVRCallback<T, U, V> callback = d as OVRCallback<T, U, V>;
  
             if (callback != null) {
                 callback(arg1, arg2, arg3);
