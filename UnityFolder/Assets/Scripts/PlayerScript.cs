@@ -295,7 +295,7 @@ public class PlayerScript : MonoBehaviour
 
 				if(isOVR)
 				{
-					ovrCameraController.SetVerticalFOV(mainCameraComponent.fieldOfView);
+					ovrCameraController.SetVerticalFOV(1.5f*mainCameraComponent.fieldOfView);
 
 				}
 			}
