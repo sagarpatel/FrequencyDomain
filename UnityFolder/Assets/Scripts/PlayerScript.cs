@@ -296,7 +296,7 @@ public class PlayerScript : MonoBehaviour
 				if(isOVR)
 				{
 					ovrCameraController.SetVerticalFOV(1.5f*mainCameraComponent.fieldOfView);
-
+					ovrCameraController.BackgroundColor = mainCameraComponent.backgroundColor;
 				}
 			}
 		}
