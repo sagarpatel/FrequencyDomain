@@ -55,7 +55,7 @@ public class CreaturePartsEmitter : MonoBehaviour
 
 		directionVector = Vector3.Cross( transform.up, directionVector);
 
-		directionVector.y = 0.1f * Mathf.Sin(angle);
+		directionVector.y = -0.1f * Mathf.Pow( Mathf.Sin(angle), 3.0f);
 	
 		return directionVector;
 	}
@@ -65,8 +65,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 		Vector3 emissionPos = new Vector3(0, 0, 0);
 
 		float angle = (float)decade/10.0f * Mathf.PI;
-		emissionPos.x = emisionRadius * Mathf.Cos(angle);
-		emissionPos.y = emisionRadius * Mathf.Sin(angle);
+		emissionPos.x = 0.5f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Cos(angle);
+		emissionPos.y = 0.5f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Sin(angle);
 
 		// apply rotation of the emitter itself
 		emissionPos = transform.rotation * emissionPos;
