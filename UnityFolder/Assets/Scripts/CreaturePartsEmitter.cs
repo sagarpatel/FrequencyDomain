@@ -55,7 +55,7 @@ public class CreaturePartsEmitter : MonoBehaviour
 
 		directionVector = Vector3.Cross( transform.up, directionVector);
 
-		directionVector.y = -0.1f * Mathf.Pow( Mathf.Sin(angle), 3.0f);
+		directionVector.y = 0.0f; //0.1f * Mathf.Sin(angle); //0; //-0.1f * Mathf.Pow( Mathf.Sin(angle), 3.0f);
 	
 		return directionVector;
 	}
