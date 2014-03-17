@@ -134,6 +134,8 @@ public class PlayerScript : MonoBehaviour
 
 		HandleControls( xTranslation, yTranslation );
 
+		Mathf.Clamp(velocity.y, -100.0f, 20.0f); // hacked clamp
+
 		if(editor.isActive == false)
 		{
 
