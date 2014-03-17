@@ -35,7 +35,7 @@ public class PVA : MonoBehaviour
 			{
 				Vector3 direction = velocity;
 				direction.Normalize();
-				transform.up = Vector3.Lerp(transform.up, direction, 20.0f *Time.deltaTime);
+				transform.forward = Vector3.Lerp(transform.forward, direction, 20.0f *Time.deltaTime);
 			}
 		}
 	
