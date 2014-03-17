@@ -34,7 +34,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 				float scaler = 1.0f + 4.0f *(decadeAverage - minDecadeAmplitude);
 				newPart.transform.localScale = newPart.transform.localScale * scaler; //Mathf.Pow(scaler, 2.0f) ;		
 				// set velocity
-				newPart.GetComponent<PVA>().velocity = 1000.0f * GetEmissionDirection(i);	
+				SetEmissionDirection(newPart);
+				newPart.GetComponent<PVA>().velocity = 1000.0f * newPart.transform.forward;
 				// set Color
 				newPart.renderer.material.color = audioDirector.calculatedRGB;
 				
@@ -44,20 +45,9 @@ public class CreaturePartsEmitter : MonoBehaviour
 
 	}
 
-	Vector3 GetEmissionDirection(int decade)
+	void SetEmissionDirection(GameObject partGO)
 	{
-		Vector3 directionVector = new Vector3(0, 0, 0);
-
-		float angle = (float)decade/10.0f * Mathf.PI;
-		directionVector.x = 0.2f * Mathf.Cos(angle);
-		directionVector.z = 1.0f;
-		directionVector.Normalize();
-
-		directionVector = Vector3.Cross( transform.up, directionVector);
-
-		directionVector.y = 0.0f; //0.1f * Mathf.Sin(angle); //0; //-0.1f * Mathf.Pow( Mathf.Sin(angle), 3.0f);
-	
-		return directionVector;
+		partGO.transform.Rotate(partGO.transform.right, -0.01f * Mathf.Pow( audioDirector.averageAmplitude, 2.0f ) , Space.Self);
 	}
 
 	Vector3 GetEmissionPosition(int decade)
@@ -65,8 +55,8 @@ public class CreaturePartsEmitter : MonoBehaviour
 		Vector3 emissionPos = new Vector3(0, 0, 0);
 
 		float angle = (float)decade/10.0f * Mathf.PI;
-		emissionPos.x = 0.5f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Cos(angle);
-		emissionPos.y = 0.5f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Sin(angle);
+		emissionPos.x = 0.1f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Cos(angle);
+		emissionPos.y = 0.1f * Mathf.Pow( audioDirector.averageAmplitude, 3.0f ) * Mathf.Sin(angle);
 
 		// apply rotation of the emitter itself
 		emissionPos = transform.rotation * emissionPos;

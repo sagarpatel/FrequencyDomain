@@ -94,7 +94,7 @@ public class CreatureManagerScript : MonoBehaviour
 
 
 			// try to gather the appropriate number of body parts
-			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/5.0f);
+			int bodyPartsDesiredCounter = (int)(playerJumpVelocity/1.0f);
 			//creatureBodyPartsArray.Shuffle();
 
 			for(int i = 0; i < creatureBodyPartsArray.Length; i++)  
