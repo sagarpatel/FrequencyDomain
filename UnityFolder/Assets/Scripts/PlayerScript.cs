@@ -325,7 +325,7 @@ public class PlayerScript : MonoBehaviour
 			bloomBurstSum += bloomBurstValueArray[i];
 		
 		foreach(Bloom bloomScript in bloomScriptList)
-			bloomScript.bloomIntensity = orignalBloomIntensityValue + bloomBurstSum;
+			bloomScript.bloomIntensity = 10.0f * (orignalBloomIntensityValue + bloomBurstSum) * Time.deltaTime ;
 
 	}
 
