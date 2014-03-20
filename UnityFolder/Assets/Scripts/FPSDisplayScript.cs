@@ -39,6 +39,7 @@ public class FPSDisplayScript : MonoBehaviour
 	 
 	void Update()
 	{
+		/*
 	    timeleft -= Time.deltaTime;
 	    accum += Time.timeScale/Time.deltaTime;
 	    ++frames;
@@ -63,5 +64,7 @@ public class FPSDisplayScript : MonoBehaviour
 	        accum = 0.0F;
 	        frames = 0;
 	    }
+
+	    */
 	}
 }

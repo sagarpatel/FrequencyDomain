@@ -273,9 +273,14 @@ public class GeneralEditorScript : MonoBehaviour
 				else if(tempColorScale > maxColorScale)
 					tempColorScale = maxColorScale;
 
-				
+				// WILD RUMPUS HACK
 				if(currentIndex == 0)
+				{
+
 					audioDirector.rScale = tempColorScale;
+					audioDirector.gScale = tempColorScale;
+					audioDirector.bScale = tempColorScale;
+				}
 				else if(currentIndex == 1)
 					audioDirector.gScale = tempColorScale;
 				else if(currentIndex == 2)
