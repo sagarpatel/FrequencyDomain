@@ -135,7 +135,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 		CalculateAverageAmplitude();
 
-		HandleLowPassFilter(); // does affect the landscape
+		//HandleLowPassFilter(); // does affect the landscape
 
 
 		//update buffer
