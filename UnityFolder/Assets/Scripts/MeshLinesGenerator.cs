@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class MeshLinesGenerator : MonoBehaviour 
 {
+	public GameObject meshLinePrefab;
 
 	public float spawnCooldown = 1.0f;
 	float spawnCooldownCounter = 0.0f;
@@ -55,10 +56,8 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	void GenerateLineMesh()
 	{
-		GameObject newMeshLineGO = new GameObject();
-		newMeshLineGO.AddComponent<MeshFilter>();
-		newMeshLineGO.AddComponent<MeshRenderer>();
-
+		GameObject newMeshLineGO = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
+		
 		Mesh mesh = newMeshLineGO.GetComponent<MeshFilter>().mesh;
 
 		Vector3[] verticesArray = new Vector3[200];
@@ -152,12 +151,11 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		//Debug.Log("MESH GENERATED");
 
-		newMeshLineGO.AddComponent<PVA>();
 		newMeshLineGO.GetComponent<PVA>().velocity = meshSpeed *transform.forward;
 
-		newMeshLineGO.renderer.material = meshMaterial;
-		
-		newMeshLineGO.renderer.material.color = 3.0f * audioDirector.calculatedRGB;
+		newMeshLineGO.renderer.sharedMaterial = meshMaterial;
+		meshMaterial.color = audioDirector.calculatedRGB;
+		//newMeshLineGO.renderer.material.color = audioDirector.calculatedRGB;
 	}
 
 
