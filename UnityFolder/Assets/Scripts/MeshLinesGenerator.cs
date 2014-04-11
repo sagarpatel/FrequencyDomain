@@ -6,6 +6,8 @@ public class MeshLinesGenerator : MonoBehaviour
 {
 	public GameObject meshLinePrefab;
 	GameObject[] meshLinesPoolArray;
+	Mesh[] meshLinesMeshComponentArray;
+	PVA[] meshLinesPVAComponentArray;
 	public int meshLinesPoolSize = 100;
 
 	public float spawnCooldown = 1.0f;
@@ -43,12 +45,19 @@ public class MeshLinesGenerator : MonoBehaviour
 		newLineNormals = new Vector3[verticesFrequencyDepthCount];
 
 		meshLinesPoolArray = new GameObject[meshLinesPoolSize];
+		meshLinesMeshComponentArray = new Mesh[meshLinesPoolSize];
+		meshLinesPVAComponentArray = new PVA[meshLinesPoolSize];
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
 			meshLinesPoolArray[i].renderer.sharedMaterial = meshMaterial;
 			meshLinesPoolArray[i].SetActive(false);
+
+			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponent<MeshFilter>().mesh;
+			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
 		}
+		
+
 
 
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
@@ -86,40 +95,39 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	GameObject GetFreeMeshLineFromPool()
+	int GetFreeMeshLineIndex()
 	{
 		for(int i = 0; i < meshLinesPoolArray.Length; i++)
 		{
 			if(meshLinesPoolArray[i].activeSelf == false)
-				return meshLinesPoolArray[i];
+				return i;
 		}
 		// if nothing found
-			return null;
+			return -1;
 	}
 
 	void GenerateLineMesh()
 	{
-		GameObject meshLineGO = GetFreeMeshLineFromPool();
+		GameObject meshLineGO;
+		int meshlineGOIndex = GetFreeMeshLineIndex();
 		
-		if(meshLineGO == null)
+		if(meshlineGOIndex == -1)
 			return;
 		else
 		{
+			meshLineGO = meshLinesPoolArray[meshlineGOIndex];
 			meshLineGO.SetActive(true);
 			meshLineGO.transform.position = transform.position;
 		}
 
-		Mesh mesh = meshLineGO.GetComponent<MeshFilter>().mesh;
+		Mesh mesh = meshLinesMeshComponentArray[meshlineGOIndex];
 
 		// SET HEIGHT
-
-		float tempHeight = 0;
 
 		for(int i = 1; i<verticesFrequencyDepthCount; i++)
 		{
 			tempVector = verticesArray[i];
-			tempHeight = audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)];
-			tempVector.y = tempHeight; //* verticesAudioHeightScale * yScale; // normal version
+			tempVector.y =  audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
 			//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 			verticesArray[i] = tempVector;
 		}
@@ -161,8 +169,8 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		//Debug.Log("MESH GENERATED");
 
-		meshLineGO.GetComponent<PVA>().ResetPVA();
-		meshLineGO.GetComponent<PVA>().velocity = meshSpeed *transform.forward;
+		meshLinesPVAComponentArray[meshlineGOIndex].ResetPVA();
+		meshLinesPVAComponentArray[meshlineGOIndex].velocity = meshSpeed *transform.forward;
 
 		
 		
