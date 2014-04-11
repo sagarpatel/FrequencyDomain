@@ -93,6 +93,13 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		}
 
+		/*
+		if (Time.frameCount % 30 == 0)
+		{
+		   System.GC.Collect();
+		}
+		*/
+
 	}
 
 	int GetFreeMeshLineIndex()
