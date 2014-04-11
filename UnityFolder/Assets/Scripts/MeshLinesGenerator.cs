@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class MeshLinesGenerator : MonoBehaviour 
 {
 	public GameObject meshLinePrefab;
+	GameObject[] meshLinesPoolArray;
+	public int meshLinesPoolSize = 100;
 
 	public float spawnCooldown = 1.0f;
 	float spawnCooldownCounter = 0.0f;
@@ -37,6 +39,14 @@ public class MeshLinesGenerator : MonoBehaviour
 		vertsArrayLast2 = new Vector3[2 * verticesFrequencyDepthCount];
 		newLineNormals = new Vector3[verticesFrequencyDepthCount];
 
+		meshLinesPoolArray = new GameObject[meshLinesPoolSize];
+		for(int i = 0; i < meshLinesPoolSize; i++)
+		{
+			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
+			meshLinesPoolArray[i].renderer.sharedMaterial = meshMaterial;
+			meshLinesPoolArray[i].SetActive(false);
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -50,15 +60,36 @@ public class MeshLinesGenerator : MonoBehaviour
 
 			GenerateLineMesh();
 
+			meshMaterial.color = audioDirector.calculatedRGB;
+
 		}
 
 	}
 
+	GameObject GetFreeMeshLineFromPool()
+	{
+		for(int i = 0; i < meshLinesPoolArray.Length; i++)
+		{
+			if(meshLinesPoolArray[i].activeSelf == false)
+				return meshLinesPoolArray[i];
+		}
+		// if nothing found
+			return null;
+	}
+
 	void GenerateLineMesh()
 	{
-		GameObject newMeshLineGO = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
+		GameObject meshLineGO = GetFreeMeshLineFromPool();
 		
-		Mesh mesh = newMeshLineGO.GetComponent<MeshFilter>().mesh;
+		if(meshLineGO == null)
+			return;
+		else
+		{
+			meshLineGO.SetActive(true);
+			meshLineGO.transform.position = transform.position;
+		}
+
+		Mesh mesh = meshLineGO.GetComponent<MeshFilter>().mesh;
 
 		Vector3[] verticesArray = new Vector3[200];
 		for(int i = 0; i < verticesArray.Length; i++)
@@ -151,11 +182,12 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		//Debug.Log("MESH GENERATED");
 
-		newMeshLineGO.GetComponent<PVA>().velocity = meshSpeed *transform.forward;
+		meshLineGO.GetComponent<PVA>().ResetPVA();
+		meshLineGO.GetComponent<PVA>().velocity = meshSpeed *transform.forward;
 
-		newMeshLineGO.renderer.sharedMaterial = meshMaterial;
-		meshMaterial.color = audioDirector.calculatedRGB;
-		//newMeshLineGO.renderer.material.color = audioDirector.calculatedRGB;
+		
+		
+		//meshLineGO.renderer.material.color = audioDirector.calculatedRGB;
 	}
 
 

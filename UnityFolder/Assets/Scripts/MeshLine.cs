@@ -20,7 +20,10 @@ public class MeshLine : MonoBehaviour
 		lifeTimeCounter += Time.deltaTime;
 
 		if(lifeTimeCounter > maxLifeTime)
-			Destroy(gameObject, 0.0f);
+		{
+			lifeTimeCounter = 0;
+			gameObject.SetActive(false);
+		}
 	
 	}
 

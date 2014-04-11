@@ -19,7 +19,12 @@ public class PVA : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		position = transform.position;	
+		Init();
+	}
+
+	void Init()
+	{
+		position = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -53,6 +58,11 @@ public class PVA : MonoBehaviour
 		// apply decay
 		velocity = (1.0f - velocityDecay) * velocity;
 		acceleration = (1.0f - accelerationDecay) * acceleration;
+	}
+
+	public void ResetPVA()
+	{
+		Init();
 	}
 
 
