@@ -92,6 +92,8 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshMaterial.color = audioDirector.calculatedRGB;
 
 		}
+		meshMaterial.color = audioDirector.calculatedRGB;
+
 
 		/*
 		if (Time.frameCount % 30 == 0)
@@ -134,7 +136,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 1; i<verticesFrequencyDepthCount; i++)
 		{
 			tempVector = verticesArray[i];
-			tempVector.y =  audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
+			tempVector.y = 1.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
 			//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 			verticesArray[i] = tempVector;
 		}
@@ -172,16 +174,8 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		mesh.normals = newLineNormals;
 
-
-
-		//Debug.Log("MESH GENERATED");
-
 		meshLinesPVAComponentArray[meshlineGOIndex].ResetPVA();
 		meshLinesPVAComponentArray[meshlineGOIndex].velocity = meshSpeed *transform.forward;
-
-		
-		
-		//meshLineGO.renderer.material.color = audioDirector.calculatedRGB;
 	}
 
 
