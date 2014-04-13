@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MeshLinesGenerator : MonoBehaviour 
 {
@@ -26,7 +27,6 @@ public class MeshLinesGenerator : MonoBehaviour
 	Mesh calculationsMiniMesh;
 	Vector3[] miniVertsArray;
 	Vector3[] vertsArrayLast2;
-	Vector3[] newLineNormals;
 
 	Vector3[] verticesArray;
 	int[] indicesArray;
@@ -35,6 +35,11 @@ public class MeshLinesGenerator : MonoBehaviour
 	float xScale = 1.0f;
 	float zScale = 1.0f;
 
+	// predeclared temp variables (trying to avoid GC)
+	GameObject tempMeshLineGO;
+	int tempMeshLineIndex;
+	Mesh tempMesh;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -42,7 +47,6 @@ public class MeshLinesGenerator : MonoBehaviour
 		GenerateCalculationsMiniMesh();
 
 		vertsArrayLast2 = new Vector3[2 * verticesFrequencyDepthCount];
-		newLineNormals = new Vector3[verticesFrequencyDepthCount];
 
 		meshLinesPoolArray = new GameObject[meshLinesPoolSize];
 		meshLinesMeshComponentArray = new Mesh[meshLinesPoolSize];
@@ -59,7 +63,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 
 
-
+		// do basic setup for all meshes
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
 		{
@@ -75,6 +79,15 @@ public class MeshLinesGenerator : MonoBehaviour
 		}
 		indicesArray = indicesList.ToArray();
 
+
+		for(int i = 0; i < meshLinesPoolSize; i++)
+		{
+			meshLinesMeshComponentArray[i].Clear();
+			meshLinesMeshComponentArray[i].vertices = verticesArray;
+			meshLinesMeshComponentArray[i].SetIndices(indicesArray, MeshTopology.Lines, 0);
+		}
+
+
 		tempVector = new Vector3(0, 0, 0);
 	}
 	
@@ -88,9 +101,6 @@ public class MeshLinesGenerator : MonoBehaviour
 			spawnCooldownCounter -= spawnCooldown;
 
 			GenerateLineMesh();
-
-			meshMaterial.color = audioDirector.calculatedRGB;
-
 		}
 		meshMaterial.color = audioDirector.calculatedRGB;
 
@@ -117,19 +127,18 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	void GenerateLineMesh()
 	{
-		GameObject meshLineGO;
-		int meshlineGOIndex = GetFreeMeshLineIndex();
+		tempMeshLineIndex = GetFreeMeshLineIndex();
 		
-		if(meshlineGOIndex == -1)
+		if(tempMeshLineIndex == -1)
 			return;
 		else
 		{
-			meshLineGO = meshLinesPoolArray[meshlineGOIndex];
-			meshLineGO.SetActive(true);
-			meshLineGO.transform.position = transform.position;
+			tempMeshLineGO = meshLinesPoolArray[tempMeshLineIndex];
+			tempMeshLineGO.SetActive(true);
+			tempMeshLineGO.transform.position = transform.position;
 		}
 
-		Mesh mesh = meshLinesMeshComponentArray[meshlineGOIndex];
+		tempMesh = meshLinesMeshComponentArray[tempMeshLineIndex];
 
 		// SET HEIGHT
 
@@ -145,12 +154,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i < audioDirector.pseudoLogArray.Length; i++)
 			audioDirector.pseudoLogArrayBuffer[i] = 0;
 
-
-		mesh.Clear();
-		mesh.vertices = verticesArray;
-	
-		mesh.SetIndices (indicesArray, MeshTopology.Lines, 0);
-
+			
 		// calculate normals
 
 		// push down normals
@@ -166,16 +170,16 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 		calculationsMiniMesh.vertices = vertsArrayLast2;
 		calculationsMiniMesh.RecalculateNormals();
+		
+		// apply data to mesh
+		tempMesh.vertices = verticesArray;
+		
+		// looks like copying values from one array to another causes GC to go wilde spikes >_<
+		// Take() is much better than manual copy though
+		tempMesh.normals = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
 
-		for(int i = 0; i < verticesFrequencyDepthCount; i++)
-		{
-			newLineNormals[i] = calculationsMiniMesh.normals[i];
-		}
-
-		mesh.normals = newLineNormals;
-
-		meshLinesPVAComponentArray[meshlineGOIndex].ResetPVA();
-		meshLinesPVAComponentArray[meshlineGOIndex].velocity = meshSpeed *transform.forward;
+		meshLinesPVAComponentArray[tempMeshLineIndex].ResetPVA();
+		meshLinesPVAComponentArray[tempMeshLineIndex].velocity = meshSpeed *transform.forward;
 	}
 
 
@@ -250,7 +254,6 @@ public class MeshLinesGenerator : MonoBehaviour
 		calculationsMiniMesh.RecalculateNormals();
 
 		miniVertsArray = calculationsMiniMesh.normals;
-
 	}
 
 
