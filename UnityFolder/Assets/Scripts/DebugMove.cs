@@ -38,7 +38,7 @@ public class DebugMove : MonoBehaviour
 		disaplcement.y = yTranslation;
 		disaplcement.z = zTranslation;
 
-		transform.Translate(disaplcement, Space.Self);
+		transform.Translate(disaplcement, Space.World);
 
 
 	}
