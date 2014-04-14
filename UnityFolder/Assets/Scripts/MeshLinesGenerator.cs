@@ -24,6 +24,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	AudioDirectorScript audioDirector;
 
 	public int verticesFrequencyDepthCount = 200;
+	public float verticesSpread = 1.0f;
 	Mesh calculationsMiniMesh;
 	Vector3[] miniVertsArray;
 	Vector3[] vertsArrayLast2;
@@ -67,7 +68,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
 		{
-			verticesArray[i] = new Vector3(i, 0, 0);
+			verticesArray[i] = new Vector3(i * verticesSpread , 0, 0);
 		}
 
 		
@@ -135,7 +136,14 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			tempMeshLineGO = meshLinesPoolArray[tempMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
+		
+			tempMeshLineGO.transform.localScale = 0.05f * audioDirector.averageAmplitude * new Vector3(1, 1, 1);
+
 			tempMeshLineGO.transform.position = transform.position;
+			float xOffset = - 0.5f * tempMeshLineGO.transform.localScale.x * verticesFrequencyDepthCount * verticesSpread;
+			tempVector = tempMeshLineGO.transform.position;
+			tempVector.x += xOffset;
+			tempMeshLineGO.transform.position = tempVector;
 		}
 
 		tempMesh = meshLinesMeshComponentArray[tempMeshLineIndex];
