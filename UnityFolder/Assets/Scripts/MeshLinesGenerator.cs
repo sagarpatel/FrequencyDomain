@@ -36,9 +36,19 @@ public class MeshLinesGenerator : MonoBehaviour
 	float xScale = 1.0f;
 	float zScale = 1.0f;
 
+	// collumns stuff
+	GameObject[] meshCollumnsArray;
+	Mesh[] meshCollumnsMeshComponentArray;
+	public int collumnDepth = 200;
+	Vector3[] tempCollumnVerticesArray;
+	Vector3[] tempCollumnNormalsArray;
+
+	[Range(1, 10)]
+	public int collumnStitchIndex = 1;
+
 	// predeclared temp variables (trying to avoid GC)
 	GameObject tempMeshLineGO;
-	int tempMeshLineIndex;
+	int freshMeshLineIndex;
 	Mesh tempMesh;
 
 	// Use this for initialization
@@ -47,6 +57,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 		GenerateCalculationsMiniMesh();
 
+		// mesh lines (i.e. rows) setup
 		vertsArrayLast2 = new Vector3[2 * verticesFrequencyDepthCount];
 
 		meshLinesPoolArray = new GameObject[meshLinesPoolSize];
@@ -64,7 +75,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 
 
-		// do basic setup for all meshes
+		// do basic setup for all meshe lines / rows
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
 		{
@@ -88,6 +99,40 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshLinesMeshComponentArray[i].SetIndices(indicesArray, MeshTopology.Lines, 0);
 		}
 
+		// mesh collumns setup
+		// basic object setup
+		meshCollumnsArray = new GameObject[verticesFrequencyDepthCount];
+		for(int i = 0; i < meshCollumnsArray.Length; i++)
+		{
+			meshCollumnsArray[i] = new GameObject("MeshRow_" + i);
+			meshCollumnsArray[i].AddComponent<MeshFilter>();
+			meshCollumnsArray[i].AddComponent<MeshRenderer>();
+			meshCollumnsArray[i].renderer.sharedMaterial = meshMaterial;
+		}
+		
+		// vertices and indices setup
+		tempCollumnVerticesArray = new Vector3[collumnDepth];
+		tempCollumnNormalsArray = new Vector3[collumnDepth];
+		
+		// Generate indices
+		List<int> rowIndicesList = new List<int>();
+		for(int i = 0; i< tempCollumnVerticesArray.Length -1; i++)
+		{
+			rowIndicesList.Add(i);
+			rowIndicesList.Add(i+1);
+		}
+
+		// setup mesh component
+		meshCollumnsMeshComponentArray = new Mesh[meshCollumnsArray.Length];
+		Vector3[] emptyNormals = new Vector3[tempCollumnVerticesArray.Length];
+		for(int i = 0; i < meshCollumnsMeshComponentArray.Length; i++)
+		{
+			meshCollumnsMeshComponentArray[i] = meshCollumnsArray[i].GetComponent<MeshFilter>().mesh;
+			meshCollumnsMeshComponentArray[i].Clear();
+			meshCollumnsMeshComponentArray[i].vertices = tempCollumnVerticesArray;
+			meshCollumnsMeshComponentArray[i].SetIndices(rowIndicesList.ToArray(), MeshTopology.Lines,0);
+			meshCollumnsMeshComponentArray[i].normals = emptyNormals;
+		}
 
 		tempVector = new Vector3(0, 0, 0);
 	}
@@ -102,7 +147,12 @@ public class MeshLinesGenerator : MonoBehaviour
 			spawnCooldownCounter -= spawnCooldown;
 
 			GenerateLineMesh();
+
+			StitchNewRowIntoCollumns();
 		}
+
+		UpdateCollumnVerticesPosition();
+
 		meshMaterial.color = audioDirector.calculatedRGB;
 
 
@@ -128,13 +178,13 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	void GenerateLineMesh()
 	{
-		tempMeshLineIndex = GetFreeMeshLineIndex();
+		freshMeshLineIndex = GetFreeMeshLineIndex();
 		
-		if(tempMeshLineIndex == -1)
+		if(freshMeshLineIndex == -1)
 			return;
 		else
 		{
-			tempMeshLineGO = meshLinesPoolArray[tempMeshLineIndex];
+			tempMeshLineGO = meshLinesPoolArray[freshMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
 		
 			tempMeshLineGO.transform.localScale = 0.05f * audioDirector.averageAmplitude * new Vector3(1, 1, 1);
@@ -146,14 +196,14 @@ public class MeshLinesGenerator : MonoBehaviour
 			tempMeshLineGO.transform.position = tempVector;
 		}
 
-		tempMesh = meshLinesMeshComponentArray[tempMeshLineIndex];
+		tempMesh = meshLinesMeshComponentArray[freshMeshLineIndex];
 
 		// SET HEIGHT
 
 		for(int i = 1; i<verticesFrequencyDepthCount; i++)
 		{
 			tempVector = verticesArray[i];
-			tempVector.y = 4.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
+			tempVector.y = 8.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
 			//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 			verticesArray[i] = tempVector;
 		}
@@ -186,8 +236,53 @@ public class MeshLinesGenerator : MonoBehaviour
 		// Take() is much better than manual copy though
 		tempMesh.normals = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
 
-		meshLinesPVAComponentArray[tempMeshLineIndex].ResetPVA();
-		meshLinesPVAComponentArray[tempMeshLineIndex].velocity = meshSpeed *transform.forward;
+		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
+		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed *transform.forward;
+	}
+
+	void StitchNewRowIntoCollumns()
+	{
+
+		// first push down the vertices by 1 index for all collumns
+
+		for(int h = 0; h < meshCollumnsArray.Length; h++)
+		{
+			// shift values down
+			tempCollumnVerticesArray = meshCollumnsMeshComponentArray[h].vertices;
+			tempCollumnNormalsArray = meshCollumnsMeshComponentArray[h].normals;
+			for(int i = collumnDepth -1 ; i > collumnStitchIndex ; i--)
+			{
+				tempCollumnVerticesArray[i] = tempCollumnVerticesArray[i-1];
+				tempCollumnNormalsArray[i] = tempCollumnNormalsArray[i-1];
+			}
+			
+			// add the new row value to all corresponding collumn start vertex
+			tempCollumnVerticesArray[collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;//+ meshLinesPoolArray[freshMeshLineIndex].transform.position ;
+			tempCollumnNormalsArray[collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
+
+			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
+			meshCollumnsMeshComponentArray[h].normals = tempCollumnNormalsArray;
+		}
+
+
+	}
+
+	void UpdateCollumnVerticesPosition()
+	{
+		Vector3 tempPosition;
+		for(int h = 0; h < meshCollumnsArray.Length; h++)
+		{
+			tempCollumnVerticesArray = meshCollumnsMeshComponentArray[h].vertices;
+			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
+			{
+				tempPosition = tempCollumnVerticesArray[i];
+				// not unified physics now, could cause trouble later
+				tempPosition += meshSpeed * transform.forward * Time.deltaTime;
+				tempCollumnVerticesArray[i] = tempPosition;
+			}
+			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
+		}
+
 	}
 
 
