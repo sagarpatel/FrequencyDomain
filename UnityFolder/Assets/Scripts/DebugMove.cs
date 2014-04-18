@@ -21,7 +21,7 @@ public class DebugMove : MonoBehaviour
 	void Update () 
 	{
 
-		float xTranslation = Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
+		float xTranslation = -Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
 		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
 		float zTranslation = 0;;
 
