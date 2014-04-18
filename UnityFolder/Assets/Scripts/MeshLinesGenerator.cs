@@ -167,12 +167,21 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			spawnCooldownCounter -= spawnCooldown;
 
+			Profiler.BeginSample("GenerateLineMesh");
 			GenerateLineMesh();
+			Profiler.EndSample();
 
+
+			Profiler.BeginSample("StitchNewRowIntoCollumns");
 			StitchNewRowIntoCollumns();
+			Profiler.EndSample();
+
 		}
 
+		Profiler.BeginSample("UpdateCollumnVerticesPosition");
 		UpdateCollumnVerticesPosition();
+		Profiler.EndSample();
+
 
 		meshMaterial.color = audioDirector.calculatedRGB;
 
@@ -209,7 +218,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			tempMeshLineGO = meshLinesPoolArray[freshMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
 		
-			//tempMeshLineGO.transform.localScale = 0.05f * audioDirector.averageAmplitude * new Vector3(1, 1, 1);
+			tempMeshLineGO.transform.localScale = 0.03f * audioDirector.averageAmplitude * new Vector3(1, 1, 1);
 
 			tempMeshLineGO.transform.position = transform.position;
 			float xOffset = - 0.5f * tempMeshLineGO.transform.localScale.x * verticesFrequencyDepthCount * verticesSpread;
