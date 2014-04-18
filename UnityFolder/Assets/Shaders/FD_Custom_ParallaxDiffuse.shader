@@ -7,10 +7,10 @@
 	SubShader 
 	{
 		Tags { "RenderType"="Opaque" }
-		LOD 200
+		LOD 150
 		
 		CGPROGRAM
-		#pragma surface surf Lambert
+		#pragma surface surf Lambert noforwardadd
 
 	
 		fixed4 _Color;
