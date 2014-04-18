@@ -52,6 +52,8 @@ public class MeshLinesGenerator : MonoBehaviour
 	int freshMeshLineIndex;
 	Mesh tempMesh;
 
+	public Color meshColorViewer;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -85,18 +87,26 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		
 		List<int> indicesList = new List<int>();
+		List<Vector2> uvsLinesList = new List<Vector2>();
+		List<Vector4> tangentLinesList = new List<Vector4>();
 		for(int i =0; i < verticesArray.Length - 1; i++)
 		{
 			indicesList.Add(i);
 			indicesList.Add(i +1);
+			uvsLinesList.Add(new Vector2(0, 0));
+			tangentLinesList.Add(new Vector4(0, 0, 0, 0));
 		}
+		// add final uv
+		uvsLinesList.Add(new Vector2(0,0));
+		tangentLinesList.Add(new Vector4(0, 0, 0, 0));
 		indicesArray = indicesList.ToArray();
-
 
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesMeshComponentArray[i].Clear();
 			meshLinesMeshComponentArray[i].vertices = verticesArray;
+			meshLinesMeshComponentArray[i].uv = uvsLinesList.ToArray();
+			meshLinesMeshComponentArray[i].tangents = tangentLinesList.ToArray();
 			meshLinesMeshComponentArray[i].SetIndices(indicesArray, MeshTopology.Lines, 0);
 		}
 
@@ -109,6 +119,8 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshCollumnsArray[i].AddComponent<MeshFilter>();
 			meshCollumnsArray[i].AddComponent<MeshRenderer>();
 			meshCollumnsArray[i].renderer.sharedMaterial = meshMaterial;
+			meshCollumnsArray[i].renderer.receiveShadows = false;
+			meshCollumnsArray[i].renderer.castShadows = false;
 		}
 		
 		// vertices and indices setup
@@ -117,12 +129,18 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 		// Generate indices
 		List<int> rowIndicesList = new List<int>();
+		List<Vector2> uvsCollumnsList = new List<Vector2>();
+		List<Vector4> tangentsCollumnsList = new List<Vector4>();
 		for(int i = 0; i< tempCollumnVerticesArray.Length -1; i++)
 		{
 			rowIndicesList.Add(i);
 			rowIndicesList.Add(i+1);
+			uvsCollumnsList.Add(new Vector2(0, 0));
+			tangentsCollumnsList.Add( new Vector4(0, 0, 0, 0));
 		}
-
+		// add final uv
+		uvsCollumnsList.Add(new Vector2(0, 0));
+		tangentsCollumnsList.Add(new Vector4(0, 0, 0, 0));
 		// setup mesh component
 		meshCollumnsMeshComponentArray = new Mesh[meshCollumnsArray.Length];
 		Vector3[] emptyNormals = new Vector3[tempCollumnVerticesArray.Length];
@@ -133,6 +151,8 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshCollumnsMeshComponentArray[i].vertices = tempCollumnVerticesArray;
 			meshCollumnsMeshComponentArray[i].SetIndices(rowIndicesList.ToArray(), MeshTopology.Lines,0);
 			meshCollumnsMeshComponentArray[i].normals = emptyNormals;
+			meshCollumnsMeshComponentArray[i].uv = uvsCollumnsList.ToArray();
+			meshCollumnsMeshComponentArray[i].tangents = tangentsCollumnsList.ToArray();
 		}
 
 		tempVector = new Vector3(0, 0, 0);
@@ -156,6 +176,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		meshMaterial.color = audioDirector.calculatedRGB;
 
+		meshColorViewer = meshMaterial.color;
 
 		/*
 		if (Time.frameCount % 30 == 0)
