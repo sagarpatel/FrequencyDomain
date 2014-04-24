@@ -43,6 +43,9 @@ public class MeshLinesGenerator : MonoBehaviour
 	Vector3[] tempCollumnVerticesArray;
 	Vector3[] tempCollumnNormalsArray;
 
+	public Vector3[][] collumnsArrayVerticesArray;
+	Vector3[][] collumnsArrayNormalsArray;
+
 	[Range(1, 10)]
 	public int collumnStitchIndex = 1;
 	public Vector3 stitchAnchorOffset = new Vector3(0, 0, 0);
@@ -51,6 +54,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	GameObject tempMeshLineGO;
 	int freshMeshLineIndex;
 	Mesh tempMesh;
+	Vector3 currentLinesForward;
 
 	public Color meshColorViewer;
 
@@ -126,6 +130,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		// vertices and indices setup
 		tempCollumnVerticesArray = new Vector3[collumnDepth];
 		tempCollumnNormalsArray = new Vector3[collumnDepth];
+
 		
 		// Generate indices
 		List<int> rowIndicesList = new List<int>();
@@ -141,8 +146,14 @@ public class MeshLinesGenerator : MonoBehaviour
 		// add final uv
 		uvsCollumnsList.Add(new Vector2(0, 0));
 		tangentsCollumnsList.Add(new Vector4(0, 0, 0, 0));
+
 		// setup mesh component
 		meshCollumnsMeshComponentArray = new Mesh[meshCollumnsArray.Length];
+
+		// these 2D arrays will be used to locally store and manage vertices and normals, minimizing how often mesh.verties,etc gets called (which causes GC spike)
+		collumnsArrayVerticesArray = new Vector3[meshCollumnsMeshComponentArray.Length][];
+		collumnsArrayNormalsArray = new Vector3[meshCollumnsMeshComponentArray.Length][];
+
 		Vector3[] emptyNormals = new Vector3[tempCollumnVerticesArray.Length];
 		for(int i = 0; i < meshCollumnsMeshComponentArray.Length; i++)
 		{
@@ -153,7 +164,18 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshCollumnsMeshComponentArray[i].normals = emptyNormals;
 			meshCollumnsMeshComponentArray[i].uv = uvsCollumnsList.ToArray();
 			meshCollumnsMeshComponentArray[i].tangents = tangentsCollumnsList.ToArray();
+
+			collumnsArrayVerticesArray[i] = new Vector3[collumnDepth];
+			collumnsArrayNormalsArray[i] =  new Vector3[collumnDepth];
+			for(int j = 0; j < collumnDepth; j++)
+			{
+				collumnsArrayVerticesArray[i][j] = new Vector3(0, 0, 0);
+				collumnsArrayNormalsArray[i][j] = new Vector3(0, 0, 0);	
+			}
+			
 		}
+
+
 
 		tempVector = new Vector3(0, 0, 0);
 	}
@@ -161,6 +183,10 @@ public class MeshLinesGenerator : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+
+		Profiler.BeginSample("UpdateCollumnVerticesPosition");
+		UpdateCollumnVerticesPosition();
+		Profiler.EndSample();
 	
 		spawnCooldownCounter += Time.deltaTime;
 		if(spawnCooldownCounter > spawnCooldown)
@@ -178,9 +204,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		}
 
-		Profiler.BeginSample("UpdateCollumnVerticesPosition");
-		UpdateCollumnVerticesPosition();
-		Profiler.EndSample();
+		
 
 
 		meshMaterial.color = audioDirector.calculatedRGB;
@@ -225,6 +249,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			tempVector = tempMeshLineGO.transform.position;
 			tempVector.x += xOffset;
 			tempMeshLineGO.transform.position = tempVector;
+			currentLinesForward = tempMeshLineGO.transform.forward;
 		}
 
 		tempMesh = meshLinesMeshComponentArray[freshMeshLineIndex];
@@ -279,20 +304,30 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{
 			// shift values down
-			tempCollumnVerticesArray = meshCollumnsMeshComponentArray[h].vertices;
-			tempCollumnNormalsArray = meshCollumnsMeshComponentArray[h].normals;
+			//tempCollumnVerticesArray = collumnsArrayVerticesArray[h]; //meshCollumnsMeshComponentArray[h].vertices;
+			//tempCollumnNormalsArray = collumnsArrayNormalsArray[h]; //meshCollumnsMeshComponentArray[h].normals;
 			for(int i = collumnDepth -1 ; i > collumnStitchIndex ; i--)
 			{
-				tempCollumnVerticesArray[i] = tempCollumnVerticesArray[i-1];
-				tempCollumnNormalsArray[i] = tempCollumnNormalsArray[i-1];
+				//tempCollumnVerticesArray[i] = tempCollumnVerticesArray[i-1];
+				//tempCollumnNormalsArray[i] = tempCollumnNormalsArray[i-1];
+
+				collumnsArrayVerticesArray[h][i] = collumnsArrayVerticesArray[h][i-1];
+				collumnsArrayNormalsArray[h][i] = collumnsArrayNormalsArray[h][i-1];
 			}
 			
 			// add the new row value to all corresponding collumn start vertex
-			tempCollumnVerticesArray[collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;//+ meshLinesPoolArray[freshMeshLineIndex].transform.position ;
-			tempCollumnNormalsArray[collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
+			//tempCollumnVerticesArray[collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;//+ meshLinesPoolArray[freshMeshLineIndex].transform.position ;
+			//tempCollumnNormalsArray[collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
 
-			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
-			meshCollumnsMeshComponentArray[h].normals = tempCollumnNormalsArray;
+			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;
+			collumnsArrayNormalsArray[h][collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
+
+
+			//collumnsArrayVerticesArray[h] = tempCollumnVerticesArray;
+			//collumnsArrayNormalsArray[h] = tempCollumnNormalsArray;
+
+			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
+			meshCollumnsMeshComponentArray[h].normals = collumnsArrayNormalsArray[h]; // tempCollumnNormalsArray;
 		}
 
 
@@ -302,17 +337,18 @@ public class MeshLinesGenerator : MonoBehaviour
 	{
 		Vector3 tempPosition;
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
-		{
-			tempCollumnVerticesArray = meshCollumnsMeshComponentArray[h].vertices;
+		{	
+			tempCollumnVerticesArray = collumnsArrayVerticesArray[h];// meshCollumnsMeshComponentArray[h].vertices;
 			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
 			{
-				tempPosition = tempCollumnVerticesArray[i];
+				tempPosition = /*collumnsArrayVerticesArray[h][i]; //*/tempCollumnVerticesArray[i];
 				// not unified physics now, could cause trouble later
 				tempPosition += meshSpeed * transform.forward * Time.deltaTime;
-				tempCollumnVerticesArray[i] = tempPosition;
+				tempCollumnVerticesArray[i] /*collumnsArrayVerticesArray[h][i]*/ = tempPosition;
 			}
-			tempCollumnVerticesArray[collumnStitchIndex-1] = transform.position + stitchAnchorOffset;
-			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
+			tempCollumnVerticesArray[collumnStitchIndex-1] /*collumnsArrayVerticesArray[h][collumnStitchIndex-1]*/ = transform.position + stitchAnchorOffset;
+			collumnsArrayVerticesArray[h] = tempCollumnVerticesArray;
+			meshCollumnsMeshComponentArray[h].vertices = /*collumnsArrayVerticesArray[h];//*/tempCollumnVerticesArray;
 		}
 
 	}
