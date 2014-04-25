@@ -322,20 +322,20 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	void UpdateCollumnVerticesPosition()
 	{
-		Vector3 tempPosition;
+		Vector3 tempPosition = transform.position;
+		Vector3 forwardVec = transform.forward;
+		float deltaT = Time.deltaTime;
+
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
-			tempCollumnVerticesArray = collumnsArrayVerticesArray[h];
 			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
-			{
-				tempPosition = tempCollumnVerticesArray[i];
-				// not unified physics now, could cause trouble later
-				tempPosition += meshSpeed * transform.forward * Time.deltaTime;
-				tempCollumnVerticesArray[i] = tempPosition;
+			{	
+				//// not unified physics now, could cause trouble later`
+				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
 			}
-			tempCollumnVerticesArray[collumnStitchIndex-1] = transform.position + stitchAnchorOffset;
-			collumnsArrayVerticesArray[h] = tempCollumnVerticesArray;
-			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
+			
+			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = tempPosition + stitchAnchorOffset;
+			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 		}
 
 	}
