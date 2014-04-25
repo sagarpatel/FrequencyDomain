@@ -256,12 +256,12 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		// SET HEIGHT
 
-		for(int i = 1; i<verticesFrequencyDepthCount; i++)
+		for(int i = 0; i<verticesFrequencyDepthCount; i++)
 		{
-			tempVector = verticesArray[i];
+			tempVector = verticesArray[ verticesFrequencyDepthCount - i -1];
 			tempVector.y = 8.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
 			//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
-			verticesArray[i] = tempVector;
+			verticesArray[verticesFrequencyDepthCount - i -1] = tempVector;
 		}
 
 		// reset the audio data buffer
