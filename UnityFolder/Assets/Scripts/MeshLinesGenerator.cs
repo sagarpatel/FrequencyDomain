@@ -56,6 +56,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	int freshMeshLineIndex;
 	Mesh tempMesh;
 	Vector3 currentLinesForward;
+	Vector3 flatScale = new Vector3(1, 1, 1);
 
 	public Color meshColorViewer;
 
@@ -241,7 +242,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			tempMeshLineGO = meshLinesPoolArray[freshMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
 		
-			tempMeshLineGO.transform.localScale = 0.03f * audioDirector.averageAmplitude * new Vector3(1, 1, 1);
+			tempMeshLineGO.transform.localScale = 0.03f * audioDirector.averageAmplitude * flatScale;
 
 			tempMeshLineGO.transform.position = transform.position;
 			float xOffset = - 0.5f * tempMeshLineGO.transform.localScale.x * verticesFrequencyDepthCount * verticesSpread;
@@ -270,6 +271,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			
 		// calculate normals
 
+		
 		// push down normals
 		for(int i = 0; i < verticesFrequencyDepthCount; i ++)
 		{
@@ -281,6 +283,9 @@ public class MeshLinesGenerator : MonoBehaviour
 			vertsArrayLast2[i] = verticesArray[i];
 		}
 		
+
+		
+		
 		calculationsMiniMesh.vertices = vertsArrayLast2;
 		calculationsMiniMesh.RecalculateNormals();
 		
@@ -289,11 +294,15 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 		// looks like copying values from one array to another causes GC to go wilde spikes >_<
 		// Take() is much better than manual copy though
-		tempMesh.normals = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
+		Profiler.BeginSample("Mesh take");
 		freshLineMeshNormalsArray = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
+		tempMesh.normals = freshLineMeshNormalsArray; //calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
+		Profiler.EndSample();
 
 		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
 		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed *transform.forward;
+
+		
 	}
 
 	void StitchNewRowIntoCollumns()
