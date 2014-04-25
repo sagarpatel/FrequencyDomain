@@ -42,6 +42,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	public int collumnDepth = 200;
 	Vector3[] tempCollumnVerticesArray;
 	Vector3[] tempCollumnNormalsArray;
+	Vector3[] freshLineMeshNormalsArray;
 
 	public Vector3[][] collumnsArrayVerticesArray;
 	Vector3[][] collumnsArrayNormalsArray;
@@ -84,6 +85,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		// do basic setup for all meshe lines / rows
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
+		freshLineMeshNormalsArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
 		{
 			verticesArray[i] = new Vector3(i * verticesSpread , 0, 0);
@@ -288,6 +290,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		// looks like copying values from one array to another causes GC to go wilde spikes >_<
 		// Take() is much better than manual copy though
 		tempMesh.normals = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
+		freshLineMeshNormalsArray = calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
 
 		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
 		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed *transform.forward;
@@ -309,7 +312,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			
 			// add the new row value to all corresponding collumn start vertex
 			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;
-			collumnsArrayNormalsArray[h][collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
+			collumnsArrayNormalsArray[h][collumnStitchIndex] = freshLineMeshNormalsArray[h]; //meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
 
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
 			meshCollumnsMeshComponentArray[h].normals = collumnsArrayNormalsArray[h]; // tempCollumnNormalsArray;
