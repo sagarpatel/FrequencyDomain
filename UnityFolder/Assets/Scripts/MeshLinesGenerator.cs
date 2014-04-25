@@ -204,9 +204,6 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		}
 
-		
-
-
 		meshMaterial.color = audioDirector.calculatedRGB;
 
 		meshColorViewer = meshMaterial.color;
@@ -304,32 +301,19 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{
 			// shift values down
-			//tempCollumnVerticesArray = collumnsArrayVerticesArray[h]; //meshCollumnsMeshComponentArray[h].vertices;
-			//tempCollumnNormalsArray = collumnsArrayNormalsArray[h]; //meshCollumnsMeshComponentArray[h].normals;
 			for(int i = collumnDepth -1 ; i > collumnStitchIndex ; i--)
 			{
-				//tempCollumnVerticesArray[i] = tempCollumnVerticesArray[i-1];
-				//tempCollumnNormalsArray[i] = tempCollumnNormalsArray[i-1];
-
 				collumnsArrayVerticesArray[h][i] = collumnsArrayVerticesArray[h][i-1];
 				collumnsArrayNormalsArray[h][i] = collumnsArrayNormalsArray[h][i-1];
 			}
 			
 			// add the new row value to all corresponding collumn start vertex
-			//tempCollumnVerticesArray[collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;//+ meshLinesPoolArray[freshMeshLineIndex].transform.position ;
-			//tempCollumnNormalsArray[collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
-
 			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;
 			collumnsArrayNormalsArray[h][collumnStitchIndex] = meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
-
-
-			//collumnsArrayVerticesArray[h] = tempCollumnVerticesArray;
-			//collumnsArrayNormalsArray[h] = tempCollumnNormalsArray;
 
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
 			meshCollumnsMeshComponentArray[h].normals = collumnsArrayNormalsArray[h]; // tempCollumnNormalsArray;
 		}
-
 
 	}
 
@@ -338,17 +322,17 @@ public class MeshLinesGenerator : MonoBehaviour
 		Vector3 tempPosition;
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
-			tempCollumnVerticesArray = collumnsArrayVerticesArray[h];// meshCollumnsMeshComponentArray[h].vertices;
+			tempCollumnVerticesArray = collumnsArrayVerticesArray[h];
 			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
 			{
-				tempPosition = /*collumnsArrayVerticesArray[h][i]; //*/tempCollumnVerticesArray[i];
+				tempPosition = tempCollumnVerticesArray[i];
 				// not unified physics now, could cause trouble later
 				tempPosition += meshSpeed * transform.forward * Time.deltaTime;
-				tempCollumnVerticesArray[i] /*collumnsArrayVerticesArray[h][i]*/ = tempPosition;
+				tempCollumnVerticesArray[i] = tempPosition;
 			}
-			tempCollumnVerticesArray[collumnStitchIndex-1] /*collumnsArrayVerticesArray[h][collumnStitchIndex-1]*/ = transform.position + stitchAnchorOffset;
+			tempCollumnVerticesArray[collumnStitchIndex-1] = transform.position + stitchAnchorOffset;
 			collumnsArrayVerticesArray[h] = tempCollumnVerticesArray;
-			meshCollumnsMeshComponentArray[h].vertices = /*collumnsArrayVerticesArray[h];//*/tempCollumnVerticesArray;
+			meshCollumnsMeshComponentArray[h].vertices = tempCollumnVerticesArray;
 		}
 
 	}
