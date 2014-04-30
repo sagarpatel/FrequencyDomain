@@ -75,11 +75,14 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
-			meshLinesPoolArray[i].renderer.sharedMaterial = meshMaterial;
-			meshLinesPoolArray[i].SetActive(false);
-
-			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponent<MeshFilter>().mesh;
+			meshLinesPoolArray[i].GetComponentInChildren<MeshRenderer>().sharedMaterial = meshMaterial;
+			
+			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponentInChildren<MeshFilter>().mesh;
 			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
+
+			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(-0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
+
+			meshLinesPoolArray[i].SetActive(false);
 		}
 		
 
@@ -122,7 +125,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		meshCollumnsArray = new GameObject[verticesFrequencyDepthCount];
 		for(int i = 0; i < meshCollumnsArray.Length; i++)
 		{
-			meshCollumnsArray[i] = new GameObject("MeshRow_" + i);
+			meshCollumnsArray[i] = new GameObject("MeshCollumn_" + i);
 			meshCollumnsArray[i].AddComponent<MeshFilter>();
 			meshCollumnsArray[i].AddComponent<MeshRenderer>();
 			meshCollumnsArray[i].renderer.sharedMaterial = meshMaterial;
@@ -241,15 +244,16 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			tempMeshLineGO = meshLinesPoolArray[freshMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
+
+			tempMeshLineGO.transform.rotation = transform.rotation;
 		
 			tempMeshLineGO.transform.localScale = 0.03f * audioDirector.averageAmplitude * flatScale;
 
 			tempMeshLineGO.transform.position = transform.position;
-			float xOffset = - 0.5f * tempMeshLineGO.transform.localScale.x * verticesFrequencyDepthCount * verticesSpread;
-			tempVector = tempMeshLineGO.transform.position;
-			tempVector.x += xOffset;
-			tempMeshLineGO.transform.position = tempVector;
+			//tempMeshLineGO.GetComponent<MeshLine>().UpdateCenter(verticesFrequencyDepthCount, verticesSpread);
+
 			currentLinesForward = tempMeshLineGO.transform.forward;
+
 		}
 
 		tempMesh = meshLinesMeshComponentArray[freshMeshLineIndex];
@@ -259,7 +263,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i<verticesFrequencyDepthCount; i++)
 		{
 			tempVector = verticesArray[ verticesFrequencyDepthCount - i -1];
-			tempVector.y = 8.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
+			tempVector.y = 16.0f * audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)]; //* verticesAudioHeightScale * yScale; // normal version
 			//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 			verticesArray[verticesFrequencyDepthCount - i -1] = tempVector;
 		}
@@ -320,7 +324,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			}
 			
 			// add the new row value to all corresponding collumn start vertex
-			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.TransformPoint(verticesArray[h]) ;
+			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.GetChild(0).transform.TransformPoint(verticesArray[h]) ;
 			collumnsArrayNormalsArray[h][collumnStitchIndex] = freshLineMeshNormalsArray[h]; //meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
 
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
