@@ -10,6 +10,7 @@ public class DebugMove : MonoBehaviour
 
 	public Vector3 disaplcement = new Vector3(0, 0, 0);
 
+	public Transform targetTransform;
 
 	// Use this for initialization
 	void Start () 
@@ -39,6 +40,8 @@ public class DebugMove : MonoBehaviour
 		disaplcement.z = zTranslation;
 
 		transform.Translate(disaplcement, Space.World);
+
+		transform.LookAt(targetTransform, Vector3.up);
 
 
 	}
