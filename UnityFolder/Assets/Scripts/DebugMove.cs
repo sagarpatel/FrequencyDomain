@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
+
 
 public class DebugMove : MonoBehaviour 
 {
@@ -21,9 +23,14 @@ public class DebugMove : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		InputManager.Update();
 
-		float xTranslation = -Input.GetAxis("Horizontal") * hControlSpeed * Time.deltaTime;
-		float yTranslation = Input.GetAxis("Vertical") * vControlSpeed * Time.deltaTime;
+		// Use last device which provided input.
+		var inputDevice = InputManager.ActiveDevice;
+
+
+		float xTranslation = -inputDevice.Direction.x * hControlSpeed * Time.deltaTime;
+		float yTranslation = inputDevice.Direction.y * vControlSpeed * Time.deltaTime;
 		float zTranslation = 0;;
 
 		if(Input.GetKey("q"))

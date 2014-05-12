@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
 
 public class LiveAudioInputSelectorScript : MonoBehaviour 
 {
@@ -23,7 +24,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	{
 		if(isActive)
 		{
-			if(Input.GetButtonDown("Warp"))
+			if(InputManager.ActiveDevice.GetControl( InputControlType.Action1 ))
 			{
 				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
 						currentlySelectedDeviceIndex = 0;
