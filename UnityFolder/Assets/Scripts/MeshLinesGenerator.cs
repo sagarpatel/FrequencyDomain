@@ -64,6 +64,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	public bool isAmplitudeScale = true;
 	public float minimumAmplitude = 1.0f;
 	public float maximumAmplitude = 8.0f;
+	public float staticAmpltiudeScale = 4.0f;
 
 	// Use this for initialization
 	void Start () 
@@ -259,7 +260,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 			tempMeshLineGO.transform.rotation = transform.rotation;
 
-			float amplitudeScale = 0.5f;
+			float amplitudeScale;
 			if(isAmplitudeScale)
 			{
 				amplitudeScale = Mathf.Clamp(audioDirector.averageAmplitude, minimumAmplitude, maximumAmplitude) ;
@@ -267,7 +268,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			}
 			else
 			{
-				amplitudeScale = 1.0f;
+				amplitudeScale = staticAmpltiudeScale;
 			}
 		
 			tempMeshLineGO.transform.localScale = 0.03f * amplitudeScale * flatScale;
