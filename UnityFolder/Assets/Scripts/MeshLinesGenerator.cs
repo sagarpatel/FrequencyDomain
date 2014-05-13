@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using InControl;
 
 public class MeshLinesGenerator : MonoBehaviour 
 {
@@ -59,6 +60,10 @@ public class MeshLinesGenerator : MonoBehaviour
 	Vector3 flatScale = new Vector3(1, 1, 1);
 
 	public Color meshColorViewer;
+
+	public bool isAmplitudeScale = true;
+	public float minimumAmplitude = 1.0f;
+	public float maximumAmplitude = 8.0f;
 
 	// Use this for initialization
 	void Start () 
@@ -190,6 +195,13 @@ public class MeshLinesGenerator : MonoBehaviour
 	void Update () 
 	{
 
+		
+		if(InputManager.Devices[0].Action4.WasPressed)
+		{
+			isAmplitudeScale = !isAmplitudeScale;
+		}
+
+
 		Profiler.BeginSample("UpdateCollumnVerticesPosition");
 		UpdateCollumnVerticesPosition();
 		Profiler.EndSample();
@@ -246,8 +258,19 @@ public class MeshLinesGenerator : MonoBehaviour
 			tempMeshLineGO.SetActive(true);
 
 			tempMeshLineGO.transform.rotation = transform.rotation;
+
+			float amplitudeScale = 0.5f;
+			if(isAmplitudeScale)
+			{
+				amplitudeScale = Mathf.Clamp(audioDirector.averageAmplitude, minimumAmplitude, maximumAmplitude) ;
+
+			}
+			else
+			{
+				amplitudeScale = 1.0f;
+			}
 		
-			tempMeshLineGO.transform.localScale = 0.03f * audioDirector.averageAmplitude * flatScale;
+			tempMeshLineGO.transform.localScale = 0.03f * amplitudeScale * flatScale;
 
 			tempMeshLineGO.transform.position = transform.position;
 			//tempMeshLineGO.GetComponent<MeshLine>().UpdateCenter(verticesFrequencyDepthCount, verticesSpread);

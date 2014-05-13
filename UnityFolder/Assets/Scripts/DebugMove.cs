@@ -23,7 +23,6 @@ public class DebugMove : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		InputManager.Update();
 
 		// Use last device which provided input.
 		var inputDevice = InputManager.ActiveDevice;
