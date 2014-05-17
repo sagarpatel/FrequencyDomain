@@ -133,7 +133,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			meshCollumnsArray[i] = new GameObject("MeshCollumn_" + i);
 			// parenting to make sure GO stays in view and does not get culled out when moving
-			meshCollumnsArray[i].transform.parent = gameObject.transform; 
+			//meshCollumnsArray[i].transform.parent = gameObject.transform; 
 			meshCollumnsArray[i].AddComponent<MeshFilter>();
 			meshCollumnsArray[i].AddComponent<MeshRenderer>();
 			meshCollumnsArray[i].renderer.sharedMaterial = meshMaterial;
@@ -178,6 +178,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshCollumnsMeshComponentArray[i].normals = emptyNormals;
 			meshCollumnsMeshComponentArray[i].uv = uvsCollumnsList.ToArray();
 			meshCollumnsMeshComponentArray[i].tangents = tangentsCollumnsList.ToArray();
+			meshCollumnsMeshComponentArray[i].bounds = new Bounds(Vector3.zero, Vector3.one * 10000000.0f);
 
 			collumnsArrayVerticesArray[i] = new Vector3[collumnDepth];
 			collumnsArrayNormalsArray[i] =  new Vector3[collumnDepth];
@@ -350,7 +351,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			}
 			
 			// add the new row value to all corresponding collumn start vertex
-			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.GetChild(0).transform.TransformPoint(verticesArray[h]) - transform.position;
+			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.GetChild(0).transform.TransformPoint(verticesArray[h]); //- transform.position;
 			collumnsArrayNormalsArray[h][collumnStitchIndex] = freshLineMeshNormalsArray[h]; //meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
 
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
@@ -373,7 +374,7 @@ public class MeshLinesGenerator : MonoBehaviour
 				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
 			}
 			
-			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchAnchorOffset;
+			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchAnchorOffset + tempPosition;
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 		}
 
