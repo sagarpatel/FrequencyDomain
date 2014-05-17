@@ -18,9 +18,12 @@ public class StarFieldGenerator : MonoBehaviour
 
 	List<GameObject> starsList = new List<GameObject>();
 
+	public int randomSeed = 1;
+
 	public void GenerateStarField()
 	{
-		Random.seed = 1;
+		Random.seed = randomSeed;
+		randomSeed ++;
 
 		Vector3 spawnPosition;
 		float randX;
@@ -38,12 +41,13 @@ public class StarFieldGenerator : MonoBehaviour
 		}
 	}
 
-	public void DeleteStarField()
+
+	public void DeleteAllStarsInScene()
 	{
-		for(int i = 0; i < starsList.Count; i++)
+		GameObject[] allStars = GameObject.FindGameObjectsWithTag("Star");
+		for(int i = 0; i < allStars.Length; i++)
 		{
-			DestroyImmediate(starsList[i]);
+			DestroyImmediate(allStars[i]);
 		}
-		starsList.Clear();
 	}
 }
