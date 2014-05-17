@@ -132,6 +132,8 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i < meshCollumnsArray.Length; i++)
 		{
 			meshCollumnsArray[i] = new GameObject("MeshCollumn_" + i);
+			// parenting to make sure GO stays in view and does not get culled out when moving
+			meshCollumnsArray[i].transform.parent = gameObject.transform; 
 			meshCollumnsArray[i].AddComponent<MeshFilter>();
 			meshCollumnsArray[i].AddComponent<MeshRenderer>();
 			meshCollumnsArray[i].renderer.sharedMaterial = meshMaterial;
@@ -348,7 +350,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			}
 			
 			// add the new row value to all corresponding collumn start vertex
-			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.GetChild(0).transform.TransformPoint(verticesArray[h]) ;
+			collumnsArrayVerticesArray[h][collumnStitchIndex] = tempMeshLineGO.transform.GetChild(0).transform.TransformPoint(verticesArray[h]) - transform.position;
 			collumnsArrayNormalsArray[h][collumnStitchIndex] = freshLineMeshNormalsArray[h]; //meshLinesMeshComponentArray[freshMeshLineIndex].normals[h];
 
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h]; //tempCollumnVerticesArray;
@@ -371,7 +373,7 @@ public class MeshLinesGenerator : MonoBehaviour
 				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
 			}
 			
-			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = tempPosition + stitchAnchorOffset;
+			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchAnchorOffset;
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 		}
 
