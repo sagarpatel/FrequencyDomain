@@ -15,5 +15,10 @@ public class StarFieldGeneratorInspector : Editor
         {
             myScript.GenerateStarField();
         }
+
+        if(GUILayout.Button("Delete Star Field"))
+        {
+        	myScript.DeleteStarField();
+        }
     }
 }
