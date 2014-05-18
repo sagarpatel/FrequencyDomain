@@ -36,6 +36,11 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		deltaV.y = yAcc;
 		deltaV.z = zAcc;
 
+		if(deltaV.magnitude > 0)
+			pva.isDecay = false;
+		else
+			pva.isDecay = true;
+
 		pva.acceleration = deltaV;
 
 

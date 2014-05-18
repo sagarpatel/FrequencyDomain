@@ -18,6 +18,8 @@ public class PVA : MonoBehaviour
 	public Space refrenceFrame = Space.World;
 	Vector3 deltaPos;
 
+	public bool isDecay = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -59,9 +61,12 @@ public class PVA : MonoBehaviour
 		//transform.position = position;
 		transform.Translate(deltaPos, refrenceFrame);
 
-		// apply decay
-		velocity = (1.0f - velocityDecay) * velocity;
-		acceleration = (1.0f - accelerationDecay) * acceleration;
+		if(isDecay)
+		{
+			// apply decay
+			velocity = (1.0f - velocityDecay) * velocity;
+			acceleration = (1.0f - accelerationDecay) * acceleration;
+		}
 	}
 
 	public void ResetPVA()
