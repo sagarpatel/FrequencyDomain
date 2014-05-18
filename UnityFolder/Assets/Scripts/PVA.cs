@@ -19,11 +19,15 @@ public class PVA : MonoBehaviour
 	Vector3 deltaPos;
 
 	public bool isDecay = false;
+	public float velocityKillThreashold = 0.0f;
+	public Vector3 deltaV;
+	Vector3 previousV;
 
 	// Use this for initialization
 	void Start () 
 	{
 		Init();
+		//previousV = new Vector3(0, 0, 0);
 	}
 
 	void Init()
@@ -67,6 +71,16 @@ public class PVA : MonoBehaviour
 			velocity = (1.0f - velocityDecay) * velocity;
 			acceleration = (1.0f - accelerationDecay) * acceleration;
 		}
+
+		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
+			velocity.x = 0;
+		if( Mathf.Abs(velocity.y) <= velocityKillThreashold )
+			velocity.y = 0;
+		if( Mathf.Abs(velocity.z) <= velocityKillThreashold )
+			velocity.z = 0;
+
+		deltaV = velocity - previousV;
+		previousV = velocity;
 	}
 
 	public void ResetPVA()

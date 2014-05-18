@@ -12,7 +12,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 	public float forwardControlScale = 10.0f;
 
 	//read only
-	public Vector3 deltaV;
+	public Vector3 controlDelta;
 
 
 	void Start () 
@@ -32,16 +32,16 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		float zAcc = inputDevice.Action1 * forwardControlScale * Time.deltaTime;
 
 
-		deltaV.x = xAcc;
-		deltaV.y = yAcc;
-		deltaV.z = zAcc;
+		controlDelta.x = xAcc;
+		controlDelta.y = yAcc;
+		controlDelta.z = zAcc;
 
-		if(deltaV.magnitude > 0)
+		if(controlDelta.magnitude > 0)
 			pva.isDecay = false;
 		else
 			pva.isDecay = true;
 
-		pva.acceleration = deltaV;
+		pva.acceleration = controlDelta;
 
 
 	}
