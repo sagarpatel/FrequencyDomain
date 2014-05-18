@@ -24,7 +24,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	{
 		if(isActive)
 		{
-			if(InputManager.ActiveDevice.GetControl( InputControlType.Action1 ))
+			if(InputManager.ActiveDevice.GetControl( InputControlType.Action4 ))
 			{
 				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
 						currentlySelectedDeviceIndex = 0;

@@ -7,8 +7,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 {
 	PVA pva;
 
-	public float hControlSpeed = 10.0f;
-	public float vControlSpeed = 10.0f;
+	public float hControlScale = 10.0f;
+	public float vControlScale = 10.0f;
+	public float forwardControlScale = 10.0f;
 
 	//read only
 	public Vector3 deltaV;
@@ -26,12 +27,14 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		// Use last device which provided input.
 		var inputDevice = InputManager.ActiveDevice;
 
-		float xTranslation = inputDevice.Direction.x * hControlSpeed * Time.deltaTime;
-		float yTranslation = inputDevice.Direction.y * vControlSpeed * Time.deltaTime;
-		
-		deltaV.x = xTranslation;
-		deltaV.y = yTranslation;
-		deltaV.z = 0;
+		float xAcc = inputDevice.Direction.x * hControlScale * Time.deltaTime;
+		float yAcc = inputDevice.Direction.y * vControlScale * Time.deltaTime;
+		float zAcc = inputDevice.Action1 * forwardControlScale * Time.deltaTime;
+
+
+		deltaV.x = xAcc;
+		deltaV.y = yAcc;
+		deltaV.z = zAcc;
 
 		pva.acceleration = deltaV;
 

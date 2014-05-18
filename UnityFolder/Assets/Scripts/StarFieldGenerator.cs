@@ -17,6 +17,7 @@ public class StarFieldGenerator : MonoBehaviour
 	public float zRange = 100.0f;	
 
 	List<GameObject> starsList = new List<GameObject>();
+	public float modelScale = 1.0f;
 
 	public int randomSeed = 1;
 
@@ -38,6 +39,7 @@ public class StarFieldGenerator : MonoBehaviour
 			spawnPosition = new Vector3(randX, randY, randZ);
 
 			starsList.Add( (GameObject) Instantiate(startModel, spawnPosition, Quaternion.identity) );
+			starsList[i].transform.localScale = Vector3.one * modelScale;
 		}
 	}
 
