@@ -51,6 +51,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	[Range(1, 10)]
 	public int collumnStitchIndex = 1;
 	public Vector3 stitchAnchorOffset = new Vector3(0, 0, 0);
+	GameObject stitchPosObject;
 
 	// predeclared temp variables (trying to avoid GC)
 	GameObject tempMeshLineGO;
@@ -190,7 +191,9 @@ public class MeshLinesGenerator : MonoBehaviour
 			
 		}
 
-
+		stitchPosObject = new GameObject();
+		stitchPosObject.transform.parent = transform;
+		stitchPosObject.transform.localPosition = stitchAnchorOffset;
 
 		tempVector = new Vector3(0, 0, 0);
 	}
@@ -374,7 +377,7 @@ public class MeshLinesGenerator : MonoBehaviour
 				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
 			}
 			
-			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchAnchorOffset + tempPosition;
+			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 		}
 

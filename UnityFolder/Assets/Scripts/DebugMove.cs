@@ -47,7 +47,7 @@ public class DebugMove : MonoBehaviour
 
 		//transform.Translate(disaplcement, Space.World);
 
-		transform.LookAt(targetTransform, Vector3.up);
+		transform.LookAt(targetTransform, transform.parent.up);
 
 
 	}
