@@ -15,6 +15,8 @@ public class PVA : MonoBehaviour
 	[Range(0,1)]
 	public float accelerationDecay = 0;
 
+	public Space refrenceFrame = Space.World;
+	Vector3 deltaPos;
 
 	// Use this for initialization
 	void Start () 
@@ -51,9 +53,11 @@ public class PVA : MonoBehaviour
 	{
 		// do core PVA update
 		//position = transform.position;
-		position += velocity * Time.deltaTime;
+		//position += velocity * Time.deltaTime;
+		deltaPos = velocity * Time.deltaTime;
 		velocity += acceleration * Time.deltaTime;
-		transform.position = position;
+		//transform.position = position;
+		transform.Translate(deltaPos, refrenceFrame);
 
 		// apply decay
 		velocity = (1.0f - velocityDecay) * velocity;

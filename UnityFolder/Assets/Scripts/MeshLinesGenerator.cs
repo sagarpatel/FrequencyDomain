@@ -331,7 +331,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		Profiler.EndSample();
 
 		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
-		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed *transform.forward;
+		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed * transform.forward;
 
 		
 	}
