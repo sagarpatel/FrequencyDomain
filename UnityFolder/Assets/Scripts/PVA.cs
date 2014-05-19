@@ -9,6 +9,11 @@ public class PVA : MonoBehaviour
 	public Vector3 velocity;
 	public Vector3 acceleration;
 
+	public float zRotationVelocity;
+	public float zRotationAcceleration;
+	public float deltaZRotation;
+	public float previousZVel;
+
 	[Range(0,0.1f)]
 	public float velocityDecay = 0;
 
@@ -46,6 +51,7 @@ public class PVA : MonoBehaviour
 
 		loopCounter = 0;
 		stepCounter = 0;
+		deltaZRotation = 0;
 		while(stepCounter < currentDT)
 		{
 			CalculatePVA();
@@ -55,7 +61,6 @@ public class PVA : MonoBehaviour
 			
 		transform.Translate(deltaPos, refrenceFrame);
 		deltaPos = Vector3.zero;
-
 	}
 
 	public void CalculatePVA()
@@ -64,12 +69,19 @@ public class PVA : MonoBehaviour
 
 		velocity += acceleration * timeStep;
 		deltaPos += (velocity + previousV) * 0.5f * timeStep;
+
+		zRotationVelocity += zRotationAcceleration * timeStep;
+		deltaZRotation += (zRotationVelocity + previousZVel) * 0.5f * timeStep;
+
 		
 		if(isDecay)
 		{
 			// apply decay
 			velocity -= velocityDecay * velocity * timeStep;
 			acceleration -= -accelerationDecay * acceleration * timeStep;
+
+			zRotationVelocity -= velocityDecay * zRotationVelocity * timeStep;
+			zRotationAcceleration -= accelerationDecay * zRotationAcceleration * timeStep;
 		}
 
 		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
@@ -78,9 +90,14 @@ public class PVA : MonoBehaviour
 			velocity.y = 0;
 		if( Mathf.Abs(velocity.z) <= velocityKillThreashold )
 			velocity.z = 0;
+		if( Mathf.Abs(zRotationVelocity) <= velocityKillThreashold )
+			zRotationVelocity = 0;
 
 		deltaV = velocity - previousV;
 		previousV = velocity;
+
+		deltaZRotation = zRotationVelocity - previousZVel;
+		previousZVel = zRotationVelocity;
 	}
 
 	public void ResetPVA()

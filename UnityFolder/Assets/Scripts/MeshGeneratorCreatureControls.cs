@@ -11,6 +11,8 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 	public float vControlScale = 10.0f;
 	public float forwardControlScale = 10.0f;
 
+	public float rotationControlScale = 10.0f;
+
 	//read only
 	public Vector3 controlDelta;
 
@@ -44,5 +46,11 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		pva.acceleration = controlDelta;
 
 
+		// triggers / tilt/ rotation
+
+		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale * Time.deltaTime;
+		float triggerRight = -inputDevice.RightTrigger * rotationControlScale * Time.deltaTime;
+
+		pva.zRotationAcceleration = triggerLeft + triggerRight;
 	}
 }
