@@ -23,6 +23,9 @@ public class PVA : MonoBehaviour
 	public Vector3 deltaV;
 	Vector3 previousV;
 
+	public float timeStep = 1.0f/1000.0f;
+	public float stepCounter = 0;
+	public int loopCounter = 0;
 	// Use this for initialization
 	void Start () 
 	{
@@ -39,37 +42,34 @@ public class PVA : MonoBehaviour
 	void Update () 
 	{
 
-		ApplyPVA();
-		
-		// do rotation, if necessary
-		if(rotationPointsToCurrentVelocity)
+		float currentDT = Time.deltaTime;
+
+		loopCounter = 0;
+		stepCounter = 0;
+		while(stepCounter < currentDT)
 		{
-			if(velocity.magnitude != 0)
-			{
-				Vector3 direction = velocity;
-				direction.Normalize();
-				transform.forward = Vector3.Lerp(transform.forward, direction, 20.0f *Time.deltaTime);
-			}
+			CalculatePVA();
+			stepCounter += timeStep;
+			loopCounter ++;
 		}
-	
+			
+		transform.Translate(deltaPos, refrenceFrame);
+		deltaPos = Vector3.zero;
 
 	}
 
-	public void ApplyPVA()
+	public void CalculatePVA()
 	{
 		// do core PVA update
-		//position = transform.position;
-		//position += velocity * Time.deltaTime;
-		deltaPos = velocity * Time.deltaTime;
-		velocity += acceleration * Time.deltaTime;
-		//transform.position = position;
-		transform.Translate(deltaPos, refrenceFrame);
 
+		velocity += acceleration * timeStep;
+		deltaPos += (velocity + previousV) * 0.5f * timeStep;
+		
 		if(isDecay)
 		{
 			// apply decay
-			velocity = (1.0f - velocityDecay) * velocity;
-			acceleration = (1.0f - accelerationDecay) * acceleration;
+			velocity -= velocityDecay * velocity * timeStep;
+			acceleration -= -accelerationDecay * acceleration * timeStep;
 		}
 
 		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
