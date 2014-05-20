@@ -16,6 +16,10 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 	//read only
 	public Vector3 controlDelta;
 
+	public Vector3 rotDelta;
+
+	
+	
 
 	void Start () 
 	{
@@ -29,14 +33,17 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		// Use last device which provided input.
 		var inputDevice = InputManager.ActiveDevice;
 
-		float xAcc = inputDevice.Direction.x * hControlScale ;//* Time.deltaTime;
-		float yAcc = inputDevice.Direction.y * vControlScale ;//* Time.deltaTime;
+		
 		float zAcc = inputDevice.Action1 * forwardControlScale ;//* Time.deltaTime;
 
 
-		controlDelta.x = xAcc;
-		controlDelta.y = yAcc;
-		controlDelta.z = zAcc;
+		//controlDelta.x = xAcc;
+		//controlDelta.y = yAcc;
+		//controlDelta.z = zAcc;
+
+
+
+		controlDelta = transform.forward * zAcc;
 
 		if(controlDelta.magnitude > 0)
 			pva.isDecay = false;
@@ -51,7 +58,14 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;// * Time.deltaTime;
 		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;// * Time.deltaTime;
 
-		pva.zRotationAcceleration = triggerLeft + triggerRight;
+		float xAcc = inputDevice.Direction.x * hControlScale ;//* Time.deltaTime;
+		float yAcc = inputDevice.Direction.y * vControlScale ;//* Time.deltaTime;
+
+		rotDelta.x = xAcc;
+		rotDelta.y = yAcc;
+		rotDelta.z = triggerLeft + triggerRight;
+
+		pva.rotationalAcceleration = rotDelta;
 
 	}
 }

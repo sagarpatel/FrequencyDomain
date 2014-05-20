@@ -20,9 +20,8 @@ public class VelocityRotation : MonoBehaviour
 	void Update () 
 	{
 		
-		transform.Rotate(Vector3.right, pva.velocity.y * yScale * Time.deltaTime , Space.Self);
-
-		transform.Rotate(Vector3.up, pva.velocity.x * xScale * Time.deltaTime , Space.Self);
-		transform.Rotate(Vector3.forward, pva.zRotationVelocity * zScale * Time.deltaTime , Space.Self);		
+		transform.Rotate(Vector3.right, pva.rotationalVelocity.y * yScale * Time.deltaTime , Space.Self);
+		transform.Rotate(Vector3.up, pva.rotationalVelocity.x * xScale * Time.deltaTime , Space.Self);
+		transform.Rotate(Vector3.forward, pva.rotationalVelocity.z * zScale * Time.deltaTime , Space.Self);		
 	}
 }
