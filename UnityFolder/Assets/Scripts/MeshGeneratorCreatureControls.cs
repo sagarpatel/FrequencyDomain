@@ -13,9 +13,6 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 	public float rotationControlScale = 10.0f;
 
-	Vector3 counter;
-	float timeCounter = 0;
-
 	//read only
 	public Vector3 controlDelta;
 
@@ -55,17 +52,6 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;// * Time.deltaTime;
 
 		pva.zRotationAcceleration = triggerLeft + triggerRight;
-
-
-		if(timeCounter > 1.0f)
-		{
-			Debug.Log(counter);
-			timeCounter -= 1.0f;
-			counter = Vector3.zero;
-		}
-		counter += controlDelta;
-		timeCounter += Time.deltaTime;
-
 
 	}
 }
