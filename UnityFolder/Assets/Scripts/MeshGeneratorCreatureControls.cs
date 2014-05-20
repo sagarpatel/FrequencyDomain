@@ -13,6 +13,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 	public float rotationControlScale = 10.0f;
 
+	Vector3 counter;
+	float timeCounter = 0;
+
 	//read only
 	public Vector3 controlDelta;
 
@@ -29,9 +32,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		// Use last device which provided input.
 		var inputDevice = InputManager.ActiveDevice;
 
-		float xAcc = inputDevice.Direction.x * hControlScale * Time.deltaTime;
-		float yAcc = inputDevice.Direction.y * vControlScale * Time.deltaTime;
-		float zAcc = inputDevice.Action1 * forwardControlScale * Time.deltaTime;
+		float xAcc = inputDevice.Direction.x * hControlScale ;//* Time.deltaTime;
+		float yAcc = inputDevice.Direction.y * vControlScale ;//* Time.deltaTime;
+		float zAcc = inputDevice.Action1 * forwardControlScale ;//* Time.deltaTime;
 
 
 		controlDelta.x = xAcc;
@@ -48,9 +51,21 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		// triggers / tilt/ rotation
 
-		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale * Time.deltaTime;
-		float triggerRight = -inputDevice.RightTrigger * rotationControlScale * Time.deltaTime;
+		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;// * Time.deltaTime;
+		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;// * Time.deltaTime;
 
 		pva.zRotationAcceleration = triggerLeft + triggerRight;
+
+
+		if(timeCounter > 1.0f)
+		{
+			Debug.Log(counter);
+			timeCounter -= 1.0f;
+			counter = Vector3.zero;
+		}
+		counter += controlDelta;
+		timeCounter += Time.deltaTime;
+
+
 	}
 }

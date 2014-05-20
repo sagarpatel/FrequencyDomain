@@ -31,6 +31,11 @@ public class PVA : MonoBehaviour
 	public float timeStep = 1.0f/1000.0f;
 	public float stepCounter = 0;
 	public int loopCounter = 0;
+
+
+	public float counter = 0;
+	int loopsInSec = 0;
+	Vector3 velInSec;
 	// Use this for initialization
 	void Start () 
 	{
@@ -50,7 +55,6 @@ public class PVA : MonoBehaviour
 		float currentDT = Time.deltaTime;
 
 		loopCounter = 0;
-		stepCounter = 0;
 		deltaZRotation = 0;
 		while(stepCounter < currentDT)
 		{
@@ -58,16 +62,33 @@ public class PVA : MonoBehaviour
 			stepCounter += timeStep;
 			loopCounter ++;
 		}
+		stepCounter -= currentDT;
 			
 		transform.Translate(deltaPos, refrenceFrame);
 		deltaPos = Vector3.zero;
+
+
+		counter += Time.deltaTime;
+		if(counter > 1.0f)
+		{
+			Debug.Log(velInSec);
+			Debug.Log(loopsInSec);
+			counter -= 1.0f;
+			loopsInSec = 0;
+			velInSec = Vector3.zero;
+		}
+		loopsInSec += loopCounter;
+		//velInSec += deltaV;
+
+
 	}
 
-	public void CalculatePVA()
+	private void CalculatePVA()
 	{
 		// do core PVA update
 
 		velocity += acceleration * timeStep;
+		velInSec += acceleration * timeStep;
 		deltaPos += (velocity + previousV) * 0.5f * timeStep;
 
 		zRotationVelocity += zRotationAcceleration * timeStep;
@@ -95,6 +116,8 @@ public class PVA : MonoBehaviour
 
 		deltaV = velocity - previousV;
 		previousV = velocity;
+
+		//velInSec += deltaV;
 
 		deltaZRotation = zRotationVelocity - previousZVel;
 		previousZVel = zRotationVelocity;
