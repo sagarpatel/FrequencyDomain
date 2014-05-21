@@ -58,8 +58,8 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;// * Time.deltaTime;
 		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;// * Time.deltaTime;
 
-		float xAcc = inputDevice.Direction.x * hControlScale ;//* Time.deltaTime;
-		float yAcc = inputDevice.Direction.y * vControlScale ;//* Time.deltaTime;
+		float xAcc = inputDevice.LeftStickX * hControlScale ;//* Time.deltaTime;
+		float yAcc = inputDevice.LeftStickY * vControlScale ;//* Time.deltaTime;
 
 		rotDelta.x = xAcc;
 		rotDelta.y = yAcc;

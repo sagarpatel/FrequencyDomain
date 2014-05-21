@@ -38,7 +38,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	
 	}
 
-
+	/*
 	void OnGUI()
 	{
 
@@ -63,4 +63,5 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 		}
 
 	}
+	*/
 }

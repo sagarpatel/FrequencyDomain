@@ -33,13 +33,12 @@ public class DebugPointLight : MonoBehaviour
 		}
 	
 	}
-
+	/*
 	void OnGUI()
 	{
 
 		GUI.Label(new Rect(0.0f, 0.05f*Screen.height, Screen.width, 0.2f*Screen.height), "Light Range: " + light.range.ToString());
 		GUI.Label(new Rect(0.0f, 0.1f*Screen.height, Screen.width, 0.2f*Screen.height), "Light Intensity: " + light.intensity.ToString());
-
-
 	}
+	*/
 }
