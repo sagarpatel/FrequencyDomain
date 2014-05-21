@@ -18,7 +18,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 	public Vector3 rotDelta;
 
-	
+	public float lerpToIdentityScale = 10.0f;
 	
 
 	void Start () 
@@ -66,6 +66,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		rotDelta.z = triggerLeft + triggerRight;
 
 		pva.rotationalAcceleration = rotDelta;
+
+		//transform.rotation =  Quaternion.Slerp(transform.rotation, Quaternion.identity, inputDevice.Action2 * lerpToIdentityScale * Time.deltaTime);
+		//pva.rotationalVelocity = Vector3.Lerp(pva.rotationalVelocity, Vector3.zero, inputDevice.Action3 * lerpToIdentityScale * Time.deltaTime);
 
 	}
 }
