@@ -46,9 +46,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		controlDelta = transform.forward * zAcc;
 
 		if(controlDelta.magnitude > 0)
-			pva.isDecay = false;
+			pva.isLinearDecay = false;
 		else
-			pva.isDecay = true;
+			pva.isLinearDecay = true;
 
 		pva.acceleration = controlDelta;
 
@@ -64,6 +64,11 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		rotDelta.x = xAcc;
 		rotDelta.y = yAcc;
 		rotDelta.z = triggerLeft + triggerRight;
+
+		if(rotDelta.magnitude > 0)
+			pva.isAngularDecay = false;
+		else
+			pva.isAngularDecay = true;
 
 		pva.rotationalAcceleration = rotDelta;
 

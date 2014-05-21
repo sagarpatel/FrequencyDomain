@@ -15,16 +15,20 @@ public class PVA : MonoBehaviour
 	public float zRotationVelocity;
 	public float zRotationAcceleration;
 
-	[Range(0,0.1f)]
-	public float velocityDecay = 0;
 
-	[Range(0,1)]
-	public float accelerationDecay = 0;
+	public bool isLinearDecay = false;
+	public bool isAngularDecay = false;
+
+	[Range(0.0f,1.0f)]
+	public float linearVelocityDecay = 0;
+
+	[Range(0.0f,1.0f)]
+	public float angularVelocityDecay = 0;
+
 
 	public Space refrenceFrame = Space.World;
 	Vector3 deltaPos;
 
-	public bool isDecay = false;
 	public float velocityKillThreashold = 0.0f;
 	public Vector3 deltaV;
 	Vector3 previousV;
@@ -74,15 +78,14 @@ public class PVA : MonoBehaviour
 
 		rotationalVelocity += rotationalAcceleration * timeStep;
 		
-		if(isDecay)
+		if(isLinearDecay)
 		{
 			// apply decay
-			velocity -= velocityDecay * velocity * timeStep;
-			acceleration -= -accelerationDecay * acceleration * timeStep;
-
-			rotationalVelocity -= velocityDecay * rotationalVelocity * timeStep;
-			rotationalAcceleration -= accelerationDecay * rotationalAcceleration * timeStep;
-
+			velocity -= linearVelocityDecay * velocity * timeStep;
+		}
+		if(isAngularDecay)
+		{
+			rotationalVelocity -= angularVelocityDecay * rotationalVelocity * timeStep;			
 		}
 
 		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
