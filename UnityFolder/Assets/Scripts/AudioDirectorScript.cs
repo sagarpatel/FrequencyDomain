@@ -309,7 +309,7 @@ public class AudioDirectorScript : MonoBehaviour
 			if (livePosition < liveAudioSamplesArray.Length) 
 				livePosition += liveAudioClipLength * liveAudioSampleRate;
 
-			liveAudioSource.clip.GetData(liveAudioSamplesArray, livePosition - liveAudioSamplesArray.Length);
+			liveAudioSource.clip.GetData(liveAudioSamplesArray, Microphone.GetPosition(currentLiveDeviceName) /*livePosition - liveAudioSamplesArray.Length*/);
 			liveAudioSource.timeSamples = livePosition;
 
 			yield return null;
