@@ -20,6 +20,9 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 	public float lerpToIdentityScale = 10.0f;
 	
+	bool turnBoost_x = false;
+	bool turnBoost_y = false;
+
 
 	void Start () 
 	{
@@ -61,6 +64,31 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		float xAcc = inputDevice.LeftStickX * hControlScale ;//* Time.deltaTime;
 		float yAcc = inputDevice.LeftStickY * vControlScale ;//* Time.deltaTime;
+
+		//Debug.Log(xAcc);
+
+		if(turnBoost_x || turnBoost_y)
+			Debug.Log("TURNING");
+
+		if(xAcc > 0 && pva.rotationalVelocity.x < 0)
+			turnBoost_x = true;
+		if(xAcc < 0 && pva.rotationalVelocity.x > 0)
+			turnBoost_x = true;
+
+		if(yAcc > 0 && pva.rotationalVelocity.y < 0)
+			turnBoost_y = true;
+		if(yAcc < 0 && pva.rotationalVelocity.y > 0)
+			turnBoost_y = true;
+
+		if(xAcc == 0)
+			turnBoost_x = false;
+		if(yAcc == 0)
+			turnBoost_y = false;
+
+		if(turnBoost_x)
+			xAcc *= 4.0f;
+		if(turnBoost_y)
+			yAcc *= 4.0f;
 
 		rotDelta.x = xAcc;
 		rotDelta.y = yAcc;
