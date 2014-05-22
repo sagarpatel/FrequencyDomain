@@ -8,6 +8,7 @@ public class PVA : MonoBehaviour
 	public Vector3 position;
 	public Vector3 velocity;
 	public Vector3 acceleration;
+	public float velocityMagnitude;
 
 	public Vector3 rotationalVelocity;
 	public Vector3 rotationalAcceleration;
@@ -66,6 +67,8 @@ public class PVA : MonoBehaviour
 			
 		transform.Translate(deltaPos, refrenceFrame);
 		deltaPos = Vector3.zero;
+
+		velocityMagnitude = velocity.magnitude;
 
 	}
 
