@@ -53,6 +53,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		pva.acceleration = controlDelta;
 
 
+
 		// triggers / tilt/ rotation
 
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;// * Time.deltaTime;
@@ -75,5 +76,21 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		//transform.rotation =  Quaternion.Slerp(transform.rotation, Quaternion.identity, inputDevice.Action2 * lerpToIdentityScale * Time.deltaTime);
 		//pva.rotationalVelocity = Vector3.Lerp(pva.rotationalVelocity, Vector3.zero, inputDevice.Action3 * lerpToIdentityScale * Time.deltaTime);
 
+		// force velocity orientation
+		Vector3 correctedVel = pva.velocity.magnitude * transform.forward;
+		pva.velocity = correctedVel;
+
 	}
+
+	/*
+
+	void OnDrawGizmos()
+	{
+		  Gizmos.DrawRay(transform.position, transform.forward * 5.0f);
+		  Gizmos.color = Color.green;
+		  Gizmos.DrawRay(transform.position, pva.velocity.normalized * 5.0f);
+		  //Gizmos.DrawRay(transform.position, transform.TransformDirection( pva.velocity.normalized ) * 5.0f);
+	}
+
+	*/
 }
