@@ -377,6 +377,8 @@ public class MeshLinesGenerator : MonoBehaviour
 				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
 			}
 			
+			stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
+
 			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 		}
