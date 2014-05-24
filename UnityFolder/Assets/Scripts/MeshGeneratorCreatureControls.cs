@@ -67,9 +67,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		//Debug.Log(xAcc);
 
-		if(turnBoost_x || turnBoost_y)
-			Debug.Log("TURNING");
-
+		
 		if(xAcc > 0 && pva.rotationalVelocity.x < 0)
 			turnBoost_x = true;
 		if(xAcc < 0 && pva.rotationalVelocity.x > 0)
