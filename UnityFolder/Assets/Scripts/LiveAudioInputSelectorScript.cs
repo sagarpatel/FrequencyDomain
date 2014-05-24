@@ -12,6 +12,9 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 
 	AudioDirectorScript audioDirector;
 
+	float timeSinceChange = 0;
+	bool isGUI = true;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -33,17 +36,26 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 
 				// Call Audiodirector function with new device
 				audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
+
+				timeSinceChange = 0;
 			}
 		}
+
+		timeSinceChange += Time.deltaTime;
+
+		if(timeSinceChange > 3.0f)
+			isGUI = false;
+		else
+			isGUI = true;
 	
 	}
 
-	/*
+	
 	void OnGUI()
 	{
 
 
-		if(isActive)
+		if(isActive && isGUI)
 		{
 			devicesArray = Microphone.devices;
 
@@ -63,5 +75,5 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 		}
 
 	}
-	*/
+	
 }
