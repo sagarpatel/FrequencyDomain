@@ -16,6 +16,8 @@ public class CameraTypeHandler : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		normalCameraObject.SetActive(!isOVR);
+		ovrCameraControllerObject.SetActive(isOVR);
 
 	}
 	
