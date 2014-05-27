@@ -13,12 +13,18 @@ public class CameraTypeHandler : MonoBehaviour
 
 	public bool isOVR = false;
 
+	public float ovrFOV = 120.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
 		normalCameraObject.SetActive(!isOVR);
 		ovrCameraControllerObject.SetActive(isOVR);
 
+		ovrCameraControllerObject.GetComponent<OVRCameraController>().SetVerticalFOV(ovrFOV);
+
+		ovrCameraControllerObject.transform.GetChild(0).camera.fieldOfView = ovrFOV;
+		ovrCameraControllerObject.transform.GetChild(1).camera.fieldOfView = ovrFOV;
 	}
 	
 	// Update is called once per frame
