@@ -203,7 +203,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	{
 
 		
-		if(InputManager.Devices[0].Action4.WasPressed)
+		if(InputManager.Devices[0].Action2.WasPressed)
 		{
 			isAmplitudeScale = !isAmplitudeScale;
 		}
