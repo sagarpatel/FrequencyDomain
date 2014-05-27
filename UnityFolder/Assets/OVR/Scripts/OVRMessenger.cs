@@ -5,16 +5,16 @@ Content     :   Base component OVR class
 Created     :   January 8, 2013
 Authors     :   Peter Giokaris
 
-Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright 2014 Oculus VR, Inc. All Rights reserved.
 
-Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
-you may not use the Oculus VR SDK except in compliance with the License, 
+Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
 which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-2.0 
+http://www.oculusvr.com/licenses/LICENSE-3.1 
 
 Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,22 +78,27 @@ static internal class OVRMessenger {
 	static public List< string > permanentMessages = new List< string > ();
 	#endregion
 	#region Helper methods
-	//Marks a certain message as permanent.
-	static public void MarkAsPermanent(string eventType) {
+
+	/// <summary>
+	/// Marks a certain message as permanent.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	static public void MarkAsPermanent(string eventType) 
+	{
 #if LOG_ALL_MESSAGES
 		Debug.Log("Messenger MarkAsPermanent \t\"" + eventType + "\"");
 #endif
- 
 		permanentMessages.Add( eventType );
 	}
  
- 
+ 	/// <summary>
+ 	/// Cleanup this instance.
+ 	/// </summary>
 	static public void Cleanup()
 	{
 #if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER Cleanup. Make sure that none of necessary listeners are removed.");
 #endif
- 
 		List< string > messagesToRemove = new List<string>();
  
 		foreach (KeyValuePair<string, Delegate> pair in eventTable) {
@@ -115,6 +120,9 @@ static internal class OVRMessenger {
 		}
 	}
  
+	/// <summary>
+	/// Prints the event table.
+	/// </summary>
 	static public void PrintEventTable()
 	{
 		Debug.Log("\t\t\t=== MESSENGER PrintEventTable ===");
@@ -128,7 +136,13 @@ static internal class OVRMessenger {
 	#endregion
  
 	#region Message logging and exception throwing
-    static public void OnListenerAdding(string eventType, Delegate listenerBeingAdded) {
+	/// <summary>
+	/// Raises the listener adding event.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="listenerBeingAdded">Listener being added.</param>
+    static public void OnListenerAdding(string eventType, Delegate listenerBeingAdded) 
+	{
 #if LOG_ALL_MESSAGES || LOG_ADD_LISTENER
 		Debug.Log("MESSENGER OnListenerAdding \t\"" + eventType + "\"\t{" + listenerBeingAdded.Target + " -> " + listenerBeingAdded.Method + "}");
 #endif
@@ -143,31 +157,51 @@ static internal class OVRMessenger {
         }
     }
  
-    static public void OnListenerRemoving(string eventType, Delegate listenerBeingRemoved) {
+	/// <summary>
+	/// Raises the listener removing event.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="listenerBeingRemoved">Listener being removed.</param>
+    static public void OnListenerRemoving(string eventType, Delegate listenerBeingRemoved) 
+	{
 #if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER OnListenerRemoving \t\"" + eventType + "\"\t{" + listenerBeingRemoved.Target + " -> " + listenerBeingRemoved.Method + "}");
 #endif
  
-        if (eventTable.ContainsKey(eventType)) {
+        if (eventTable.ContainsKey(eventType)) 
+		{
             Delegate d = eventTable[eventType];
  
-            if (d == null) {
+            if (d == null) 
+			{
                 throw new ListenerException(string.Format("Attempting to remove listener with for event type \"{0}\" but current listener is null.", eventType));
-            } else if (d.GetType() != listenerBeingRemoved.GetType()) {
+            } else if (d.GetType() != listenerBeingRemoved.GetType()) 
+			{
                 throw new ListenerException(string.Format("Attempting to remove listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being removed has type {2}", eventType, d.GetType().Name, listenerBeingRemoved.GetType().Name));
             }
-        } else {
+        } 
+		else 
+		{
             throw new ListenerException(string.Format("Attempting to remove listener for type \"{0}\" but Messenger doesn't know about this event type.", eventType));
         }
     }
  
+	/// <summary>
+	/// Raises the listener removed event.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
     static public void OnListenerRemoved(string eventType) {
         if (eventTable[eventType] == null) {
             eventTable.Remove(eventType);
         }
     }
  
-    static public void OnBroadcasting(string eventType) {
+	/// <summary>
+	/// Raises the broadcasting event.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+    static public void OnBroadcasting(string eventType) 
+	{
 #if REQUIRE_LISTENER
         if (!eventTable.ContainsKey(eventType)) {
             throw new BroadcastException(string.Format("Broadcasting message \"{0}\" but no listener found. Try marking the message with Messenger.MarkAsPermanent.", eventType));
@@ -175,73 +209,135 @@ static internal class OVRMessenger {
 #endif
     }
  
-    static public BroadcastException CreateBroadcastSignatureException(string eventType) {
+	/// <summary>
+	/// Creates the broadcast signature exception.
+	/// </summary>
+	/// <returns>The broadcast signature exception.</returns>
+	/// <param name="eventType">Event type.</param>
+    static public BroadcastException CreateBroadcastSignatureException(string eventType) 
+	{
         return new BroadcastException(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
     }
  
-    public class BroadcastException : Exception {
+    public class BroadcastException : Exception 
+	{
         public BroadcastException(string msg)
-            : base(msg) {
+            : base(msg) 
+		{
         }
     }
  
-    public class ListenerException : Exception {
+    public class ListenerException : Exception 
+	{
         public ListenerException(string msg)
-            : base(msg) {
+            : base(msg) 
+		{
         }
     }
 	#endregion
  
 	#region AddListener
-	//No parameters
-    static public void AddListener(string eventType, OVRCallback handler) {
+	/// <summary>
+	/// No parameters.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+    static public void AddListener(string eventType, OVRCallback handler) 
+	{
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (OVRCallback)eventTable[eventType] + handler;
     }
  
-	//Single parameter
-	static public void AddListener<T>(string eventType, OVRCallback<T> handler) {
+	/// <summary>
+	/// Single parameter.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	static public void AddListener<T>(string eventType, OVRCallback<T> handler) 
+	{
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (OVRCallback<T>)eventTable[eventType] + handler;
     }
  
-	//Two parameters
-	static public void AddListener<T, U>(string eventType, OVRCallback<T, U> handler) {
+	/// <summary>
+	/// Two parameters.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+	static public void AddListener<T, U>(string eventType, OVRCallback<T, U> handler) 
+	{
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (OVRCallback<T, U>)eventTable[eventType] + handler;
     }
  
-	//Three parameters
-	static public void AddListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) {
+	/// <summary>
+	/// Three parameters
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+	/// <typeparam name="V">The 3rd type parameter.</typeparam>
+	static public void AddListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) 
+	{
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (OVRCallback<T, U, V>)eventTable[eventType] + handler;
     }
 	#endregion
  
 	#region RemoveListener
-	//No parameters
-    static public void RemoveListener(string eventType, OVRCallback handler) {
+	/// <summary>
+	/// No parameters
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+    static public void RemoveListener(string eventType, OVRCallback handler) 
+	{
         OnListenerRemoving(eventType, handler);   
         eventTable[eventType] = (OVRCallback)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
-	//Single parameter
-	static public void RemoveListener<T>(string eventType, OVRCallback<T> handler) {
+	/// <summary>
+	/// Single parameter
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	static public void RemoveListener<T>(string eventType, OVRCallback<T> handler) 
+	{
         OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (OVRCallback<T>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
-	//Two parameters
-	static public void RemoveListener<T, U>(string eventType, OVRCallback<T, U> handler) {
+	/// <summary>
+	/// Two parameters
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+	static public void RemoveListener<T, U>(string eventType, OVRCallback<T, U> handler) 
+	{
         OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (OVRCallback<T, U>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
     }
  
-	//Three parameters
-	static public void RemoveListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) {
+	/// <summary>
+	//Three parameters.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="handler">Handler.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+	/// <typeparam name="V">The 3rd type parameter.</typeparam>
+	static public void RemoveListener<T, U, V>(string eventType, OVRCallback<T, U, V> handler) 
+	{
         OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (OVRCallback<T, U, V>)eventTable[eventType] - handler;
         OnListenerRemoved(eventType);
@@ -249,8 +345,12 @@ static internal class OVRMessenger {
 	#endregion
  
 	#region Broadcast
-	//No parameters
-    static public void Broadcast(string eventType) {
+	/// <summary>
+	/// Broadcast the specified eventType.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+    static public void Broadcast(string eventType) 
+	{
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -268,7 +368,12 @@ static internal class OVRMessenger {
         }
     }
  
-	//Single parameter
+	/// <summary>
+	/// Broadcast the specified eventType and arg1.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="arg1">Arg1.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
     static public void Broadcast<T>(string eventType, T arg1) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
@@ -287,8 +392,16 @@ static internal class OVRMessenger {
         }
 	}
  
-	//Two parameters
-    static public void Broadcast<T, U>(string eventType, T arg1, U arg2) {
+	/// <summary>
+	/// Broadcast the specified eventType, arg1 and arg2.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="arg1">Arg1.</param>
+	/// <param name="arg2">Arg2.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+    static public void Broadcast<T, U>(string eventType, T arg1, U arg2) 
+	{
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -306,8 +419,18 @@ static internal class OVRMessenger {
         }
     }
  
-	//Three parameters
-    static public void Broadcast<T, U, V>(string eventType, T arg1, U arg2, V arg3) {
+	/// <summary>
+	/// Broadcast the specified eventType, arg1, arg2 and arg3.
+	/// </summary>
+	/// <param name="eventType">Event type.</param>
+	/// <param name="arg1">Arg1.</param>
+	/// <param name="arg2">Arg2.</param>
+	/// <param name="arg3">Arg3.</param>
+	/// <typeparam name="T">The 1st type parameter.</typeparam>
+	/// <typeparam name="U">The 2nd type parameter.</typeparam>
+	/// <typeparam name="V">The 3rd type parameter.</typeparam>
+    static public void Broadcast<T, U, V>(string eventType, T arg1, U arg2, V arg3) 
+	{
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 #endif
@@ -327,15 +450,25 @@ static internal class OVRMessenger {
 	#endregion
 }
  
-//This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.
-public sealed class MessengerHelper : MonoBehaviour {
+/// <summary>
+/// Messenger helper.
+/// This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.
+/// </summary>
+public sealed class MessengerHelper : MonoBehaviour 
+{
+	/// <summary>
+	/// Awake this instance.
+	/// </summary>
 	void Awake ()
 	{
 		DontDestroyOnLoad(gameObject);	
 	}
  
-	//Clean up eventTable every time a new level loads.
-	public void OnDisable() {
+	/// <summary>
+	/// Raises the disable event.
+	/// </summary>
+	public void OnDisable() 
+	{
 		OVRMessenger.Cleanup();
 	}
 }
