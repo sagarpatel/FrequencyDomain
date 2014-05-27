@@ -35,10 +35,8 @@ public class DebugAudioScale : MonoBehaviour
 	{
 
 		if(isGUI)
-		{
-			Debug.Log("GUI");			
-	    	GUI.Label(new Rect(600,40,200,20),"Amplitude Scaler:" + audioDirector.overallAmplitudeScaler);
-	    	
+		{		
+	    	GUI.Label(new Rect(600,40,200,20),"Amplitude Scaler:" + audioDirector.overallAmplitudeScaler);	
 	    }
 
 	}

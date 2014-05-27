@@ -34,17 +34,8 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 	{
 
 		// Use last device which provided input.
-		var inputDevice = InputManager.ActiveDevice;
-
-		
+		var inputDevice = InputManager.ActiveDevice;		
 		float zAcc = inputDevice.Action1 * forwardControlScale ;//* Time.deltaTime;
-
-
-		//controlDelta.x = xAcc;
-		//controlDelta.y = yAcc;
-		//controlDelta.z = zAcc;
-
-
 
 		controlDelta = transform.forward * zAcc;
 
@@ -56,16 +47,12 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		pva.acceleration = controlDelta;
 
 
+		//  --------  triggers / tilt/ rotation --------------
 
-		// triggers / tilt/ rotation
-
-		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;// * Time.deltaTime;
-		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;// * Time.deltaTime;
-
-		float xAcc = inputDevice.LeftStickX * hControlScale ;//* Time.deltaTime;
-		float yAcc = inputDevice.LeftStickY * vControlScale ;//* Time.deltaTime;
-
-		//Debug.Log(xAcc);
+		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;
+		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;
+		float xAcc = inputDevice.LeftStickX * hControlScale;
+		float yAcc = inputDevice.LeftStickY * vControlScale;
 
 		
 		if(xAcc > 0 && pva.rotationalVelocity.x < 0)
@@ -99,8 +86,6 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		pva.rotationalAcceleration = rotDelta;
 
-		//transform.rotation =  Quaternion.Slerp(transform.rotation, Quaternion.identity, inputDevice.Action2 * lerpToIdentityScale * Time.deltaTime);
-		//pva.rotationalVelocity = Vector3.Lerp(pva.rotationalVelocity, Vector3.zero, inputDevice.Action3 * lerpToIdentityScale * Time.deltaTime);
 
 		// force velocity orientation
 		Vector3 correctedVel = pva.velocity.magnitude * transform.forward;
