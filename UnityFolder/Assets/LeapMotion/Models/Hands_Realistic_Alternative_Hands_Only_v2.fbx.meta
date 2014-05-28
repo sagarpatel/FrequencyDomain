@@ -1,0 +1,187 @@
+fileFormatVersion: 2
+guid: 18126218cb5384d52bdb73cc85af08db
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: group5
+    100002: group6
+    100004: //RootNode
+    100006: HandsREAL_CutOff_Arm1
+    100008: HandsREAL_CutOff_Arm1 1
+    100010: L_Arm
+    100012: L_IndexA
+    100014: L_IndexB
+    100016: L_IndexC
+    100018: L_IndexD
+    100020: L_IndexEND
+    100022: L_MiddleA
+    100024: L_MiddleB
+    100026: L_MiddleC
+    100028: L_MiddleD
+    100030: L_MiddleEND
+    100032: L_PinkyA
+    100034: L_PinkyB
+    100036: L_PinkyC
+    100038: L_PinkyD
+    100040: L_PinkyEND
+    100042: L_RingA
+    100044: L_RingB
+    100046: L_RingC
+    100048: L_RingD
+    100050: L_RingEND
+    100052: L_ThumbA
+    100054: L_ThumbB
+    100056: L_ThumbC
+    100058: L_ThumbEND
+    100060: L_Wrist
+    100062: nailsFix1
+    100064: nailsFix1 1
+    100066: R_Arm
+    100068: R_IndexA
+    100070: R_IndexB
+    100072: R_IndexC
+    100074: R_IndexD
+    100076: R_IndexEND
+    100078: R_MiddleA
+    100080: R_MiddleB
+    100082: R_MiddleC
+    100084: R_MiddleD
+    100086: R_MiddleEND
+    100088: R_PinkyA
+    100090: R_PinkyB
+    100092: R_PinkyC
+    100094: R_PinkyD
+    100096: R_PinkyEND
+    100098: R_RingA
+    100100: R_RingB
+    100102: R_RingC
+    100104: R_RingD
+    100106: R_RingEND
+    100108: R_ThumbA
+    100110: R_ThumbB
+    100112: R_ThumbC
+    100114: R_ThumbEND
+    100116: R_Wrist
+    100118: Root
+    400000: group5
+    400002: group6
+    400004: //RootNode
+    400006: HandsREAL_CutOff_Arm1
+    400008: HandsREAL_CutOff_Arm1 1
+    400010: L_Arm
+    400012: L_IndexA
+    400014: L_IndexB
+    400016: L_IndexC
+    400018: L_IndexD
+    400020: L_IndexEND
+    400022: L_MiddleA
+    400024: L_MiddleB
+    400026: L_MiddleC
+    400028: L_MiddleD
+    400030: L_MiddleEND
+    400032: L_PinkyA
+    400034: L_PinkyB
+    400036: L_PinkyC
+    400038: L_PinkyD
+    400040: L_PinkyEND
+    400042: L_RingA
+    400044: L_RingB
+    400046: L_RingC
+    400048: L_RingD
+    400050: L_RingEND
+    400052: L_ThumbA
+    400054: L_ThumbB
+    400056: L_ThumbC
+    400058: L_ThumbEND
+    400060: L_Wrist
+    400062: nailsFix1
+    400064: nailsFix1 1
+    400066: R_Arm
+    400068: R_IndexA
+    400070: R_IndexB
+    400072: R_IndexC
+    400074: R_IndexD
+    400076: R_IndexEND
+    400078: R_MiddleA
+    400080: R_MiddleB
+    400082: R_MiddleC
+    400084: R_MiddleD
+    400086: R_MiddleEND
+    400088: R_PinkyA
+    400090: R_PinkyB
+    400092: R_PinkyC
+    400094: R_PinkyD
+    400096: R_PinkyEND
+    400098: R_RingA
+    400100: R_RingB
+    400102: R_RingC
+    400104: R_RingD
+    400106: R_RingEND
+    400108: R_ThumbA
+    400110: R_ThumbB
+    400112: R_ThumbC
+    400114: R_ThumbEND
+    400116: R_Wrist
+    400118: Root
+    4300000: HandsREAL_CutOff_Arm1
+    4300002: nailsFix1
+    4300004: HandsREAL_CutOff_Arm1
+    4300006: nailsFix1
+    9500000: //RootNode
+    13700000: HandsREAL_CutOff_Arm1
+    13700002: HandsREAL_CutOff_Arm1 1
+    13700004: nailsFix1
+    13700006: nailsFix1 1
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 

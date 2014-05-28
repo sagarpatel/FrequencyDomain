@@ -33,7 +33,7 @@ public class LMC_PlayerControls : MonoBehaviour
 		
 		// Leap stuff
 		controller = new Controller();
-		controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
+		//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
 		controller.Config.SetFloat("Gesture.Circle.MinArc", Mathf.PI );
 		controller.Config.Save();
 
