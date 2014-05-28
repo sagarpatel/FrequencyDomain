@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using InControl;
+using Leap;
+
 
 [RequireComponent(typeof(PVA))]
 public class MeshGeneratorCreatureControls : MonoBehaviour 
@@ -23,15 +25,25 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 	bool turnBoost_x = false;
 	bool turnBoost_y = false;
 
+	Controller lmcController;
 
 	void Start () 
 	{
 		pva = GetComponent<PVA>();
+
+		lmcController = new Controller();
+
+		if (lmcController == null) 
+		{
+      		Debug.LogWarning("Cannot connect to controller. Make sure you have Leap Motion v2.0+ installed");
+    	}
 	}
 	
 
 	void Update () 
 	{
+
+		// -------- FORWARD ACCELERATION --------------
 
 		// Use last device which provided input.
 		var inputDevice = InputManager.ActiveDevice;		
@@ -47,13 +59,33 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		pva.acceleration = controlDelta;
 
 
-		//  --------  triggers / tilt/ rotation --------------
+		//  --------  ROTATIONAL ACCELERATION --------------
 
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;
 		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;
 		float xAcc = inputDevice.LeftStickX * hControlScale;
 		float yAcc = inputDevice.LeftStickY * vControlScale;
 
+		// --------- LEAP PART ------------
+		if(lmcController != null)
+		{
+			Frame frame = lmcController.Frame();
+			HandList hands = frame.Hands;
+			Hand firstHand = hands[0];
+
+			if(firstHand.IsValid)
+			{
+				float yaw = firstHand.Direction.Yaw * 4.0f;
+				float pitch = -firstHand.Direction.Pitch * 4.0f;
+				float roll = firstHand.PalmNormal.Roll * 0.20f;
+
+				xAcc += yaw;
+				yAcc += pitch;
+				rotDelta.z  += roll;
+			}
+		}
+
+		// ------------ Turn boost adjustments ---------------
 		
 		if(xAcc > 0 && pva.rotationalVelocity.x < 0)
 			turnBoost_x = true;
@@ -77,7 +109,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		rotDelta.x = xAcc;
 		rotDelta.y = yAcc;
-		rotDelta.z = triggerLeft + triggerRight;
+		rotDelta.z += triggerLeft + triggerRight;
 
 		if(rotDelta.magnitude > 0)
 			pva.isAngularDecay = false;
