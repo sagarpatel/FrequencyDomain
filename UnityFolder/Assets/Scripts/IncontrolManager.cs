@@ -11,7 +11,7 @@ public class IncontrolManager : MonoBehaviour
 	{
 		InputManager.Setup();
 		// Add a custom device profile.
-		InputManager.AttachDevice( new UnityInputDevice( new FPSProfile() ) );
+		InputManager.AttachDevice( new UnityInputDevice( new InControlFDProfile() ) );
 
 		Debug.Log( "InControl (version " + InputManager.Version + ")" );
 	}

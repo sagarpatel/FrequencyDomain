@@ -42,6 +42,7 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 	void Update () 
 	{
+		rotDelta = Vector3.zero;
 
 		// -------- FORWARD ACCELERATION --------------
 
@@ -63,6 +64,15 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;
 		float triggerRight = -inputDevice.RightTrigger * rotationControlScale;
+
+		
+		if(Input.GetKey(KeyCode.Q))
+			triggerLeft += 1.0f * rotationControlScale;
+
+		if(Input.GetKey(KeyCode.E))
+			triggerRight += 1.0f * -rotationControlScale;
+
+
 		float xAcc = inputDevice.LeftStickX * hControlScale;
 		float yAcc = inputDevice.LeftStickY * vControlScale;
 
