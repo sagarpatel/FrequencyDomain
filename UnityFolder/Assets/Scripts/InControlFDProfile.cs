@@ -38,18 +38,23 @@ namespace InControl
 					Target = InputControlType.Action1,
 					Source = KeyCodeButton( KeyCode.Space )
 				},
-				
+				new InputControlMapping
+				{
+					Handle = "Toggle Amplitude Scaling",
+					Target = InputControlType.Action2,
+					Source = KeyCodeButton( KeyCode.U )
+				},
 				new InputControlMapping
 				{
 					Handle = "Toggle Audio Source",
 					Target = InputControlType.Action4,
-					Source = KeyCodeButton( KeyCode.G )
+					Source = KeyCodeButton( KeyCode.T )
 				},
 				new InputControlMapping
 				{
 					Handle = "Toggle OVR",
 					Target = InputControlType.LeftBumper,
-					Source = KeyCodeButton( KeyCode.T )
+					Source = KeyCodeButton( KeyCode.O )
 				},
 				
 			};
