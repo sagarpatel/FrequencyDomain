@@ -24,6 +24,14 @@ public class DebugAudioScale : MonoBehaviour
 		scaleIncrement += inputDevice.DPadUp * 8.0f * Time.deltaTime;
 		scaleIncrement -= inputDevice.DPadDown * 8.0f * Time.deltaTime;
 
+		if(Input.GetKey( KeyCode.UpArrow ))
+			scaleIncrement += 8.0f * Time.deltaTime;
+
+		if(Input.GetKey( KeyCode.DownArrow ))
+			scaleIncrement -= 8.0f * Time.deltaTime;
+
+
+
 		if(scaleIncrement != 0)
 			isGUI = true;
 
