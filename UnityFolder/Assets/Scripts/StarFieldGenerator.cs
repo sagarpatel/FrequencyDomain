@@ -30,6 +30,8 @@ public class StarFieldGenerator : MonoBehaviour
 		float randX;
 		float randY;
 		float randZ;
+
+		starsList.Clear();
 		for(int i = 0; i < starCount; i ++)
 		{
 			randX = Random.Range(-xRange, xRange);
