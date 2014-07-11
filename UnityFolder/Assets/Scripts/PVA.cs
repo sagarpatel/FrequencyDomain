@@ -31,7 +31,9 @@ public class PVA : MonoBehaviour
 	Vector3 deltaPos;
 
 	public float velocityKillThreashold = 0.0f;
-	public Vector3 deltaV;
+	public float maxVelocityMagnitude = 300.0f;
+	public float maxRotationalVelocityMagnitude = 400.0f;
+	Vector3 deltaV;
 	Vector3 previousV;
 
 	public float timeStep = 1.0f/1000.0f;
@@ -77,9 +79,11 @@ public class PVA : MonoBehaviour
 		// do core PVA update
 
 		velocity += acceleration * timeStep;
+		velocity = Vector3.ClampMagnitude(velocity, maxVelocityMagnitude);
 		deltaPos += (velocity + previousV) * 0.5f * timeStep;
 
 		rotationalVelocity += rotationalAcceleration * timeStep;
+		rotationalVelocity = Vector3.ClampMagnitude(rotationalVelocity, maxRotationalVelocityMagnitude);
 		
 		if(isLinearDecay)
 		{
