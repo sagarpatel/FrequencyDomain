@@ -4,7 +4,7 @@ using System.Collections;
 public class CameraHolderLerp : MonoBehaviour 
 {
 	public Transform cameraHolderTransform;
-	float lerpSpeed = 1.0f;
+	float lerpSpeed = 10.0f;
 
 
 	// Use this for initialization
