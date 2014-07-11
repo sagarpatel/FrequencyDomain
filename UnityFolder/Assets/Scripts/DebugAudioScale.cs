@@ -30,12 +30,16 @@ public class DebugAudioScale : MonoBehaviour
 		if(Input.GetKey( KeyCode.DownArrow ))
 			scaleIncrement -= 8.0f * Time.deltaTime;
 
-
-
 		if(scaleIncrement != 0)
 			isGUI = true;
 
-		audioDirector.overallAmplitudeScaler += scaleIncrement;
+		float currentScale = audioDirector.overallAmplitudeScaler;
+		currentScale += scaleIncrement;
+
+		currentScale = Mathf.Clamp(currentScale, 0.1f, 100.0f);
+		audioDirector.overallAmplitudeScaler = currentScale;
+
+
 
 	}
 
