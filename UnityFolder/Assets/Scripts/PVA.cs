@@ -25,7 +25,7 @@ public class PVA : MonoBehaviour
 
 	[Range(0.0f,1.0f)]
 	public float angularVelocityDecay = 0;
-
+	public Vector3 angularFrictionAxisToggle = Vector3.zero;
 
 	public Space refrenceFrame = Space.World;
 	Vector3 deltaPos;
@@ -90,10 +90,14 @@ public class PVA : MonoBehaviour
 			// apply decay
 			velocity -= linearVelocityDecay * velocity * timeStep;
 		}
-		if(isAngularDecay)
-		{
-			rotationalVelocity -= angularVelocityDecay * rotationalVelocity * timeStep;			
-		}
+		
+
+		// always do angular friction, just apply depending on toggle
+		Vector3 amountToRemove =  new Vector3(angularFrictionAxisToggle.x * rotationalVelocity.x,
+											 angularFrictionAxisToggle.y * rotationalVelocity.y,
+											 angularFrictionAxisToggle.z * rotationalVelocity.z);
+		amountToRemove *= angularVelocityDecay * timeStep;
+		rotationalVelocity -= amountToRemove;			
 
 		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
 			velocity.x = 0;

@@ -121,11 +121,15 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		rotDelta.y = yAcc;
 		rotDelta.z += triggerLeft + triggerRight;
 
-		if(rotDelta.magnitude > 0)
-			pva.isAngularDecay = false;
-		else
-			pva.isAngularDecay = true;
+		Vector3 frictionToggleVector= Vector3.one;
+		if(rotDelta.x == 0)
+			frictionToggleVector.x = 0;
+		if(rotDelta.y == 0)
+			frictionToggleVector.y = 0;
+		if(rotDelta.z == 0)
+			frictionToggleVector.z = 0;
 
+		pva.angularFrictionAxisToggle = frictionToggleVector;
 		pva.rotationalAcceleration = rotDelta;
 
 
