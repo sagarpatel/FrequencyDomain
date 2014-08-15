@@ -85,9 +85,11 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 
 			if(firstHand.IsValid)
 			{
-				float yaw = firstHand.Direction.Yaw * 4.0f;
-				float pitch = -firstHand.Direction.Pitch * 4.0f;
-				float roll = firstHand.PalmNormal.Roll * 0.20f;
+				float yaw = firstHand.Direction.Yaw; //* 4.0f;
+				float pitch = -firstHand.Direction.Pitch; //* 4.0f;
+				float roll = firstHand.PalmNormal.Roll; //* 4.20f;
+
+				transform.localEulerAngles = new Vector3(360.0f * pitch, 360.0f * yaw, 360.0f * roll);
 
 				xAcc += yaw;
 				yAcc += pitch;
