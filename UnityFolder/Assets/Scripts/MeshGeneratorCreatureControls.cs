@@ -89,7 +89,10 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 				float pitch = -firstHand.Direction.Pitch; //* 4.0f;
 				float roll = firstHand.PalmNormal.Roll; //* 4.20f;
 
-				transform.localEulerAngles = new Vector3(360.0f * pitch, 360.0f * yaw, 360.0f * roll);
+				//transform.localEulerAngles = new Vector3(360.0f * pitch, 360.0f * yaw, 360.0f * roll);
+				Vector3 rotVec = new Vector3(pitch, yaw, roll);
+				transform.Rotate(2.0f *  Mathf.PI * rotVec, Space.Self);
+
 
 				xAcc += yaw;
 				yAcc += pitch;
