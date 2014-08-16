@@ -50,16 +50,6 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		var inputDevice = InputManager.ActiveDevice;		
 		float zAcc = inputDevice.Action1 * forwardControlScale ;//* Time.deltaTime;
 
-		controlDelta = transform.forward * zAcc;
-
-		if(controlDelta.magnitude > 0)
-			pva.isLinearDecay = false;
-		else
-			pva.isLinearDecay = true;
-
-		pva.acceleration = controlDelta;
-
-
 		//  --------  ROTATIONAL ACCELERATION --------------
 
 		float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;
@@ -92,11 +82,14 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 				//transform.localEulerAngles = new Vector3(360.0f * pitch, 360.0f * yaw, 360.0f * roll);
 				Vector3 rotVec = new Vector3(pitch, yaw, roll);
 				transform.Rotate(2.0f *  Mathf.PI * rotVec, Space.Self);
-
-
+				
 				xAcc += yaw;
 				yAcc += pitch;
 				rotDelta.z  += roll;
+
+				// use palm height as gas pedal
+				float normalizedHeight = 1.0f - (2.0f * Mathf.Clamp(firstHand.PalmPosition.ToUnityScaled().y, 0, 0.5f));
+				zAcc += normalizedHeight * forwardControlScale;
 			}
 		}
 
@@ -141,6 +134,16 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 		// force velocity orientation
 		Vector3 correctedVel = pva.velocity.magnitude * transform.forward;
 		pva.velocity = correctedVel;
+
+		// apply forward acceleration
+		controlDelta = transform.forward * zAcc;
+		if (controlDelta.magnitude > 0)
+			pva.isLinearDecay = false;
+		else
+			pva.isLinearDecay = true;
+
+		pva.acceleration = controlDelta;
+
 
 	}
 
