@@ -20,16 +20,23 @@ namespace InControl
 
 			JoystickNames = new[]
 			{
-				"Controller (XBOX 360 For Windows)",
-				"Controller (XBOX 360 Wireless Receiver for Windows)",
-				"XBOX 360 For Windows (Controller)",
-				"Controller (Gamepad F310)",
-				"Controller (MLG GamePad for Xbox 360)",
+				"Controller (Afterglow Gamepad for Xbox 360)",
+				"Controller (Batarang wired controller (XBOX))",
 				"Controller (Gamepad for Xbox 360)",
-				"Controller (Rock Candy Gamepad for Xbox 360)"
+				"Controller (Infinity Controller 360)",
+				"Controller (Mad Catz FPS Pro GamePad)",
+				"Controller (MadCatz Call of Duty GamePad)",
+				"Controller (MadCatz GamePad)",
+				"Controller (MLG GamePad for Xbox 360)",
+				"Controller (Razer Sabertooth Elite)",
+				"Controller (Rock Candy Gamepad for Xbox 360)",
+				"Controller (Xbox 360 For Windows)",
+				"Controller (Xbox 360 Wireless Receiver for Windows)",
+				"XBOX 360 For Windows (Controller)",
+				"Controller (XEOX Gamepad)" // Speedlink XEOX Pro Analog Gamepad
 			};
 
-			RegexName = "360";
+			LastResortRegex = "360|xbox|catz";
 
 			Sensitivity = 1.0f;
 			LowerDeadZone = 0.2f;
@@ -87,7 +94,7 @@ namespace InControl
 				new InputControlMapping
 				{
 					Handle = "Back",
-					Target = InputControlType.Select,
+					Target = InputControlType.Back,
 					Source = Button6
 				},
 				new InputControlMapping
@@ -164,18 +171,13 @@ namespace InControl
 				{
 					Handle = "Left Trigger",
 					Target = InputControlType.LeftTrigger,
-					Source = Analog2,
-					SourceRange = InputControlMapping.Range.Positive,
-					TargetRange = InputControlMapping.Range.Positive
+					Source = Analog8
 				},
 				new InputControlMapping
 				{
 					Handle = "Right Trigger",
 					Target = InputControlType.RightTrigger,
-					Source = Analog2,
-					SourceRange = InputControlMapping.Range.Negative,
-					TargetRange = InputControlMapping.Range.Negative,
-					Invert = true
+					Source = Analog9
 				}
 			};
 		}

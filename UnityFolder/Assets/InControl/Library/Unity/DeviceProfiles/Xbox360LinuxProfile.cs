@@ -21,9 +21,10 @@ namespace InControl
 			JoystickNames = new[]
 			{
 				"Microsoft X-Box 360 pad",
+				"Generic X-Box pad"
 			};
 
-			RegexName = "360";
+			LastResortRegex = "360";
 
 			Sensitivity = 1.0f;
 			LowerDeadZone = 0.2f;
@@ -107,7 +108,7 @@ namespace InControl
 				new InputControlMapping
 				{
 					Handle = "Back",
-					Target = InputControlType.Select,
+					Target = InputControlType.Back,
 					Source = Button6
 				},
 				new InputControlMapping
@@ -143,14 +144,14 @@ namespace InControl
 				{
 					Handle = "Right Stick X",
 					Target = InputControlType.RightStickX,
-					Source = Analog3,
-					Invert = true
+					Source = Analog3
 				},
 				new InputControlMapping
 				{
 					Handle = "Right Stick Y",
 					Target = InputControlType.RightStickY,
-					Source = Analog4
+					Source = Analog4,
+					Invert = true
 				},
 				new InputControlMapping
 				{

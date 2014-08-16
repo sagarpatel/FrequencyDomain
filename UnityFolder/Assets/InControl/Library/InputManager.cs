@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -10,12 +11,14 @@ namespace InControl
 {
 	public class InputManager
 	{
-		public static readonly VersionInfo Version = new VersionInfo();
+		public static readonly VersionInfo Version = VersionInfo.InControlVersion();
+		public static readonly VersionInfo UnityVersion = VersionInfo.UnityVersion();
 
-		public delegate void DeviceEventHandler( InputDevice device );
-		public static event DeviceEventHandler OnDeviceAttached;
-		public static event DeviceEventHandler OnDeviceDetached;
-		public static event DeviceEventHandler OnActiveDeviceChanged;
+		public static event Action OnSetup;
+		public static event Action<ulong,float> OnUpdate;
+		public static event Action<InputDevice> OnDeviceAttached;
+		public static event Action<InputDevice> OnDeviceDetached;
+		public static event Action<InputDevice> OnActiveDeviceChanged;
 
 		static List<InputDeviceManager> inputDeviceManagers = new List<InputDeviceManager>();
 
@@ -23,10 +26,11 @@ namespace InControl
 		public static List<InputDevice> Devices = new List<InputDevice>();
 
 		public static string Platform { get; private set; }
+		public static bool MenuWasPressed { get; private set; }
+		public static bool InvertYAxis;
 
-		static bool invertYAxis = false; // default to y-axis up.
-		static bool enableXInput = false;
-		static bool isSetup = false;
+		static bool enableXInput;
+		static bool isSetup;
 
 		static float initialTime;
 		static float currentTime;
@@ -37,40 +41,54 @@ namespace InControl
 
 		public static void Setup()
 		{
-			isSetup = false;
+			if (isSetup)
+			{
+				return;
+			}
 
 			Platform = (SystemInfo.operatingSystem + " " + SystemInfo.deviceModel).ToUpper();
 
 			initialTime = 0.0f;
 			currentTime = 0.0f;
 			lastUpdateTime = 0.0f;
-
 			currentTick = 0;
 
 			inputDeviceManagers.Clear();
 			Devices.Clear();
 			activeDevice = InputDevice.Null;
 
-			OnDeviceAttached = null;
-			OnDeviceDetached = null;
-			OnActiveDeviceChanged = null;
-
 			isSetup = true;
 
 			#if UNITY_STANDALONE_WIN || UNITY_EDITOR
 			if (enableXInput)
 			{
-				if (Application.platform == RuntimePlatform.WindowsPlayer ||
-					Application.platform == RuntimePlatform.WindowsEditor)
-				{
-					HideDevicesWithProfile( typeof( Xbox360WinProfile ) );
-					HideDevicesWithProfile( typeof( LogitechF710ModeXWinProfile ) );
-					InputManager.AddDeviceManager( new XInputDeviceManager() );
-				}
+				XInputDeviceManager.Enable();
 			}
 			#endif
 
 			AddDeviceManager( new UnityInputDeviceManager() );
+
+			if (OnSetup != null)
+			{
+				OnSetup.Invoke();
+				OnSetup = null;
+			}
+		}
+
+
+		public static void Reset()
+		{
+			OnSetup = null;
+			OnUpdate = null;
+			OnActiveDeviceChanged = null;
+			OnDeviceAttached = null;
+			OnDeviceDetached = null;
+
+			inputDeviceManagers.Clear();
+			Devices.Clear();
+			activeDevice = InputDevice.Null;
+			
+			isSetup = false;
 		}
 
 
@@ -86,12 +104,22 @@ namespace InControl
 		public static void Update()
 		{
 			AssertIsSetup();
+			if (OnSetup != null)
+			{
+				OnSetup.Invoke();
+				OnSetup = null;
+			}
 
 			currentTick++;
-
 			UpdateCurrentTime();
-			UpdateDeviceManagers();
-			UpdateDevices();
+			var deltaTime = currentTime - lastUpdateTime;
+
+			UpdateDeviceManagers( deltaTime);
+
+			PreUpdateDevices( deltaTime );
+			UpdateDevices( deltaTime );
+			PostUpdateDevices( deltaTime );
+
 			UpdateActiveDevice();
 
 			lastUpdateTime = currentTime;
@@ -144,10 +172,8 @@ namespace InControl
 		}
 
 
-		static void UpdateDeviceManagers()
+		static void UpdateDeviceManagers( float deltaTime )
 		{
-			var deltaTime = currentTime - lastUpdateTime;
-
 			int inputDeviceManagerCount = inputDeviceManagers.Count;
 			for (int i = 0; i < inputDeviceManagerCount; i++)
 			{
@@ -157,21 +183,44 @@ namespace InControl
 		}
 
 
-		static void UpdateDevices()
+		static void PreUpdateDevices( float deltaTime )
 		{
-			var deltaTime = currentTime - lastUpdateTime;
-
 			MenuWasPressed = false;
-
+			
 			int deviceCount = Devices.Count;
 			for (int i = 0; i < deviceCount; i++)
 			{
 				var device = Devices[i];
-
 				device.PreUpdate( currentTick, deltaTime );
-				device.Update( currentTick, deltaTime );
-				device.PostUpdate( currentTick, deltaTime );
+			}
+		}
 
+
+		static void UpdateDevices( float deltaTime )
+		{
+			int deviceCount = Devices.Count;
+			for (int i = 0; i < deviceCount; i++)
+			{
+				var device = Devices[i];
+				device.Update( currentTick, deltaTime );
+			}
+
+			if (OnUpdate != null)
+			{
+				OnUpdate.Invoke( currentTick, deltaTime );
+			}
+		}
+
+
+		static void PostUpdateDevices( float deltaTime )
+		{			
+			int deviceCount = Devices.Count;
+			for (int i = 0; i < deviceCount; i++)
+			{
+				var device = Devices[i];
+				
+				device.PostUpdate( currentTick, deltaTime );
+				
 				if (device.MenuWasPressed)
 				{
 					MenuWasPressed = true;
@@ -225,7 +274,11 @@ namespace InControl
 
 		public static void HideDevicesWithProfile( Type type )
 		{
+			#if !UNITY_EDITOR && UNITY_WINRT
+			if (type.GetTypeInfo().IsAssignableFrom( typeof( UnityInputDeviceProfile ).GetTypeInfo() ))
+			#else
 			if (type.IsSubclassOf( typeof( UnityInputDeviceProfile ) ))
+			#endif
 			{
 				UnityInputDeviceProfile.Hide( type );
 			}
@@ -234,7 +287,10 @@ namespace InControl
 
 		static InputDevice DefaultActiveDevice
 		{
-			get { return (Devices.Count > 0) ? Devices[0] : InputDevice.Null; }
+			get 
+			{ 
+				return (Devices.Count > 0) ? Devices[0] : InputDevice.Null; 
+			}
 		}
 
 
@@ -252,38 +308,17 @@ namespace InControl
 		}
 
 
-		public static bool InvertYAxis
-		{
-			get { return invertYAxis; }
-			set
-			{
-				if (isSetup)
-				{
-					throw new Exception( "InputManager.InvertYAxis must be set before calling InputManager.Setup()." );
-				}
-				invertYAxis = value;
-			}
-		}
-
-
 		public static bool EnableXInput
 		{
-			get { return enableXInput; }
+			get 
+			{ 
+				return enableXInput; 
+			}
+
 			set
 			{
-				if (isSetup)
-				{
-					throw new Exception( "InputManager.EnableXInput must be set before calling InputManager.Setup()." );
-				}
 				enableXInput = value;
 			}
-		}
-
-
-		public static bool MenuWasPressed
-		{
-			get;
-			private set;
 		}
 	}
 }

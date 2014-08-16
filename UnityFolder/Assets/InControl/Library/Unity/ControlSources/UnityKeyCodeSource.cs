@@ -6,24 +6,31 @@ namespace InControl
 {
 	public class UnityKeyCodeSource : InputControlSource
 	{
-		KeyCode keyCode;
-
-
-		public UnityKeyCodeSource( KeyCode keyCode )
+		KeyCode[] keyCodeList;
+		
+		
+		public UnityKeyCodeSource( params KeyCode[] keyCodeList )
 		{
-			this.keyCode = keyCode;
+			this.keyCodeList = keyCodeList;
 		}
 
 
-		public override float GetValue( InputDevice inputDevice )
+		public float GetValue( InputDevice inputDevice )
 		{
 			return GetState( inputDevice ) ? 1.0f : 0.0f;
 		}
 
 
-		public override bool GetState( InputDevice inputDevice )
+		public bool GetState( InputDevice inputDevice )
 		{
-			return Input.GetKey( keyCode );
+			for (int i = 0; i < keyCodeList.Length; i++)
+			{
+				if (Input.GetKey( keyCodeList[i] ))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

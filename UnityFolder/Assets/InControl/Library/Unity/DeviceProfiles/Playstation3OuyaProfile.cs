@@ -23,8 +23,11 @@ namespace InControl
 			{
 				"", // Yes, really.
 				"PLAYSTATION(R)3 Controller",
-				"SHENGHIC 2009/0708ZXW-V1Inc. PLAYSTATION(R)3Conteroller" // Not a typo.
+				"SHENGHIC 2009/0708ZXW-V1Inc. PLAYSTATION(R)3Conteroller", // Not a typo.
+				"Sony PLAYSTATION(R)3 Controller"
 			};
+
+			LastResortRegex = "PLAYSTATION(R)3";
 
 			Sensitivity = 1.0f;
 			LowerDeadZone = 0.2f;
@@ -66,18 +69,6 @@ namespace InControl
 					Handle = "Right Bumper",
 					Target = InputControlType.RightBumper,
 					Source = Button5
-				},
-				new InputControlMapping
-				{
-					Handle = "Left Trigger",
-					Target = InputControlType.LeftTrigger,
-					Source = Button6
-				},
-				new InputControlMapping
-				{
-					Handle = "Right Trigger",
-					Target = InputControlType.RightTrigger,
-					Source = Button7
 				},
 				new InputControlMapping
 				{
@@ -166,6 +157,18 @@ namespace InControl
 					Source = Analog5,
 					SourceRange = InputControlMapping.Range.Positive,
 					TargetRange = InputControlMapping.Range.Positive
+				},
+				new InputControlMapping
+				{
+					Handle = "Left Trigger",
+					Target = InputControlType.LeftTrigger,
+					Source = Analog6
+				},
+				new InputControlMapping
+				{
+					Handle = "Right Trigger",
+					Target = InputControlType.RightTrigger,
+					Source = Analog7
 				}
 			};
 		}

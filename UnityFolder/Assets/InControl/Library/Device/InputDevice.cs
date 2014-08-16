@@ -17,6 +17,10 @@ namespace InControl
 
 		public InputControl[] Controls { get; protected set; }
 
+		public TwoAxisInputControl LeftStick { get; protected set; }
+		public TwoAxisInputControl RightStick { get; protected set; }
+		public TwoAxisInputControl DPad { get; protected set; }
+
 
 		public InputDevice( string name )
 		{
@@ -27,13 +31,16 @@ namespace InControl
 
 			const int numInputControlTypes = (int) InputControlType.Count + 1;
 			Controls = new InputControl[numInputControlTypes];
+
+			LeftStick = new TwoAxisInputControl();
+			RightStick = new TwoAxisInputControl();
+			DPad = new TwoAxisInputControl();
 		}
 
 
-		public InputControl GetControl( Enum inputControlType )
+		public InputControl GetControl( InputControlType inputControlType )
 		{
-			int controlIndex = Convert.ToInt32( inputControlType );
-			var control = Controls[controlIndex];
+			var control = Controls[ (int) inputControlType ];
 			return control ?? InputControl.Null;
 		}
 
@@ -53,11 +60,10 @@ namespace InControl
 		}
 
 
-		public InputControl AddControl( InputControlType target, string handle )
+		public InputControl AddControl( InputControlType inputControlType, string handle )
 		{
-			var controlIndex = (int) target;
-			var inputControl = new InputControl( handle, target );
-			Controls[controlIndex] = inputControl;
+			var inputControl = new InputControl( handle, inputControlType );
+			Controls[ (int) inputControlType ] = inputControl;
 			return inputControl;
 		}
 
@@ -96,13 +102,13 @@ namespace InControl
 
 		public void PostUpdate( ulong updateTick, float deltaTime )
 		{
+			// Apply post-processing to controls.
 			int controlCount = Controls.GetLength( 0 );
 			for (int i = 0; i < controlCount; i++)
 			{
 				var control = Controls[i];
 				if (control != null)
 				{
-					// This only really applies to analog controls.
 					if (control.RawValue.HasValue)
 					{
 						control.UpdateWithValue( control.RawValue.Value, updateTick );
@@ -121,6 +127,13 @@ namespace InControl
 					}
 				}
 			}
+
+			// Update two-axis controls.
+			LeftStick.Update( LeftStickX, LeftStickY, updateTick );
+			RightStick.Update( RightStickX, RightStickY, updateTick );
+
+			var dpv = DPadVector;
+			DPad.Update( dpv.x, dpv.y, updateTick );
 		}
 
 
@@ -131,8 +144,15 @@ namespace InControl
 			var obverseTarget = control.Obverse;
 			if (obverseTarget.HasValue)
 			{
-				var obverseControl = GetControl( obverseTarget );
-				analogValue = ApplyCircularDeadZone( analogValue, obverseControl.PreValue.Value, control.LowerDeadZone, control.UpperDeadZone );
+				var obverseControl = GetControl( obverseTarget.Value );
+				if (obverseControl.PreValue.HasValue)
+				{
+					analogValue = ApplyCircularDeadZone( analogValue, obverseControl.PreValue.Value, control.LowerDeadZone, control.UpperDeadZone );
+				}
+				else
+				{
+					analogValue = ApplyDeadZone( analogValue, control.LowerDeadZone, control.UpperDeadZone );
+				}
 			}
 			else
 			{
@@ -178,6 +198,18 @@ namespace InControl
 		}
 
 
+		Vector2 DPadVector
+		{
+			get 
+			{
+				var x = DPadLeft.State ? -DPadLeft.Value : DPadRight.Value;
+				var t = DPadUp.State ? DPadUp.Value : -DPadDown.Value;
+				var y = InputManager.InvertYAxis ? -t : t;
+				return new Vector2( x, y ).normalized;
+			}
+		}
+		
+		
 		public bool LastChangedAfter( InputDevice otherDevice )
 		{
 			return LastChangeTick > otherDevice.LastChangeTick;
@@ -221,13 +253,30 @@ namespace InControl
 		}
 
 
+		public InputControl AnyButton
+		{
+			get
+			{
+				int controlCount = Controls.GetLength( 0 );
+				for (int i = 0; i < controlCount; i++)
+				{
+					var control = Controls[i];
+					if (control != null && control.IsButton && control.IsPressed)
+					{
+						return control;
+					}
+				}
+
+				return InputControl.Null;
+			}
+		}
+
+
 		public InputControl LeftStickX { get { return GetControl( InputControlType.LeftStickX ); } }
 		public InputControl LeftStickY { get { return GetControl( InputControlType.LeftStickY ); } }
-		public InputControl LeftStickButton { get { return GetControl( InputControlType.LeftStickButton ); } }
 
 		public InputControl RightStickX { get { return GetControl( InputControlType.RightStickX ); } }
 		public InputControl RightStickY { get { return GetControl( InputControlType.RightStickY ); } }
-		public InputControl RightStickButton { get { return GetControl( InputControlType.RightStickButton ); } }
 
 		public InputControl DPadUp { get { return GetControl( InputControlType.DPadUp ); } }
 		public InputControl DPadDown { get { return GetControl( InputControlType.DPadDown ); } }
@@ -245,61 +294,35 @@ namespace InControl
 		public InputControl LeftBumper { get { return GetControl( InputControlType.LeftBumper ); } }
 		public InputControl RightBumper { get { return GetControl( InputControlType.RightBumper ); } }
 
-
-		public Vector2 LeftStickVector
-		{
-			get
-			{
-				return new Vector2( LeftStickX.Value, LeftStickY.Value );
-			}
-		}
-
-
-		public Vector2 RightStickVector
-		{
-			get
-			{
-				return new Vector2( RightStickX.Value, RightStickY.Value );
-			}
-		}
+		public InputControl LeftStickButton { get { return GetControl( InputControlType.LeftStickButton ); } }
+		public InputControl RightStickButton { get { return GetControl( InputControlType.RightStickButton ); } }
 
 
 		public float DPadX
 		{
-			get
-			{
-				return DPadLeft.State ? -DPadLeft.Value : DPadRight.Value;
+			get 
+			{ 
+				return DPad.X; 
 			}
 		}
 
 
 		public float DPadY
 		{
-			get
-			{
-				var y = DPadUp.State ? DPadUp.Value : -DPadDown.Value;
-				return InputManager.InvertYAxis ? -y : y;
+			get 
+			{ 
+				return DPad.Y; 
 			}
 		}
 
 
-		public Vector2 DPadVector
+		public TwoAxisInputControl Direction
 		{
-			get
-			{
-				return new Vector2( DPadX, DPadY ).normalized;
-			}
-		}
-
-
-		public Vector2 Direction
-		{
-			get
-			{
-				var dpad = DPadVector;
-				var zero = Mathf.Approximately( dpad.x, 0.0f ) && Mathf.Approximately( dpad.y, 0.0f );
-				return zero ? LeftStickVector : dpad;
+			get 
+			{ 
+				return DPad.UpdateTick > LeftStick.UpdateTick ? DPad : LeftStick; 
 			}
 		}
 	}
 }
+

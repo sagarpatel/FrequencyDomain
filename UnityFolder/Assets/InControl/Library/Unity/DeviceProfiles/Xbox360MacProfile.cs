@@ -23,10 +23,10 @@ namespace InControl
 				"", // Yes, really.
 				"Microsoft Wireless 360 Controller",
 				"Mad Catz, Inc. Mad Catz FPS Pro GamePad",
-				"Logitech Gamepad F310"
+				"\u00A9Microsoft Corporation Controller"
 			};
 
-			RegexName = "360";
+			LastResortRegex = "360";
 
 			Sensitivity = 1.0f;
 			LowerDeadZone = 0.2f;
@@ -114,7 +114,7 @@ namespace InControl
 				new InputControlMapping
 				{
 					Handle = "Back",
-					Target = InputControlType.Select,
+					Target = InputControlType.Back,
 					Source = Button10
 				},
 				new InputControlMapping

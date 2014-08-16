@@ -10,11 +10,11 @@ namespace InControl
 		//
 		LeftStickX,
 		LeftStickY,
-		LeftStickButton, // TODO: This may be non-standard?
+		LeftStickButton,
 
 		RightStickX,
 		RightStickY,
-		RightStickButton, // TODO: This may be non-standard?
+		RightStickButton,
 
 		DPadUp,
 		DPadDown,
@@ -28,7 +28,7 @@ namespace InControl
 
 		LeftTrigger,
 		RightTrigger,
-		
+
 		LeftBumper,
 		RightBumper,
 
@@ -41,6 +41,8 @@ namespace InControl
 		System,
 		Pause,
 		Menu,
+		Share,
+		View,
 		TiltX,
 		TiltY,
 		TiltZ,
@@ -97,7 +99,7 @@ namespace InControl
 
 		// Internal. Must be last.
 		//
-		Count 
+		Count
 	}
 }
 

@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Reflection;
+using UnityEngine;
 
 
 namespace InControl
@@ -104,11 +104,39 @@ namespace InControl
 
 		void DetectAttachedJoystickDevice( int unityJoystickId, string unityJoystickName )
 		{
+			if (unityJoystickName == "WIRED CONTROLLER" || 
+			    unityJoystickName == " WIRED CONTROLLER")
+			{
+				// Ignore Steam controller for now.
+				return;
+			}
+
+			if (unityJoystickName.IndexOf( "webcam", StringComparison.OrdinalIgnoreCase ) != -1)
+			{
+				// Unity thinks some webcams are joysticks. >_<
+				return;
+			}
+
+			// PS4 controller works properly as of Unity 4.5
+			if (InputManager.UnityVersion <= new VersionInfo( 4, 5 ))
+			{
+				if (Application.platform == RuntimePlatform.OSXEditor ||
+				    Application.platform == RuntimePlatform.OSXPlayer ||
+				    Application.platform == RuntimePlatform.OSXWebPlayer)
+				{
+					if (unityJoystickName == "Unknown Wireless Controller")
+					{
+						// Ignore PS4 controller in Bluetooth mode on Mac since it connects but does nothing.
+						return;
+					}
+				}
+			}
+
 			var matchedDeviceProfile = deviceProfiles.Find( config => config.HasJoystickName( unityJoystickName ) );
 
 			if (matchedDeviceProfile == null)
 			{
-				matchedDeviceProfile = deviceProfiles.Find( config => config.HasRegexName( unityJoystickName ) );
+				matchedDeviceProfile = deviceProfiles.Find( config => config.HasLastResortRegex( unityJoystickName ) );
 			}
 
 			UnityInputDeviceProfile deviceProfile = null;
@@ -183,21 +211,13 @@ namespace InControl
 
 		void AutoDiscoverDeviceProfiles()
 		{
-			foreach (var type in GetType().Assembly.GetTypes())
-			{
-				if (type.GetCustomAttributes( typeof(AutoDiscover), true ).Length > 0)
+			foreach (var typeName in UnityInputDeviceProfileList.Profiles)
+			{				
+				var deviceProfile = (UnityInputDeviceProfile) Activator.CreateInstance( Type.GetType( typeName ) );
+				if (deviceProfile.IsSupportedOnThisPlatform)
 				{
-					var deviceProfile = (UnityInputDeviceProfile) Activator.CreateInstance( type );
-
-					if (deviceProfile.IsSupportedOnThisPlatform)
-					{
-						Logger.LogInfo( "Adding profile: " + type.Name + " (" + deviceProfile.Name + ")" );
-						deviceProfiles.Add( deviceProfile );
-					}
-					else
-					{
-//						Logger.LogInfo( "Ignored profile: " + type.Name + " (" + deviceProfile.Name + ")" );
-					}
+					// Logger.LogInfo( "Found profile: " + deviceProfile.GetType().Name + " (" + deviceProfile.Name + ")" );
+					deviceProfiles.Add( deviceProfile );
 				}
 			}
 		}
