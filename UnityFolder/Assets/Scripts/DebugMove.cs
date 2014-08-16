@@ -28,8 +28,8 @@ public class DebugMove : MonoBehaviour
 		var inputDevice = InputManager.ActiveDevice;
 
 
-		float xTranslation = -inputDevice.Direction.x * hControlSpeed * Time.deltaTime;
-		float yTranslation = inputDevice.Direction.y * vControlSpeed * Time.deltaTime;
+		float xTranslation = -inputDevice.Direction.Vector.x * hControlSpeed * Time.deltaTime;
+		float yTranslation = inputDevice.Direction.Vector.y * vControlSpeed * Time.deltaTime;
 		float zTranslation = 0;;
 
 		if(Input.GetKey("q"))
