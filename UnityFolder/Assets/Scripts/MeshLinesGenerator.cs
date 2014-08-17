@@ -208,10 +208,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			isAmplitudeScale = !isAmplitudeScale;
 		}
 
-
-		Profiler.BeginSample("UpdateCollumnVerticesPosition");
 		UpdateCollumnVerticesPosition();
-		Profiler.EndSample();
 	
 		spawnCooldownCounter += Time.deltaTime;
 		if(spawnCooldownCounter > spawnCooldown)
@@ -365,6 +362,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	void UpdateCollumnVerticesPosition()
 	{
+		Profiler.BeginSample("Update Collumn Vertices");
 		Vector3 tempPosition = transform.position;
 		Vector3 forwardVec = transform.forward;
 		float deltaT = Time.deltaTime;
@@ -372,17 +370,21 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
 			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
-			{	
+			{
+				//Profiler.BeginSample("Inner loop");
 				//// not unified physics now, could cause trouble later`
-				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;	
+				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;
+				//Profiler.EndSample();
 			}
-			
+
+			//Profiler.BeginSample("Outter loop");
 			stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
 
 			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
+			//Profiler.EndSample();
 		}
-
+		Profiler.EndSample();
 	}
 
 
