@@ -6,10 +6,13 @@ public class LMC_FingertipsStitch : MonoBehaviour
 {
 	Controller lmcController;
 	AudioDirectorScript audioDirector;
-	public Vector3[] fingertipsPosArray;
-	float posScale = 3.0f;
+	MeshLinesGenerator meshlinesGenerator;
 
+	Vector3[] fingertipsPosArray;
+	float posScale = 7.0f;
 	GameObject[] debugPosObjects;
+	Vector3[] stitchPosArray;
+	public bool isValidData = false;
 
 	void Start () 
 	{
@@ -23,8 +26,13 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		for (int i = 0; i < debugPosObjects.Length; i++)
 		{
 			debugPosObjects[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			debugPosObjects[i].name = "Debug finger: " + i.ToString();
 			debugPosObjects[i].transform.parent = transform;
+			debugPosObjects[i].renderer.enabled = false;
 		}
+
+		meshlinesGenerator = GetComponent<MeshLinesGenerator>();
+		stitchPosArray = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
 	}
 	
 	void Update () 
@@ -38,11 +46,30 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 			for (int i = 0; i < fingertipsPosArray.Length; i++)
 			{
-				fingertipsPosArray[i] =  posScale * audioDirector.overallAmplitudeScaler * firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
+				fingertipsPosArray[i] = posScale * audioDirector.overallAmplitudeScaler * firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
 				debugPosObjects[i].transform.localPosition = fingertipsPosArray[i];
 			}
-			
+
+			// reverse order of data if left hand
+			//if (firstHand.IsLeft == true) ;
+			//	System.Array.Reverse(debugPosObjects);
+
+			int fingerIndex = 0;
+			int fingerCount = debugPosObjects.Length;
+			int stitchesPerFinger = stitchPosArray.Length / fingerCount;
+
+			for (int i = 0; i < stitchPosArray.Length; i++)
+			{
+				stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
+				if ((i + 1) % stitchesPerFinger == 0)
+					fingerIndex++;
+			}
+			// send data over
+			meshlinesGenerator.stitchOriginPosArray = stitchPosArray;
+			isValidData = true;
 		}
+		else
+			isValidData = false;
 	
 	}
 

@@ -67,6 +67,9 @@ public class MeshLinesGenerator : MonoBehaviour
 	public float maximumAmplitude = 8.0f;
 	public float staticAmpltiudeScale = 4.0f;
 
+	LMC_FingertipsStitch fingertipStitch;
+	public Vector3[] stitchOriginPosArray;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -196,6 +199,9 @@ public class MeshLinesGenerator : MonoBehaviour
 		stitchPosObject.transform.localPosition = stitchAnchorOffset;
 
 		tempVector = new Vector3(0, 0, 0);
+
+		fingertipStitch = GetComponent<LMC_FingertipsStitch>();
+		stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
 	}
 	
 	// Update is called once per frame
@@ -378,9 +384,19 @@ public class MeshLinesGenerator : MonoBehaviour
 			}
 
 			//Profiler.BeginSample("Outter loop");
-			stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
-
-			collumnsArrayVerticesArray[h][collumnStitchIndex-1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
+			
+			// leap motion finger stitching 
+			if (fingertipStitch.isValidData == true)
+			{
+				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchOriginPosArray[h];
+			}
+			else
+			{
+				// old/normal way, unified origin point
+				stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
+				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
+			}
+			
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
 			//Profiler.EndSample();
 		}
