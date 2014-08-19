@@ -56,8 +56,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		{
 			Vector3 leapFingerPos = firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
 			// flipping x and z to account for parent transform facing the wrong way
-			leapFingerPos.x = -leapFingerPos.x;
-			leapFingerPos.z = -leapFingerPos.z;
+			leapFingerPos.x = -leapFingerPos.x * 2.0f;
+			leapFingerPos.z = -leapFingerPos.z * 4.0f ;
 			fingertipsPosArray[i] = posScale * audioDirector.overallAmplitudeScaler * leapFingerPos;
 			debugPosObjects[i].transform.localPosition = fingertipsPosArray[i];
 		}
