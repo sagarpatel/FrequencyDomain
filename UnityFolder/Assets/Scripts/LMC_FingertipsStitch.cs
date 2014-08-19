@@ -34,43 +34,57 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		meshlinesGenerator = GetComponent<MeshLinesGenerator>();
 		stitchPosArray = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
 	}
-	
-	void Update () 
+
+	void Update()
 	{
+		isValidData = false;
+		if (lmcController == null)
+			return;
 
-		if (lmcController != null)
+		Frame frame = lmcController.Frame();
+		HandList hands = frame.Hands;
+		Hand firstHand = hands[0];
+
+		if (firstHand.IsValid == false)
 		{
-			Frame frame = lmcController.Frame();
-			HandList hands = frame.Hands;
-			Hand firstHand = hands[0];
-
-			for (int i = 0; i < fingertipsPosArray.Length; i++)
-			{
-				fingertipsPosArray[i] = posScale * audioDirector.overallAmplitudeScaler * firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
-				debugPosObjects[i].transform.localPosition = fingertipsPosArray[i];
-			}
-
-			// reverse order of data if left hand
-			//if (firstHand.IsLeft == true) ;
-			//	System.Array.Reverse(debugPosObjects);
-
-			int fingerIndex = 0;
-			int fingerCount = debugPosObjects.Length;
-			int stitchesPerFinger = stitchPosArray.Length / fingerCount;
-
-			for (int i = 0; i < stitchPosArray.Length; i++)
-			{
-				stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
-				if ((i + 1) % stitchesPerFinger == 0)
-					fingerIndex++;
-			}
-			// send data over
-			meshlinesGenerator.stitchOriginPosArray = stitchPosArray;
-			isValidData = true;
+			print("Invalid hand");
+			return;
 		}
-		else
-			isValidData = false;
-	
+
+
+		for (int i = 0; i < fingertipsPosArray.Length; i++)
+		{
+			Vector3 leapFingerPos = firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
+			// flipping x and z to account for parent transform facing the wrong way
+			leapFingerPos.x = -leapFingerPos.x;
+			leapFingerPos.z = -leapFingerPos.z;
+			fingertipsPosArray[i] = posScale * audioDirector.overallAmplitudeScaler * leapFingerPos;
+			debugPosObjects[i].transform.localPosition = fingertipsPosArray[i];
+		}
+
+		// reverse order of data if right hand
+		if (firstHand.IsLeft == false)
+		{
+			print("RIGHT HAND DAWG");
+			System.Array.Reverse(debugPosObjects);
+		}
+
+		int fingerIndex = 0;
+		int fingerCount = debugPosObjects.Length;
+		int stitchesPerFinger = stitchPosArray.Length / fingerCount;
+
+		for (int i = 0; i < stitchPosArray.Length; i++)
+		{
+			stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
+			if ((i + 1) % stitchesPerFinger == 0)
+				fingerIndex++;
+		}
+		// send data over
+		meshlinesGenerator.stitchOriginPosArray = stitchPosArray;
+		isValidData = true;
 	}
+		
+	
+	
 
 }
