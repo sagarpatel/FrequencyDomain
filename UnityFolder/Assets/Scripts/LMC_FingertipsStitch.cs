@@ -10,6 +10,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 	Vector3[] fingertipsPosArray;
 	float posScale = 0.01f;
+	float fingerWidthScale = 10.0f;
 	GameObject[] debugPosObjects;
 
 	public bool isValidData = false;
@@ -113,6 +114,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		int stitchesCount = fingerJointsArrayStitchesPosArray[0].Length;
 		int stitchesPerFinger = stitchesCount / fingerCount; //stitchPosArray.Length / fingerCount;
 
+		int remainder = 0;
 		// going through each collumn
 		for (int i = 0; i < stitchesCount; i++)
 		{
@@ -120,11 +122,22 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 			for (int j = 0; j < jointsPerFinger; j++)
 			{
-				fingerJointsArrayStitchesPosArray[j][i] = fingersArrayJointsPositionsPosArray[fingerIndex][j];
+				// do finger tip normally, want all vertices of finger to converge anyways
+				if (j ==0)
+				{
+					fingerJointsArrayStitchesPosArray[j][i] = fingersArrayJointsPositionsPosArray[fingerIndex][j];	
+				}
+				else
+				{
+					float progression = (float)remainder / (float)stitchesPerFinger;
+					Vector3 jointPosition = fingersArrayJointsPositionsPosArray[fingerIndex][j];
+					fingerJointsArrayStitchesPosArray[j][i] = CalculatePosAroundJoint(firstHand, fingerIndex, jointsPerFinger - 1 - j, progression, jointPosition);
+				}
+				
 			}
 
-
-			if ((i + 1) % stitchesPerFinger == 0)
+			remainder = (i + 1) % stitchesPerFinger;
+			if ( remainder == 0)
 				fingerIndex++;
 		}
 		// send data over
@@ -144,7 +157,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
 		float yOffset = Mathf.Sin(progression * Mathf.PI);
 
-		Vector3 offsetPos = posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
+		Vector3 offsetPos = fingerWidthScale * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
 
 		finalPos = jointPos + boneRotation * offsetPos;	
 
