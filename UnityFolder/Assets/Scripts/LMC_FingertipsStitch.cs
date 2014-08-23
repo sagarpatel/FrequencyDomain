@@ -9,7 +9,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	MeshLinesGenerator meshlinesGenerator;
 
 	Vector3[] fingertipsPosArray;
-	float posScale = 0.02f;
+	float posScale = 0.01f;
 	GameObject[] debugPosObjects;
 
 	public bool isValidData = false;
