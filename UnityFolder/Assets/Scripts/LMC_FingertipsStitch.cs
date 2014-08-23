@@ -9,10 +9,14 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	MeshLinesGenerator meshlinesGenerator;
 
 	Vector3[] fingertipsPosArray;
-	float posScale = 7.0f;
+	float posScale = 0.02f;
 	GameObject[] debugPosObjects;
-	Vector3[] stitchPosArray;
+
 	public bool isValidData = false;
+	int jointsPerFinger = 5; // finger tip is the 5th joint (index 0)
+	public Vector3[][] fingerJointsArrayStitchesPosArray;
+
+	Vector3[][] fingersArrayJointsPositionsPosArray;
 
 	void Start () 
 	{
@@ -32,7 +36,19 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		}
 
 		meshlinesGenerator = GetComponent<MeshLinesGenerator>();
-		stitchPosArray = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
+		//stitchPosArray = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
+		fingerJointsArrayStitchesPosArray = new Vector3[jointsPerFinger][];
+		for (int i = 0; i < fingerJointsArrayStitchesPosArray.Length; i++)
+		{
+			fingerJointsArrayStitchesPosArray[i] = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
+		}
+
+		// internal array to store just joint positions
+		fingersArrayJointsPositionsPosArray = new Vector3[5][]; // 5 because there are 5 fingers
+		for (int i = 0; i < fingersArrayJointsPositionsPosArray.Length; i++)
+		{
+			fingersArrayJointsPositionsPosArray[i] = new Vector3[jointsPerFinger]; 
+		}
 	}
 
 	void Update()
@@ -51,36 +67,68 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			return;
 		}
 
+		
+		//for every finger
+		for (int i = 0; i < fingersArrayJointsPositionsPosArray.Length; i++)
+		{
+			// for every joint in finger
+			// do bone joints (except fingertips)
+			for (int j = 1; j < jointsPerFinger; j++)
+			{
+				// enum mappings -->  https://developer.leapmotion.com/documentation/skeletal/csharp/api/Leap.Bone.html#csharpclass_leap_1_1_bone_1ad1607a6b2f5cceb9194ad7d7f88d4b07
 
+				Vector3 jointPos = firstHand.Fingers[i].Bone((Bone.BoneType)(jointsPerFinger -1 - j)).PrevJoint.ToUnity();
+				// flipping x and z to account for parent transform facing the wrong way
+				jointPos.x *= -2.0f;
+				jointPos.z *= -4.0f;
+				jointPos *= posScale * audioDirector.overallAmplitudeScaler;
+				debugPosObjects[i].transform.localPosition = jointPos;
+				fingersArrayJointsPositionsPosArray[i][j] = debugPosObjects[i].transform.position; ;
+			}
+			
+		}
+		// do finger tips (get stabilized value0
 		for (int i = 0; i < fingertipsPosArray.Length; i++)
 		{
-			Vector3 leapFingerPos = firstHand.Fingers[i].StabilizedTipPosition.ToUnityScaled();
+			Vector3 leapFingerPos = firstHand.Fingers[i].StabilizedTipPosition.ToUnity();
 			// flipping x and z to account for parent transform facing the wrong way
 			leapFingerPos.x = -leapFingerPos.x * 2.0f;
 			leapFingerPos.z = -leapFingerPos.z * 4.0f ;
 			fingertipsPosArray[i] = posScale * audioDirector.overallAmplitudeScaler * leapFingerPos;
 			debugPosObjects[i].transform.localPosition = fingertipsPosArray[i];
+			fingersArrayJointsPositionsPosArray[i][0] = debugPosObjects[i].transform.position;
 		}
+
 
 		// reverse order of data if right hand
 		if (firstHand.IsLeft == false)
 		{
 			print("RIGHT HAND DAWG");
-			System.Array.Reverse(debugPosObjects);
+			//System.Array.Reverse(debugPosObjects);
+			System.Array.Reverse(fingersArrayJointsPositionsPosArray);
 		}
 
 		int fingerIndex = 0;
 		int fingerCount = debugPosObjects.Length;
-		int stitchesPerFinger = stitchPosArray.Length / fingerCount;
+		int stitchesCount = fingerJointsArrayStitchesPosArray[0].Length;
+		int stitchesPerFinger = stitchesCount / fingerCount; //stitchPosArray.Length / fingerCount;
 
-		for (int i = 0; i < stitchPosArray.Length; i++)
+		// going through each collumn
+		for (int i = 0; i < stitchesCount; i++)
 		{
-			stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
+			//stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
+
+			for (int j = 0; j < jointsPerFinger; j++)
+			{
+				fingerJointsArrayStitchesPosArray[j][i] = fingersArrayJointsPositionsPosArray[fingerIndex][j];
+			}
+
+
 			if ((i + 1) % stitchesPerFinger == 0)
 				fingerIndex++;
 		}
 		// send data over
-		meshlinesGenerator.stitchOriginPosArray = stitchPosArray;
+		meshlinesGenerator.fingerJointsArrayStitchesPosArray = fingerJointsArrayStitchesPosArray;
 		isValidData = true;
 	}
 		

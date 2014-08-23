@@ -68,7 +68,8 @@ public class MeshLinesGenerator : MonoBehaviour
 	public float staticAmpltiudeScale = 4.0f;
 
 	LMC_FingertipsStitch fingertipStitch;
-	public Vector3[] stitchOriginPosArray;
+	int jointsPerFinger = 5;
+	public Vector3[][] fingerJointsArrayStitchesPosArray;
 
 	// Use this for initialization
 	void Start () 
@@ -86,26 +87,18 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
 			meshLinesPoolArray[i].GetComponentInChildren<MeshRenderer>().sharedMaterial = meshMaterial;
-			
 			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponentInChildren<MeshFilter>().mesh;
 			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
-
 			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(-0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
-
 			meshLinesPoolArray[i].SetActive(false);
 		}
-		
-
 
 		// do basic setup for all meshe lines / rows
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
 		freshLineMeshNormalsArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
-		{
 			verticesArray[i] = new Vector3(i * verticesSpread , 0, 0);
-		}
 
-		
 		List<int> indicesList = new List<int>();
 		List<Vector2> uvsLinesList = new List<Vector2>();
 		List<Vector4> tangentLinesList = new List<Vector4>();
@@ -197,11 +190,17 @@ public class MeshLinesGenerator : MonoBehaviour
 		stitchPosObject = new GameObject();
 		stitchPosObject.transform.parent = transform;
 		stitchPosObject.transform.localPosition = stitchAnchorOffset;
-
 		tempVector = new Vector3(0, 0, 0);
 
 		fingertipStitch = GetComponent<LMC_FingertipsStitch>();
-		stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
+		//  array structured so that for [i][j], i represents the joint index (ex: fingertip row) and j represents the vertices
+		// see https://developer.leapmotion.com/documentation/skeletal/csharp/devguide/Intro_Skeleton_API.html
+		fingerJointsArrayStitchesPosArray = new Vector3[jointsPerFinger][];
+		for (int i = 0; i < fingerJointsArrayStitchesPosArray.Length; i++)
+		{
+			fingerJointsArrayStitchesPosArray[i] = new Vector3[verticesFrequencyDepthCount];
+		}
+		//stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
 	}
 	
 	// Update is called once per frame
@@ -388,7 +387,12 @@ public class MeshLinesGenerator : MonoBehaviour
 			// leap motion finger stitching 
 			if (fingertipStitch.isValidData == true)
 			{
-				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchOriginPosArray[h];
+				//collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchOriginPosArray[h];
+				// assign this collumns (h) finger joint vertices (k)
+				for (int k = 0; k < collumnStitchIndex; k++)
+				{
+					collumnsArrayVerticesArray[h][k] = fingerJointsArrayStitchesPosArray[k][h];
+				}
 			}
 			else
 			{
