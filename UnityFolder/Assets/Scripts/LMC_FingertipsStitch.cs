@@ -104,7 +104,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		// reverse order of data if right hand
 		if (firstHand.IsLeft == false)
 		{
-			print("RIGHT HAND DAWG");
+			//print("RIGHT HAND DAWG");
 			//System.Array.Reverse(debugPosObjects);
 			System.Array.Reverse(fingersArrayJointsPositionsPosArray);
 		}
@@ -148,10 +148,16 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 	Vector3 CalculatePosAroundJoint(Hand hand, int fingerIndex, int boneIndex, float progression, Vector3 jointPos)
 	{
+		Profiler.BeginSample("Cal offset");
+
+		
 		Vector3 finalPos = Vector3.zero;
+		Profiler.BeginSample("Get bOne stuff");
 		Bone currentBone = hand.Fingers[fingerIndex].Bone((Bone.BoneType)boneIndex);
+		Profiler.EndSample();
 		float boneWidth = currentBone.Width;
 		Quaternion boneRotation = currentBone.Basis.Rotation();
+		
 
 		// using PI (instead of 2PI) because I only want semi circle around joint
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
@@ -159,7 +165,9 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 		Vector3 offsetPos = fingerWidthScale * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
 
-		finalPos = jointPos + boneRotation * offsetPos;	
+		finalPos = jointPos + boneRotation * offsetPos;
+
+		Profiler.EndSample();
 
 		return finalPos;
 	}
