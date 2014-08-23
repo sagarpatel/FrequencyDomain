@@ -131,8 +131,24 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		meshlinesGenerator.fingerJointsArrayStitchesPosArray = fingerJointsArrayStitchesPosArray;
 		isValidData = true;
 	}
-		
-	
-	
+
+
+	Vector3 CalculatePosAroundJoint(Hand hand, int fingerIndex, int boneIndex, float progression, Vector3 jointPos)
+	{
+		Vector3 finalPos = Vector3.zero;
+		Bone currentBone = hand.Fingers[fingerIndex].Bone((Bone.BoneType)boneIndex);
+		float boneWidth = currentBone.Width;
+		Quaternion boneRotation = currentBone.Basis.Rotation();
+
+		// using PI (instead of 2PI) because I only want semi circle around joint
+		float xOffset = Mathf.Cos(progression * Mathf.PI);
+		float yOffset = Mathf.Sin(progression * Mathf.PI);
+
+		Vector3 offsetPos = posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
+
+		finalPos = jointPos + boneRotation * offsetPos;	
+
+		return finalPos;
+	}
 
 }
