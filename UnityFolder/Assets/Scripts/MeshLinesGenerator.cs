@@ -48,8 +48,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	public Vector3[][] collumnsArrayVerticesArray;
 	Vector3[][] collumnsArrayNormalsArray;
 
-	[Range(1, 10)]
-	public int collumnStitchIndex = 5;
+	const int collumnStitchIndex = 5;
 	public Vector3 stitchAnchorOffset = new Vector3(0, 0, 0);
 	GameObject stitchPosObject;
 
@@ -374,35 +373,32 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
-			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
+			for(int i = 0 ; i < collumnDepth ; i++)
 			{
-				//Profiler.BeginSample("Inner loop");
-				//// not unified physics now, could cause trouble later`
-				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;
-				//Profiler.EndSample();
-			}
-
-			//Profiler.BeginSample("Outter loop");
-			
-			// leap motion finger stitching 
-			if (fingertipStitch.isValidData == true)
-			{
-				//collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchOriginPosArray[h];
-				// assign this collumns (h) finger joint vertices (k)
-				for (int k = 0; k < collumnStitchIndex; k++)
+				// handle origin stitches/vertices
+				if (i < collumnStitchIndex)
 				{
-					collumnsArrayVerticesArray[h][k] = fingerJointsArrayStitchesPosArray[k][h];
+					// leap motion finger stitching 
+					if (fingertipStitch.isValidData == true)
+					{
+						collumnsArrayVerticesArray[h][i] = fingerJointsArrayStitchesPosArray[i][h];
+					}
+					else
+					{
+						// default to common origin stitch point
+						// old/normal way, unified origin point
+						stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
+						collumnsArrayVerticesArray[h][i] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
+					}
+				}
+				else // oridinary vertices
+				{
+					//// not unified physics now, could cause trouble later`
+					collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;
 				}
 			}
-			else
-			{
-				// old/normal way, unified origin point
-				stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
-				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
-			}
-			
+
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
-			//Profiler.EndSample();
 		}
 		Profiler.EndSample();
 	}
