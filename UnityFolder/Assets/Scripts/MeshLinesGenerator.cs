@@ -49,7 +49,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	Vector3[][] collumnsArrayNormalsArray;
 
 	[Range(1, 10)]
-	public int collumnStitchIndex = 1;
+	public int collumnStitchIndex = 5;
 	public Vector3 stitchAnchorOffset = new Vector3(0, 0, 0);
 	GameObject stitchPosObject;
 
