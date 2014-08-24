@@ -160,7 +160,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		int boneKey = GenerateBoneIDKey(fingerIndex, boneIndex);
 
 		Quaternion boneRotation = bonesQuaternionsCacheArray[boneKey];
-		float boneWidth = bonesWidthsCacheArray[boneKey] * audioDirector.overallAmplitudeScaler; 
+		float boneWidth = bonesWidthsCacheArray[boneKey] * audioDirector.overallAmplitudeScaler * 0.1f; 
 
 		// using PI (instead of 2PI) because I only want semi circle around joint
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
