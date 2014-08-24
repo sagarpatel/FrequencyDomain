@@ -19,7 +19,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	Vector3[][] fingersArrayJointsPositionsPosArray;
 
 	// bone cache hashtable
-	Hashtable bonesCacheHashTable;
+	Hashtable bonesCacheHashtable;
+	Hashtable bonesQuaternionsCacheHashtable;
 
 	void Start () 
 	{
@@ -52,7 +53,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			fingersArrayJointsPositionsPosArray[i] = new Vector3[jointsPerFinger]; 
 		}
 
-		bonesCacheHashTable = new Hashtable();
+		bonesCacheHashtable = new Hashtable();
+		bonesQuaternionsCacheHashtable = new Hashtable();
 	}
 
 	void Update()
@@ -72,8 +74,10 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		}
 		
 		// clear the bone index (in case new hand, TODO : detect hand change and  onyl clear then)
-		bonesCacheHashTable.Clear();
+		bonesCacheHashtable.Clear();
+		bonesQuaternionsCacheHashtable.Clear();
 
+		// Get and/or cache bone/joint data
 		//for every finger
 		for (int i = 0; i < fingersArrayJointsPositionsPosArray.Length; i++)
 		{
@@ -86,7 +90,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 				// generate unique key to store bone
 				int boneKey = GenerateBoneIDKey(i, boneIndex);
 				Bone tempBone = firstHand.Fingers[i].Bone((Bone.BoneType)boneIndex);
-				bonesCacheHashTable.Add(boneKey, tempBone);
+				bonesCacheHashtable.Add(boneKey, tempBone);
+				bonesQuaternionsCacheHashtable.Add(boneKey, tempBone.Basis.Rotation());
 				Vector3 jointPos = tempBone.PrevJoint.ToUnity();
 				// flipping x and z to account for parent transform facing the wrong way
 				jointPos.x *= -2.0f;
@@ -157,9 +162,9 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	{
 		Vector3 finalPos = Vector3.zero;
 		int boneKey = GenerateBoneIDKey(fingerIndex, boneIndex);
-		Bone currentBone = (Bone)bonesCacheHashTable[boneKey];
+		Bone currentBone = (Bone)bonesCacheHashtable[boneKey];
 		float boneWidth = currentBone.Width;
-		Quaternion boneRotation = currentBone.Basis.Rotation();
+		Quaternion boneRotation = (Quaternion)bonesQuaternionsCacheHashtable[boneKey];
 		
 		// using PI (instead of 2PI) because I only want semi circle around joint
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
