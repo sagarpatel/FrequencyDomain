@@ -67,7 +67,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 		if (firstHand.IsValid == false)
 		{
-			print("Invalid hand");
+			//print("Invalid hand");
 			return;
 		}
 		
@@ -156,6 +156,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	Vector3 CalculatePosAroundJoint(Hand hand, int fingerIndex, int boneIndex, float progression, Vector3 jointPos)
 	{
 		Vector3 finalPos = Vector3.zero;
+		//int boneKey = GenerateBoneIDKey(fingerIndex, boneIndex);
+		//Bone currentBone = (Bone)bonesCacheHashTable[boneKey];
 		Bone currentBone = hand.Fingers[fingerIndex].Bone((Bone.BoneType)boneIndex);
 		float boneWidth = currentBone.Width;
 		Quaternion boneRotation = currentBone.Basis.Rotation();
