@@ -16,8 +16,10 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	public bool isValidData = false;
 	int jointsPerFinger = 5; // finger tip is the 5th joint (index 0)
 	public Vector3[][] fingerJointsArrayStitchesPosArray;
-
 	Vector3[][] fingersArrayJointsPositionsPosArray;
+
+	// bone cache hashtable
+	Hashtable bonesCacheHashTable;
 
 	void Start () 
 	{
@@ -37,7 +39,6 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		}
 
 		meshlinesGenerator = GetComponent<MeshLinesGenerator>();
-		//stitchPosArray = new Vector3[meshlinesGenerator.verticesFrequencyDepthCount];
 		fingerJointsArrayStitchesPosArray = new Vector3[jointsPerFinger][];
 		for (int i = 0; i < fingerJointsArrayStitchesPosArray.Length; i++)
 		{
@@ -50,6 +51,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		{
 			fingersArrayJointsPositionsPosArray[i] = new Vector3[jointsPerFinger]; 
 		}
+
+		bonesCacheHashTable = new Hashtable();
 	}
 
 	void Update()
@@ -67,8 +70,10 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			print("Invalid hand");
 			return;
 		}
-
 		
+		// clear the bone index (in case new hand, TODO : detect hand change and  onyl clear then)
+		bonesCacheHashTable.Clear();
+
 		//for every finger
 		for (int i = 0; i < fingersArrayJointsPositionsPosArray.Length; i++)
 		{
@@ -77,8 +82,12 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			for (int j = 1; j < jointsPerFinger; j++)
 			{
 				// enum mappings -->  https://developer.leapmotion.com/documentation/skeletal/csharp/api/Leap.Bone.html#csharpclass_leap_1_1_bone_1ad1607a6b2f5cceb9194ad7d7f88d4b07
-
-				Vector3 jointPos = firstHand.Fingers[i].Bone((Bone.BoneType)(jointsPerFinger -1 - j)).PrevJoint.ToUnity();
+				int boneIndex = jointsPerFinger -1 - j;
+				// generate unique key to store bone
+				int boneKey = GenerateBoneIDKey(i, boneIndex);
+				Bone tempBone = firstHand.Fingers[i].Bone((Bone.BoneType)boneIndex);
+				bonesCacheHashTable.Add(boneKey, tempBone);
+				Vector3 jointPos = tempBone.PrevJoint.ToUnity();
 				// flipping x and z to account for parent transform facing the wrong way
 				jointPos.x *= -2.0f;
 				jointPos.z *= -4.0f;
@@ -86,7 +95,6 @@ public class LMC_FingertipsStitch : MonoBehaviour
 				debugPosObjects[i].transform.localPosition = jointPos;
 				fingersArrayJointsPositionsPosArray[i][j] = debugPosObjects[i].transform.position; ;
 			}
-			
 		}
 		// do finger tips (get stabilized value0
 		for (int i = 0; i < fingertipsPosArray.Length; i++)
@@ -100,12 +108,9 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			fingersArrayJointsPositionsPosArray[i][0] = debugPosObjects[i].transform.position;
 		}
 
-
 		// reverse order of data if right hand
 		if (firstHand.IsLeft == false)
 		{
-			//print("RIGHT HAND DAWG");
-			//System.Array.Reverse(debugPosObjects);
 			System.Array.Reverse(fingersArrayJointsPositionsPosArray);
 		}
 
@@ -118,8 +123,6 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		// going through each collumn
 		for (int i = 0; i < stitchesCount; i++)
 		{
-			//stitchPosArray[i] = debugPosObjects[fingerIndex].transform.position;
-
 			for (int j = 0; j < jointsPerFinger; j++)
 			{
 				// do finger tip normally, want all vertices of finger to converge anyways
@@ -132,10 +135,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 					float progression = (float)remainder / (float)stitchesPerFinger;
 					Vector3 jointPosition = fingersArrayJointsPositionsPosArray[fingerIndex][j];
 					fingerJointsArrayStitchesPosArray[j][i] = CalculatePosAroundJoint(firstHand, fingerIndex, jointsPerFinger - 1 - j, progression, jointPosition);
-				}
-				
+				}		
 			}
-
 			remainder = (i + 1) % stitchesPerFinger;
 			if ( remainder == 0)
 				fingerIndex++;
@@ -146,28 +147,25 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	}
 
 
+	int GenerateBoneIDKey(int fingerIndex, int boneIndex)
+	{
+		int boneKey = 10 * fingerIndex + boneIndex;
+		return boneKey;
+	}
+
 	Vector3 CalculatePosAroundJoint(Hand hand, int fingerIndex, int boneIndex, float progression, Vector3 jointPos)
 	{
-		Profiler.BeginSample("Cal offset");
-
-		
 		Vector3 finalPos = Vector3.zero;
-		Profiler.BeginSample("Get bOne stuff");
 		Bone currentBone = hand.Fingers[fingerIndex].Bone((Bone.BoneType)boneIndex);
-		Profiler.EndSample();
 		float boneWidth = currentBone.Width;
 		Quaternion boneRotation = currentBone.Basis.Rotation();
 		
-
 		// using PI (instead of 2PI) because I only want semi circle around joint
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
 		float yOffset = Mathf.Sin(progression * Mathf.PI);
 
 		Vector3 offsetPos = fingerWidthScale * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
-
 		finalPos = jointPos + boneRotation * offsetPos;
-
-		Profiler.EndSample();
 
 		return finalPos;
 	}
