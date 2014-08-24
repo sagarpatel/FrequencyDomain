@@ -18,10 +18,9 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	public Vector3[][] fingerJointsArrayStitchesPosArray;
 	Vector3[][] fingersArrayJointsPositionsPosArray;
 
-	// bone cache hashtable
-	Hashtable bonesQuaternionsCacheHashtable;
-	Hashtable bonesWidthsCacheHashtable;
-
+	// bone data cache 
+	Quaternion[] bonesQuaternionsCacheArray;
+	float[] bonesWidthsCacheArray;
 
 	void Start () 
 	{
@@ -54,8 +53,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			fingersArrayJointsPositionsPosArray[i] = new Vector3[jointsPerFinger]; 
 		}
 
-		bonesQuaternionsCacheHashtable = new Hashtable();
-		bonesWidthsCacheHashtable = new Hashtable();
+		bonesQuaternionsCacheArray = new Quaternion[25]; // 5 bones/joints (counting fingertip) for all 5 fingers
+		bonesWidthsCacheArray = new float[25];
 	}
 
 	void Update()
@@ -73,10 +72,6 @@ public class LMC_FingertipsStitch : MonoBehaviour
 			//print("Invalid hand");
 			return;
 		}
-		
-		// clear the bone index (in case new hand, TODO : detect hand change and  onyl clear then)
-		bonesQuaternionsCacheHashtable.Clear();
-		bonesWidthsCacheHashtable.Clear();
 
 		// Get and/or cache bone/joint data
 		//for every finger
@@ -91,8 +86,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 				// generate unique key to store bone
 				int boneKey = GenerateBoneIDKey(i, boneIndex);
 				Bone tempBone = firstHand.Fingers[i].Bone((Bone.BoneType)boneIndex);
-				bonesQuaternionsCacheHashtable.Add(boneKey, tempBone.Basis.Rotation());
-				bonesWidthsCacheHashtable.Add(boneKey, tempBone.Width);
+				bonesQuaternionsCacheArray[boneKey] = tempBone.Basis.Rotation();
+				bonesWidthsCacheArray[boneKey] = tempBone.Width;
 				Vector3 jointPos = tempBone.PrevJoint.ToUnity();
 				// flipping x and z to account for parent transform facing the wrong way
 				jointPos.x *= -2.0f;
@@ -155,7 +150,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 	int GenerateBoneIDKey(int fingerIndex, int boneIndex)
 	{
-		int boneKey = 10 * fingerIndex + boneIndex;
+		int boneKey = 5 * fingerIndex + boneIndex;
 		return boneKey;
 	}
 
@@ -164,10 +159,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		Vector3 finalPos = Vector3.zero;
 		int boneKey = GenerateBoneIDKey(fingerIndex, boneIndex);
 
-		Profiler.BeginSample("Get bone data from hashtables");
-		float boneWidth = (float)bonesWidthsCacheHashtable[boneKey];
-		Quaternion boneRotation = (Quaternion)bonesQuaternionsCacheHashtable[boneKey];
-		Profiler.EndSample();
+		Quaternion boneRotation = bonesQuaternionsCacheArray[boneKey]; 
+		float boneWidth = bonesWidthsCacheArray[boneKey]; 
 
 		// using PI (instead of 2PI) because I only want semi circle around joint
 		float xOffset = Mathf.Cos(progression * Mathf.PI);
