@@ -367,9 +367,10 @@ public class MeshLinesGenerator : MonoBehaviour
 	void UpdateCollumnVerticesPosition()
 	{
 		Profiler.BeginSample("Update Collumn Vertices");
-		Vector3 tempPosition = transform.position;
 		Vector3 forwardVec = transform.forward;
 		float deltaT = Time.deltaTime;
+		Vector3 posIncrement =  meshSpeed * forwardVec * deltaT;
+		Vector3 tempPos = Vector3.zero;
 
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
@@ -394,7 +395,13 @@ public class MeshLinesGenerator : MonoBehaviour
 				else // oridinary vertices
 				{
 					//// not unified physics now, could cause trouble later`
-					collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;
+					// doing in line for perf as seen in --> https://www.youtube.com/watch?v=WE3PWHLGsX4
+					
+					tempPos = collumnsArrayVerticesArray[h][i];
+					tempPos.x += posIncrement.x;
+					tempPos.y += posIncrement.y;
+					tempPos.z += posIncrement.z;
+					collumnsArrayVerticesArray[h][i] = tempPos;
 				}
 			}
 
