@@ -372,6 +372,8 @@ public class MeshLinesGenerator : MonoBehaviour
 		Vector3 posIncrement =  meshSpeed * forwardVec * deltaT;
 		Vector3 tempPos = Vector3.zero;
 
+		Vector3 anchorLocalPos = stitchAnchorOffset * audioDirector.averageAmplitude;
+
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
 			for(int i = 0 ; i < collumnDepth ; i++)
@@ -388,7 +390,7 @@ public class MeshLinesGenerator : MonoBehaviour
 					{
 						// default to common origin stitch point
 						// old/normal way, unified origin point
-						stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
+						stitchPosObject.transform.localPosition = anchorLocalPos;
 						collumnsArrayVerticesArray[h][i] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
 					}
 				}
