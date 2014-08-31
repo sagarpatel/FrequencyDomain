@@ -10,7 +10,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 	Vector3[] fingertipsPosArray;
 	float posScale = 0.01f;
-	float fingerWidthScale = 10.0f;
+	float[] fingerWidthScaleArray = {10.0f, 7.0f, 10.0f, 15.0f, 20.0f}; // first value doesn't matter since finger tip has no radius, but ned to put a placeholder alue in the array
 	GameObject[] debugPosObjects;
 
 	public bool isValidData = false;
@@ -165,7 +165,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		float xOffset = Mathf.Cos(progression * 2.0f * Mathf.PI);
 		float yOffset = Mathf.Sin(progression * 2.0f * Mathf.PI);
 
-		Vector3 offsetPos = fingerWidthScale * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
+		Vector3 offsetPos = fingerWidthScaleArray[boneIndex] * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
 		finalPos = jointPos + boneRotation * offsetPos;
 
 		return finalPos;
