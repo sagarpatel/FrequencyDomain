@@ -384,7 +384,8 @@ public class MeshLinesGenerator : MonoBehaviour
 					// leap motion finger stitching 
 					if (fingertipStitch.isValidData == true)
 					{
-						collumnsArrayVerticesArray[h][i] = fingerJointsArrayStitchesPosArray[i][h];
+						int reversedJointsOrderIndex = (jointsPerFinger - i) - 1;
+						collumnsArrayVerticesArray[h][i] = fingerJointsArrayStitchesPosArray[reversedJointsOrderIndex][h];
 					}
 					else
 					{
