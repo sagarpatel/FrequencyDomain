@@ -100,7 +100,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		// do finger tips (get stabilized value0
 		for (int i = 0; i < fingertipsPosArray.Length; i++)
 		{
-			Vector3 leapFingerPos = firstHand.Fingers[i].StabilizedTipPosition.ToUnity();
+			Vector3 leapFingerPos = firstHand.Fingers[i].TipPosition.ToUnity();
 			// flipping x and z to account for parent transform facing the wrong way
 			leapFingerPos.x = -leapFingerPos.x * 2.0f;
 			leapFingerPos.z = -leapFingerPos.z * 4.0f ;
