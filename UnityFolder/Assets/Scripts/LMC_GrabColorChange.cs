@@ -33,7 +33,7 @@ public class LMC_GrabColorChange : MonoBehaviour
 		HandList hands = frame.Hands;
 		Hand firstHand = hands[0];
 
-		float grabStrength = Mathf.Pow(firstHand.GrabStrength, 2.0f);
+		float grabStrength = Mathf.Pow(firstHand.PinchStrength, 2.0f);//GrabStrength, 2.0f);
 		viewGrab = grabStrength;
 
 		currentIndex++;
