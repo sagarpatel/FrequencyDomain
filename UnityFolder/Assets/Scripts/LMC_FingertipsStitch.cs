@@ -166,7 +166,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		float yOffset = Mathf.Sin(progression * 2.0f * Mathf.PI);
 
 		Vector3 offsetPos = fingerWidthScaleArray[boneIndex] * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
-		finalPos = jointPos + boneRotation * offsetPos;
+		finalPos = jointPos + (boneRotation * transform.localRotation) * offsetPos;
 
 		return finalPos;
 	}
