@@ -8,16 +8,23 @@ public class LMC_GrabColorChange : MonoBehaviour
 
 	public float viewGrab;
 
+	float[] grabBuffer;
+	int currentIndex = 0;
+
+	public float currentAverage = 0;
+
 	void Start () 
 	{
 
 		lmcController = new Controller();
 		if (lmcController == null)
 			Debug.LogWarning("Cannot connect to controller. Make sure you have Leap Motion v2.0+ installed");
-	
+
+		grabBuffer = new float[30];
 	}
 	
-	void Update () 
+	// using normal update would means rolling average could move at varaible spped --> bad
+	void FixedUpdate () 
 	{
 		if (lmcController == null)
 			return;
@@ -29,7 +36,18 @@ public class LMC_GrabColorChange : MonoBehaviour
 		float grabStrength = Mathf.Pow(firstHand.GrabStrength, 2.0f);
 		viewGrab = grabStrength;
 
-		camera.backgroundColor = Color.Lerp(Color.black, Color.white, grabStrength);
+		currentIndex++;
+		if (currentIndex > grabBuffer.Length - 1)
+			currentIndex = 0;
+		grabBuffer[currentIndex] = grabStrength;
 
+		float temp = 0;
+		for (int i = 0; i < grabBuffer.Length; i++)
+		{
+			temp += grabBuffer[i];
+		}
+		currentAverage = temp / (float)grabBuffer.Length;
+
+		camera.backgroundColor = Color.Lerp(Color.black, Color.white, currentAverage);
 	}
 }
