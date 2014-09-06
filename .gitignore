@@ -18,3 +18,5 @@ UnityFolder/Assets/Audio
 #Unity3D Generated File On Crash Reports
 sysinfo.txt
 UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.suo
+*.cache
