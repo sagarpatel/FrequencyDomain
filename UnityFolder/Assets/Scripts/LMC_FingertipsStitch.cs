@@ -22,6 +22,10 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	Quaternion[] bonesQuaternionsCacheArray;
 	float[] bonesWidthsCacheArray;
 
+	// using gameobject transform local pos trick because I can't seem to figure out the rigt rotation multiplcation combo
+	GameObject rotGO;
+	Transform rotTransform;
+
 	void Start () 
 	{
 		audioDirector = GameObject.FindGameObjectWithTag("AudioDirector").GetComponent<AudioDirectorScript>();
@@ -55,6 +59,11 @@ public class LMC_FingertipsStitch : MonoBehaviour
 
 		bonesQuaternionsCacheArray = new Quaternion[25]; // 5 bones/joints (counting fingertip) for all 5 fingers
 		bonesWidthsCacheArray = new float[25];
+
+		rotGO = new GameObject();
+		rotGO.name = "LMC bone rot GO";
+		rotTransform = rotGO.transform;
+		rotTransform.parent = transform.parent;
 	}
 
 	void Update()
@@ -166,7 +175,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		float yOffset = Mathf.Sin(progression * 2.0f * Mathf.PI);
 
 		Vector3 offsetPos = fingerWidthScaleArray[boneIndex] * posScale * boneWidth * new Vector3(xOffset, yOffset, 0); // making a ring around joint, so no depth offset
-		finalPos = jointPos + (boneRotation * transform.localRotation) * offsetPos;
+		rotTransform.localPosition = boneRotation * offsetPos;
+		finalPos = jointPos + rotTransform.position - transform.position;// +(Quaternion.Inverse(transform.parent.localRotation) * boneRotation) * offsetPos;
 
 		return finalPos;
 	}
