@@ -20,3 +20,7 @@ sysinfo.txt
 UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 *.suo
 *.cache
+*.suo
+UnityFolder/UnityVS.UnityFolder.v11.suo
+*.cache
+UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
