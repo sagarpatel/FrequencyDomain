@@ -7,7 +7,7 @@ public class LMC_HandDepthCameraPos : MonoBehaviour
 	Controller lmcController;
 
 	CameraHolderTargetMovement cameraHolderTagetMovement;
-	Vector3 localPosMin = new Vector3(0, 5, -20);
+	Vector3 localPosMin = new Vector3(0, 4, -10);
 	Vector3 localPosMax = new Vector3(0, 100, -1000);
 
 	void Start () 
