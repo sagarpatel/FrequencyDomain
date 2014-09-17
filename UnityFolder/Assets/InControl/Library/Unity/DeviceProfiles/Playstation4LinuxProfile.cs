@@ -6,12 +6,12 @@ using System.Collections.Generic;
 namespace InControl
 {
 	[AutoDiscover]
-	public class Playstation4LinuxProfile : UnityInputDeviceProfile
+	public class PlayStation4LinuxProfile : UnityInputDeviceProfile
 	{
-		public Playstation4LinuxProfile()
+		public PlayStation4LinuxProfile()
 		{
-			Name = "Playstation 4 Controller";
-			Meta = "Playstation 4 Controller on Linux";
+			Name = "PlayStation 4 Controller";
+			Meta = "PlayStation 4 Controller on Linux";
 
 			SupportedPlatforms = new[]
 			{
@@ -66,12 +66,6 @@ namespace InControl
 				},
 				new InputControlMapping
 				{
-					Handle = "Start",
-					Target = InputControlType.Start,
-					Source = Button13
-				},
-				new InputControlMapping
-				{
 					Handle = "Options",
 					Target = InputControlType.Select,
 					Source = Button9
@@ -99,7 +93,13 @@ namespace InControl
 					Handle = "Right Stick Button",
 					Target = InputControlType.RightStickButton,
 					Source = Button11
-				}
+				},
+				new InputControlMapping
+				{
+					Handle = "TouchPad Button",
+					Target = InputControlType.TouchPadTap,
+					Source = Button13
+				},
 			};
 
 			AnalogMappings = new[]

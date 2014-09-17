@@ -1,0 +1,364 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{20D4C212-9550-C5BF-6F13-EDDB1145AFBB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+    <CompilerResponseFile></CompilerResponseFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Debug\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;TRACE;UNITY_4_6_0;UNITY_4_6;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_GAMECENTER;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>TRACE;UNITY_4_6_0;UNITY_4_6;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_GAMECENTER;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="Boo.Lang" />
+    <Reference Include="UnityScript.Lang" />
+    <Reference Include="UnityEngine">
+      <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>\Applications\Unity\Unity.app\Contents\UnityExtensions\Unity\GUISystem\4.6.0\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="LeapCSharp.NET3.5">
+      <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-UnityScript-firstpass">
+      <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="UnityVS.UnityFolder.CSharp.Plugins.csproj">
+      <Project>{E86B0C2A-FCB5-7B09-2FBD-5AA83AE1AF01}</Project>
+      <Name>UnityVS.UnityFolder.CSharp.Plugins</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\InControl\Examples\Basic\CubeController.cs" />
+    <Compile Include="Assets\InControl\Examples\CustomProfile\CubeController.cs" />
+    <Compile Include="Assets\InControl\Examples\CustomProfile\KeyboardAndMouseProfile.cs" />
+    <Compile Include="Assets\InControl\Examples\Gyro\CubeController.cs" />
+    <Compile Include="Assets\InControl\Examples\Gyro\GyroProfile.cs" />
+    <Compile Include="Assets\InControl\Examples\InterfaceMovement\Button.cs" />
+    <Compile Include="Assets\InControl\Examples\InterfaceMovement\ButtonFocus.cs" />
+    <Compile Include="Assets\InControl\Examples\InterfaceMovement\ButtonManager.cs" />
+    <Compile Include="Assets\InControl\Examples\Multiplayer\CubeController.cs" />
+    <Compile Include="Assets\InControl\Examples\TouchControls\CubeController.cs" />
+    <Compile Include="Assets\InControl\Library\Compatibility\HeaderAttribute.cs" />
+    <Compile Include="Assets\InControl\Library\Compatibility\RangeAttribute.cs" />
+    <Compile Include="Assets\InControl\Library\Compatibility\SpaceAttribute.cs" />
+    <Compile Include="Assets\InControl\Library\Components\InControlManager.cs" />
+    <Compile Include="Assets\InControl\Library\Control\InputControl.cs" />
+    <Compile Include="Assets\InControl\Library\Control\InputControlMapping.cs" />
+    <Compile Include="Assets\InControl\Library\Control\InputControlSource.cs" />
+    <Compile Include="Assets\InControl\Library\Control\InputControlState.cs" />
+    <Compile Include="Assets\InControl\Library\Control\InputControlType.cs" />
+    <Compile Include="Assets\InControl\Library\Control\OneAxisInputControl.cs" />
+    <Compile Include="Assets\InControl\Library\Control\TwoAxisInputControl.cs" />
+    <Compile Include="Assets\InControl\Library\Debug\Logger.cs" />
+    <Compile Include="Assets\InControl\Library\Device\InputDevice.cs" />
+    <Compile Include="Assets\InControl\Library\Device\InputDeviceManager.cs" />
+    <Compile Include="Assets\InControl\Library\InputManager.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityAnalogSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityButtonSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityGyroAxisSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityKeyCodeAxisSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityKeyCodeComboSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityKeyCodeSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityMouseAxisSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\ControlSources\UnityMouseButtonSource.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\AmazonFireGameController.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\AmazonFireTVRemote.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\AppleMFiProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\ExecutionerXProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\GameStickLinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\GameStickProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\GenericAndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\GenericBlackberryProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\HamaBlackForceWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF310LinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF310ModeDMacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF310ModeDWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF310ModeXMacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF310ModeXWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF510LinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF510WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF710MacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF710ModeDWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechF710ModeXWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechRumblePad2MacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechRumblePad2WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\LogitechWingManWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\MogaProLinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\MogaProMacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\MogaProWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\NVidiaShieldAndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\NatecGenesisP44WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\OuyaLinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\OuyaWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\PlayStation2WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\PlayStation4Profile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation3AndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation3LinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation3MacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation3ShenghicWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation3WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation4AndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation4LinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation4MacBTProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation4MacUSBProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Playstation4WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\PlaystationVitaPSMProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SamsungGP20AndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SpeedlinkStrikeMacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SpeedlinkStrikeWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SteelSeriesFreeLinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SteelSeriesFreeMacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\SteelSeriesFreeWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\ValveStreamingWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Xbox360AndroidProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Xbox360LinuxProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Xbox360MacProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\Xbox360WinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\XboxOneProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\DeviceProfiles\XboxOneWinProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\UnityInputDevice.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\UnityInputDeviceManager.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\UnityInputDeviceProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\UnityInputDeviceProfileList.cs" />
+    <Compile Include="Assets\InControl\Library\Unity\UnityUnknownDeviceProfile.cs" />
+    <Compile Include="Assets\InControl\Library\Utility\SingletonMonoBehavior.cs" />
+    <Compile Include="Assets\InControl\Library\Utility\Utility.cs" />
+    <Compile Include="Assets\InControl\Library\VersionInfo.cs" />
+    <Compile Include="Assets\InControl\Library\XInput\XInputDevice.cs" />
+    <Compile Include="Assets\InControl\Library\XInput\XInputDeviceManager.cs" />
+    <Compile Include="Assets\InControl\Library\XInput\XInputDotNetPure\GamePad.cs" />
+    <Compile Include="Assets\InControl\Library\XInput\XInputDotNetPure\Utils.cs" />
+    <Compile Include="Assets\InControl\Test\TestInputManager.cs" />
+    <Compile Include="Assets\LeapMotion\DemoResources\Scripts\CubeWave.cs" />
+    <Compile Include="Assets\LeapMotion\DemoResources\Scripts\GrabHand.cs" />
+    <Compile Include="Assets\LeapMotion\DemoResources\Scripts\Grabbable.cs" />
+    <Compile Include="Assets\LeapMotion\DemoResources\Scripts\IgnoreInternalCollisions.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\ApiDemo\AddRemoveBodies.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\ApiDemo\HoldingCallbacks.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Body.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Holding.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Math.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Native.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Scene.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\DllWrapper\Shape.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\InteractionSceneSetup.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\LeapInteraction.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\UnityIntegration\AddRemoveBodyUtil.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\UnityIntegration\HandViewer.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\UnityIntegration\MathWithUnity.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\UnityIntegration\TransformSyncUtil.cs" />
+    <Compile Include="Assets\LeapMotion\InteractionUtils (alpha)\Scripts\UnityIntegration\UnityUtil.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\HandController.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\DebugFinger.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\DebugHand.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\FingerModel.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\HandModel.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\PolyFinger.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\PolyHand.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\RiggedFinger.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\RiggedHand.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\RigidFinger.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\RigidHand.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\SkeletalFinger.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Hands\SkeletalHand.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Tools\ToolModel.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Utils\ConfidenceTransparency.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Utils\LeapUnityExtensions.cs" />
+    <Compile Include="Assets\LeapMotion\Scripts\Utils\MagneticPinch.cs" />
+    <Compile Include="Assets\OVR\OVRImageEffects\OVRImageEffectBase.cs" />
+    <Compile Include="Assets\OVR\OVRImageEffects\OVRLensCorrection.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRCamera.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRCameraController.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRComponent.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRCrosshair.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRDevice.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRDistortionCamera.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRDistortionMesh.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRGUI.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRGamepadController.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRGridCube.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRMagCalibration.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRMainMenu.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRMessenger.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRPlayerController.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRPresetManager.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRUtils.cs" />
+    <Compile Include="Assets\OVR\Scripts\OVRVisionGuide.cs" />
+    <Compile Include="Assets\Scripts\AcrobaticsScript.cs" />
+    <Compile Include="Assets\Scripts\AmplitudeDispersalArrayScript.cs" />
+    <Compile Include="Assets\Scripts\AmplitudeEditorScript.cs" />
+    <Compile Include="Assets\Scripts\AudioDirectorScript.cs" />
+    <Compile Include="Assets\Scripts\CameraHolderLerp.cs" />
+    <Compile Include="Assets\Scripts\CameraHolderTargetMovement.cs" />
+    <Compile Include="Assets\Scripts\CameraOrbit.cs" />
+    <Compile Include="Assets\Scripts\CameraTypeHandler.cs" />
+    <Compile Include="Assets\Scripts\CameraTypeSelectorScript.cs" />
+    <Compile Include="Assets\Scripts\CreatureManagerEmittedParts.cs" />
+    <Compile Include="Assets\Scripts\CreatureManagerScript.cs" />
+    <Compile Include="Assets\Scripts\CreaturePart.cs" />
+    <Compile Include="Assets\Scripts\CreaturePartsAudioScalingScript.cs" />
+    <Compile Include="Assets\Scripts\CreaturePartsEmitter.cs" />
+    <Compile Include="Assets\Scripts\CreaturePartsGeneralScript.cs" />
+    <Compile Include="Assets\Scripts\Credits.cs" />
+    <Compile Include="Assets\Scripts\DebugAudioScale.cs" />
+    <Compile Include="Assets\Scripts\DebugMove.cs" />
+    <Compile Include="Assets\Scripts\DebugPointLight.cs" />
+    <Compile Include="Assets\Scripts\EnergyBarGeneratorScript.cs" />
+    <Compile Include="Assets\Scripts\FPSDisplayScript.cs" />
+    <Compile Include="Assets\Scripts\FileBrowser.cs" />
+    <Compile Include="Assets\Scripts\FileBrowserGameObjectScript.cs" />
+    <Compile Include="Assets\Scripts\FlyingCreatureScript.cs" />
+    <Compile Include="Assets\Scripts\FrequencyEditorScript.cs" />
+    <Compile Include="Assets\Scripts\GUILayoutx.cs" />
+    <Compile Include="Assets\Scripts\GeneralEditorScript.cs" />
+    <Compile Include="Assets\Scripts\InControlFDProfile.cs" />
+    <Compile Include="Assets\Scripts\IncontrolManager.cs" />
+    <Compile Include="Assets\Scripts\LMC_FingertipsStitch.cs" />
+    <Compile Include="Assets\Scripts\LMC_GrabColorChange.cs" />
+    <Compile Include="Assets\Scripts\LMC_HandDepthCameraPos.cs" />
+    <Compile Include="Assets\Scripts\LMC_PlayerControls.cs" />
+    <Compile Include="Assets\Scripts\LMC_SetImageAsMaterialTexture.cs" />
+    <Compile Include="Assets\Scripts\LevelSelectDirectorScript.cs" />
+    <Compile Include="Assets\Scripts\LiveAudioInputSelectorScript.cs" />
+    <Compile Include="Assets\Scripts\MainCameraScript.cs" />
+    <Compile Include="Assets\Scripts\MeshFieldGeneratorScript.cs" />
+    <Compile Include="Assets\Scripts\MeshGeneratorCreature.cs" />
+    <Compile Include="Assets\Scripts\MeshGeneratorCreatureControls.cs" />
+    <Compile Include="Assets\Scripts\MeshLine.cs" />
+    <Compile Include="Assets\Scripts\MeshLinesGenerator.cs" />
+    <Compile Include="Assets\Scripts\PVA.cs" />
+    <Compile Include="Assets\Scripts\ParametersFilesImportScript.cs" />
+    <Compile Include="Assets\Scripts\ParticleGeneratorScript.cs" />
+    <Compile Include="Assets\Scripts\PerspectiveTransition.cs" />
+    <Compile Include="Assets\Scripts\PlayerScript.cs" />
+    <Compile Include="Assets\Scripts\ReverseMeshFieldScript.cs" />
+    <Compile Include="Assets\Scripts\StarFieldGenerator.cs" />
+    <Compile Include="Assets\Scripts\TileGeneratorScript.cs" />
+    <Compile Include="Assets\Scripts\VelocityRotation.cs" />
+    <None Include="Assets\InControl\README\README.txt" />
+    <None Include="Assets\LeapMotion\InteractionUtils (alpha)\readme.txt" />
+    <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Basic.shader" />
+    <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
+    <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
+    <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
+    <None Include="Assets\LeapMotion\readme.txt" />
+    <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection.shader" />
+    <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection_CA.shader" />
+    <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection_Mesh.shader" />
+    <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection_Mesh_CA.shader" />
+    <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection_Mesh_CA_TW.shader" />
+    <None Include="Assets\OVR\Shaders\OVRGUIShader.shader" />
+    <None Include="Assets\OVR\Shaders\TextShader3D.shader" />
+    <None Include="Assets\Parameters_for_.txt" />
+    <None Include="Assets\Plugins\donotdelete.txt" />
+    <None Include="Assets\Shaders\FD_Custom_ParallaxDiffuse.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\DLAA.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA2.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset3.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\NFAA.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\SSAA.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\Blend.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendOneOne.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter2.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\LensFlareCreate.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MultiPassHollywoodFlares.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\VignetteShader.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\Bokeh34.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableBlur.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableWeightedBlurDof34.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\TiltShift.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlendModesOverlay.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlurEffectConeTaps.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CameraMotionBlur.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CameraMotionBlurDX11.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ChromaticAberrationShader.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrection3DLut.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurvesSimple.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionEffect.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionSelective.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Adaptation.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Apply.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Luminance.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\MinMaxReduction.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ContrastComposite.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ConvertDepth.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CreaseApply.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\EdgeDetectNormals.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\EdgeDetectX.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\FisheyeShader.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\frag_ao.cginc" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlobalFog.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowCompose.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowConeTap.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowEffectDownsample.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GrayscaleEffect.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlur.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlurClear.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseAndGrain.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseAndGrainDX11.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderRGB.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderYUV.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\PrepareSunShaftsBlur.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\RadialBlur.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SepiaToneEffect.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ShowAlphaChannel.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SSAOShader.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Tonemapper.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\TwirlEffect.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VignettingShader.shader" />
+    <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VortexEffect.shader" />
+    <None Include="Assets\testFile.txt" />
+    <None Include="\Applications\Unity\Unity.app\Contents\UnityExtensions\Unity\GUISystem\4.6.0\UnityEngine.UI.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2012\UnityVS.CSharp.targets" />
+</Project>

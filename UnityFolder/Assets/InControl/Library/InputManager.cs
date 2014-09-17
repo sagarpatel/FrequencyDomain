@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -23,7 +24,8 @@ namespace InControl
 		static List<InputDeviceManager> inputDeviceManagers = new List<InputDeviceManager>();
 
 		static InputDevice activeDevice = InputDevice.Null;
-		public static List<InputDevice> Devices = new List<InputDevice>();
+		static List<InputDevice> devices = new List<InputDevice>();
+		public static ReadOnlyCollection<InputDevice> Devices;
 
 		public static string Platform { get; private set; }
 		public static bool MenuWasPressed { get; private set; }
@@ -54,7 +56,8 @@ namespace InControl
 			currentTick = 0;
 
 			inputDeviceManagers.Clear();
-			Devices.Clear();
+			devices.Clear();
+			Devices = new ReadOnlyCollection<InputDevice>( devices );
 			activeDevice = InputDevice.Null;
 
 			isSetup = true;
@@ -66,12 +69,21 @@ namespace InControl
 			}
 			#endif
 
-			AddDeviceManager( new UnityInputDeviceManager() );
-
 			if (OnSetup != null)
 			{
 				OnSetup.Invoke();
 				OnSetup = null;
+			}
+
+			var addUnityInputDeviceManager = true;
+
+			#if UNITY_ANDROID && INCONTROL_OUYA && !UNITY_EDITOR
+			addUnityInputDeviceManager = false;
+			#endif
+
+			if (addUnityInputDeviceManager)
+			{
+				AddDeviceManager<UnityInputDeviceManager>();
 			}
 		}
 
@@ -85,7 +97,7 @@ namespace InControl
 			OnDeviceDetached = null;
 
 			inputDeviceManagers.Clear();
-			Devices.Clear();
+			devices.Clear();
 			activeDevice = InputDevice.Null;
 			
 			isSetup = false;
@@ -114,7 +126,7 @@ namespace InControl
 			UpdateCurrentTime();
 			var deltaTime = currentTime - lastUpdateTime;
 
-			UpdateDeviceManagers( deltaTime);
+			UpdateDeviceManagers( deltaTime );
 
 			PreUpdateDevices( deltaTime );
 			UpdateDevices( deltaTime );
@@ -126,16 +138,48 @@ namespace InControl
 		}
 
 
+		public static void OnApplicationFocus( bool focusState )
+		{
+			if (!focusState)
+			{
+				int deviceCount = devices.Count;
+				for (int i = 0; i < deviceCount; i++)
+				{
+					var inputControls = devices[i].Controls;
+					var inputControlCount = inputControls.Length;
+					for (int j = 0; j < inputControlCount; j++)
+					{
+						var inputControl = inputControls[j];
+						if (inputControl != null)
+						{
+							inputControl.SetZeroTick();
+						}
+					}
+				}
+			}
+		}
+
+
+		public static void OnApplicationPause( bool pauseState )
+		{
+		}
+
+
+		public static void OnApplicationQuit()
+		{
+		}
+
+
 		static void UpdateActiveDevice()
 		{
 			var lastActiveDevice = ActiveDevice;
 
-			int deviceCount = Devices.Count;
+			int deviceCount = devices.Count;
 			for (int i = 0; i < deviceCount; i++)
 			{
-				var inputDevice = Devices[i];
+				var inputDevice = devices[i];
 				if (ActiveDevice == InputDevice.Null ||
-					inputDevice.LastChangedAfter( ActiveDevice ))
+				    inputDevice.LastChangedAfter( ActiveDevice ))
 				{
 					ActiveDevice = inputDevice;
 				}
@@ -157,6 +201,30 @@ namespace InControl
 
 			inputDeviceManagers.Add( inputDeviceManager );
 			inputDeviceManager.Update( currentTick, currentTime - lastUpdateTime );
+		}
+
+
+		public static void AddDeviceManager<T>() where T : InputDeviceManager, new()
+		{
+			if (!HasDeviceManager<T>())
+			{
+				AddDeviceManager( new T() );
+			}
+		}
+
+
+		public static bool HasDeviceManager<T>() where T : InputDeviceManager
+		{
+			int inputDeviceManagerCount = inputDeviceManagers.Count;
+			for (int i = 0; i < inputDeviceManagerCount; i++)
+			{
+				if (inputDeviceManagers[i] is T)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 
@@ -187,10 +255,10 @@ namespace InControl
 		{
 			MenuWasPressed = false;
 			
-			int deviceCount = Devices.Count;
+			int deviceCount = devices.Count;
 			for (int i = 0; i < deviceCount; i++)
 			{
-				var device = Devices[i];
+				var device = devices[i];
 				device.PreUpdate( currentTick, deltaTime );
 			}
 		}
@@ -198,10 +266,10 @@ namespace InControl
 
 		static void UpdateDevices( float deltaTime )
 		{
-			int deviceCount = Devices.Count;
+			int deviceCount = devices.Count;
 			for (int i = 0; i < deviceCount; i++)
 			{
-				var device = Devices[i];
+				var device = devices[i];
 				device.Update( currentTick, deltaTime );
 			}
 
@@ -214,10 +282,10 @@ namespace InControl
 
 		static void PostUpdateDevices( float deltaTime )
 		{			
-			int deviceCount = Devices.Count;
+			int deviceCount = devices.Count;
 			for (int i = 0; i < deviceCount; i++)
 			{
-				var device = Devices[i];
+				var device = devices[i];
 				
 				device.PostUpdate( currentTick, deltaTime );
 				
@@ -238,8 +306,8 @@ namespace InControl
 				return;
 			}
 
-			Devices.Add( inputDevice );
-			Devices.Sort( ( d1, d2 ) => d1.SortOrder.CompareTo( d2.SortOrder ) );
+			devices.Add( inputDevice );
+			devices.Sort( ( d1, d2 ) => d1.SortOrder.CompareTo( d2.SortOrder ) );
 
 			if (OnDeviceAttached != null)
 			{
@@ -257,8 +325,8 @@ namespace InControl
 		{
 			AssertIsSetup();
 
-			Devices.Remove( inputDevice );
-			Devices.Sort( ( d1, d2 ) => d1.SortOrder.CompareTo( d2.SortOrder ) );
+			devices.Remove( inputDevice );
+			devices.Sort( ( d1, d2 ) => d1.SortOrder.CompareTo( d2.SortOrder ) );
 
 			if (ActiveDevice == inputDevice)
 			{
@@ -277,7 +345,7 @@ namespace InControl
 			#if !UNITY_EDITOR && UNITY_WINRT
 			if (type.GetTypeInfo().IsAssignableFrom( typeof( UnityInputDeviceProfile ).GetTypeInfo() ))
 			#else
-			if (type.IsSubclassOf( typeof( UnityInputDeviceProfile ) ))
+			if (type.IsSubclassOf( typeof(UnityInputDeviceProfile) ))
 			#endif
 			{
 				UnityInputDeviceProfile.Hide( type );
@@ -287,9 +355,9 @@ namespace InControl
 
 		static InputDevice DefaultActiveDevice
 		{
-			get 
+			get
 			{ 
-				return (Devices.Count > 0) ? Devices[0] : InputDevice.Null; 
+				return (devices.Count > 0) ? devices[0] : InputDevice.Null; 
 			}
 		}
 
@@ -310,7 +378,7 @@ namespace InControl
 
 		public static bool EnableXInput
 		{
-			get 
+			get
 			{ 
 				return enableXInput; 
 			}
