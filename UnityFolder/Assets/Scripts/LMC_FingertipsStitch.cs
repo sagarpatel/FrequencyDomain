@@ -9,7 +9,7 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	MeshLinesGenerator meshlinesGenerator;
 
 	Vector3[] fingertipsPosArray;
-	float posScale = 0.01f;
+	public float posScale = 0.01f;
 	float[] fingerWidthScaleArray = {25.0f, 15.0f, 10.0f, 5.0f, 0.0f}; // last  value doesn't matter since finger tip has no radius, but ned to put a placeholder alue in the array
 	GameObject[] debugPosObjects;
 
