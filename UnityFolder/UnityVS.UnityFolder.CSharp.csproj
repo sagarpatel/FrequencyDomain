@@ -248,6 +248,7 @@
     <Compile Include="Assets\Scripts\GeneralEditorScript.cs" />
     <Compile Include="Assets\Scripts\InControlFDProfile.cs" />
     <Compile Include="Assets\Scripts\IncontrolManager.cs" />
+    <Compile Include="Assets\Scripts\LMCHandScaler.cs" />
     <Compile Include="Assets\Scripts\LMC_FingertipsStitch.cs" />
     <Compile Include="Assets\Scripts\LMC_GrabColorChange.cs" />
     <Compile Include="Assets\Scripts\LMC_HandDepthCameraPos.cs" />
