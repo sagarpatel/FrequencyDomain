@@ -362,7 +362,7 @@ public class PlayerScript : MonoBehaviour
 
 
 		for(int i = 0; i < meshLightsList.Count; i++ )
-			meshLightsList[i].range = 8.0f * originalLightsRange + bloomBurstSum * meshLightsScale;
+			meshLightsList[i].range = originalLightsRange + bloomBurstSum * meshLightsScale;
 	}
 
 	public void HandleControls( float xTranslation, float yTranslation )

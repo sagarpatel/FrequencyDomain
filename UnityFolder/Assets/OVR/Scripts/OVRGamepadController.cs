@@ -5,16 +5,16 @@ Content     :   Interface to gamepad controller
 Created     :   January 8, 2013
 Authors     :   Peter Giokaris
 
-Copyright   :   Copyright 2014 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License"); 
-you may not use the Oculus VR Rift SDK except in compliance with the License, 
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
 which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-3.1 
+http://www.oculusvr.com/licenses/LICENSE-2.0 
 
 Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,11 +31,10 @@ using System.Runtime.InteropServices;
 //-------------------------------------------------------------------------------------
 // ***** OVRGamepadController
 //
-
-/// <summary>
-/// OVRGamepadController is an interface class to a gamepad controller.
-/// On Win machines, the gamepad must be XInput-compliant.
-/// </summary>
+// OVRGamepadController is an interface class to a gamepad controller.
+//
+// On Win machines, the gamepad must be XInput-compliant.
+//
 public class OVRGamepadController : MonoBehaviour
 {	
 	//-------------------------
@@ -61,61 +60,39 @@ public class OVRGamepadController : MonoBehaviour
 	//-------------------------
 	// Public access to plugin functions
 	
-	/// <summary>
-	/// GPC_Initialize.
-	/// </summary>
-	/// <returns><c>true</c>, if c_ initialize was GPed, <c>false</c> otherwise.</returns>
+	// GPC_Initialize
 	public static bool GPC_Initialize()
 	{
 		return OVR_GamepadController_Initialize();
 	}
-	/// <summary>
-	/// GPC_Destroy
-	/// </summary>
-	/// <returns><c>true</c>, if c_ destroy was GPed, <c>false</c> otherwise.</returns>
+	// GPC_Destroy
 	public static bool GPC_Destroy()
 	{
 		return OVR_GamepadController_Destroy();
 	}
-	/// <summary>
-	/// GPC_Update
-	/// </summary>
-	/// <returns><c>true</c>, if c_ update was GPed, <c>false</c> otherwise.</returns>
+	// GPC_Update
 	public static bool GPC_Update()
 	{
 		return OVR_GamepadController_Update();
 	}
-	/// <summary>
-	/// GPC_GetAxis
-	/// </summary>
-	/// <returns>The c_ get axis.</returns>
-	/// <param name="axis">Axis.</param>
+	// GPC_GetAxis
 	public static float GPC_GetAxis(int axis)
 	{
 		return OVR_GamepadController_GetAxis(axis);
 	}
-	/// <summary>
-	/// GPC_GetButton
-	/// </summary>
-	/// <returns><c>true</c>, if c_ get button was GPed, <c>false</c> otherwise.</returns>
-	/// <param name="button">Button.</param>
+	// GPC_GetButton
 	public static bool GPC_GetButton(int button)
 	{
 		return OVR_GamepadController_GetButton(button);
 	}
 	
-	/// <summary>
-	/// GPC_IsAvailable
-	/// </summary>
-	/// <returns><c>true</c>, if c_ is available was GPed, <c>false</c> otherwise.</returns>
+	// GPC_Ready
 	public static bool GPC_IsAvailable()
 	{
 		return GPC_Available;
 	}
 	
-	/// <summary>
-	/// GPC_Test
-	/// </summary>
+	// GPC_Test
 	void GPC_Test()
 	{
 		// Axis test
@@ -137,33 +114,25 @@ public class OVRGamepadController : MonoBehaviour
 	
 	// * * * * * * * * * * * * *
 	
-	/// <summary>
-	/// Awake this instance.
-	/// </summary>
+	// Awake
 	void Awake () 
 	{	
 	}
 	
- 	/// <summary>
- 	/// Start this instance.
- 	/// </summary>
+ 	// Start
 	void Start()
     {
 		GPC_Available = GPC_Initialize();
     }
 	
-	/// <summary>
-	/// Update this instance.
-	/// </summary>
+	// Update
     void Update()
     {
 		GPC_Available = GPC_Update();
 		// GPC_Test();
     }
 	
-	/// <summary>
-	/// Raises the destroy event.
-	/// </summary>
+	// OnDestroy
 	void OnDestroy()
 	{
 		GPC_Destroy();

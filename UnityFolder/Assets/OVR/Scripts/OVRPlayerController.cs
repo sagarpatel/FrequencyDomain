@@ -7,16 +7,16 @@ Content     :   Player controller interface.
 Created     :   January 8, 2013
 Authors     :   Peter Giokaris
 
-Copyright   :   Copyright 2014 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License"); 
-you may not use the Oculus VR Rift SDK except in compliance with the License, 
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
 which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-3.1 
+http://www.oculusvr.com/licenses/LICENSE-2.0 
 
 Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,19 +34,18 @@ using System.Collections.Generic;
 //-------------------------------------------------------------------------------------
 // ***** OVRPlayerController
 //
-/// <summary>
-/// OVRPlayerController implements a basic first person controller for the Rift. It is 
-/// attached to the OVRPlayerController prefab, which has an OVRCameraController attached
-/// to it. 
-/// 
-/// The controller will interact properly with a Unity scene, provided that the scene has
-/// collision assigned to it. 
-///
-/// The OVRPlayerController prefab has an empty GameObject attached to it called 
-/// ForwardDirection. This game object contains the matrix which motor control bases it
-/// direction on. This game object should also house the body geometry which will be seen
-/// by the player.
-/// </summary>
+// OVRPlayerController implements a basic first person controller for the Rift. It is 
+// attached to the OVRPlayerController prefab, which has an OVRCameraController attached
+// to it. 
+// 
+// The controller will interact properly with a Unity scene, provided that the scene has
+// collision assigned to it. 
+//
+// The OVRPlayerController prefab has an empty GameObject attached to it called 
+// ForwardDirection. This game object contains the matrix which motor control bases it
+// direction on. This game object should also house the body geometry which will be seen
+// by the player.
+//
 public class OVRPlayerController : OVRComponent
 {
 	protected CharacterController 	Controller 		 = null;
@@ -78,13 +77,13 @@ public class OVRPlayerController : OVRComponent
 	private float RotationScaleMultiplier = 1.0f; 
 	private bool  AllowMouseRotation      = true;
 	private bool  HaltUpdateMovement      = false;
-
+	
+	// TEST: Get Y from second sensor
+	private float YfromSensor2            = 0.0f;
 	
 	// * * * * * * * * * * * * *
 	
-	/// <summary>
-	/// Awake this instance.
-	/// </summary>
+	// Awake
 	new public virtual void Awake()
 	{
 		base.Awake();
@@ -126,9 +125,7 @@ public class OVRPlayerController : OVRComponent
 			Debug.LogWarning("OVRPlayerController: ForwardDirection game object not found. Do not use.");
 	}
 
-	/// <summary>
-	/// Start this instance.
-	/// </summary>
+	// Start
 	new public virtual void Start()
 	{
 		base.Start();
@@ -137,13 +134,19 @@ public class OVRPlayerController : OVRComponent
 		SetCameras();
 	}
 		
-	/// <summary>
-	/// Update this instance.
-	/// </summary>
+	// Update 
 	new public virtual void Update()
 	{
 		base.Update();
-
+		
+		// Test: get Y from sensor 2 
+		if(OVRDevice.SensorCount == 2)
+		{
+			Quaternion q = Quaternion.identity;
+			OVRDevice.GetPredictedOrientation(1, ref q);
+			YfromSensor2 = q.eulerAngles.y;
+		}
+		
 		UpdateMovement();
 
 		Vector3 moveDirection = Vector3.zero;
@@ -190,10 +193,10 @@ public class OVRPlayerController : OVRComponent
 	}
 		
 	// UpdateMovement
+	//
+	// COnsolidate all movement code here
+	//
 	static float sDeltaRotationOld = 0.0f;
-	/// <summary>
-	/// Updates the movement.
-	/// </summary>
 	public virtual void UpdateMovement()
 	{
 		// Do not apply input if we are showing a level selection display
@@ -243,13 +246,13 @@ public class OVRPlayerController : OVRComponent
 		if(DirXform != null)
 		{
 			if (moveForward)
-				MoveThrottle += DirXform.TransformDirection(Vector3.forward * moveInfluence * transform.lossyScale.z);
+				MoveThrottle += DirXform.TransformDirection(Vector3.forward * moveInfluence);
 			if (moveBack)
-				MoveThrottle += DirXform.TransformDirection(Vector3.back * moveInfluence * transform.lossyScale.z) * BackAndSideDampen;
+				MoveThrottle += DirXform.TransformDirection(Vector3.back * moveInfluence) * BackAndSideDampen;
 			if (moveLeft)
-				MoveThrottle += DirXform.TransformDirection(Vector3.left * moveInfluence * transform.lossyScale.x) * BackAndSideDampen;
+				MoveThrottle += DirXform.TransformDirection(Vector3.left * moveInfluence) * BackAndSideDampen;
 			if (moveRight)
-				MoveThrottle += DirXform.TransformDirection(Vector3.right * moveInfluence * transform.lossyScale.x) * BackAndSideDampen;
+				MoveThrottle += DirXform.TransformDirection(Vector3.right * moveInfluence) * BackAndSideDampen;
 		}
 			
 		// Rotate
@@ -325,17 +328,17 @@ public class OVRPlayerController : OVRComponent
 
 	}
 
-	/// <summary>
-	/// This function will be used to 'slide' PlayerController rotation around based on 
-	/// CameraController. For now, we are simply copying the CameraController rotation into 
-	/// PlayerController, so that the PlayerController always faces the direction of the 
-	/// CameraController. When we add a body, this will change a bit..
-	/// </summary>
+	// UpdatePlayerControllerRotation
+	// This function will be used to 'slide' PlayerController rotation around based on 
+	// CameraController. For now, we are simply copying the CameraController rotation into 
+	// PlayerController, so that the PlayerController always faces the direction of the 
+	// CameraController. When we add a body, this will change a bit..
 	public virtual void UpdatePlayerForwardDirTransform()
 	{
 		if ((DirXform != null) && (CameraController != null))
 		{
 			Quaternion q = Quaternion.identity;
+			q = Quaternion.Euler(0.0f, YfromSensor2, 0.0f);
 			DirXform.rotation = q * CameraController.transform.rotation;
 		}
 	}
@@ -344,9 +347,7 @@ public class OVRPlayerController : OVRComponent
 	// PUBLIC FUNCTIONS
 	///////////////////////////////////////////////////////////
 	
-	/// <summary>
-	/// Jump this instance.
-	/// </summary>
+	// Jump
 	public bool Jump()
 	{
 		if (!Controller.isGrounded)
@@ -357,9 +358,7 @@ public class OVRPlayerController : OVRComponent
 		return true;
 	}
 
-	/// <summary>
-	/// Stop this instance.
-	/// </summary>
+	// Stop
 	public void Stop()
 	{
 		Controller.Move(Vector3.zero);
@@ -367,9 +366,7 @@ public class OVRPlayerController : OVRComponent
 		FallSpeed = 0.0f;
 	}	
 	
-	/// <summary>
-	/// Initializes the inputs.
-	/// </summary>
+	// InitializeInputs
 	public void InitializeInputs()
 	{
 		// Get our start direction
@@ -378,9 +375,7 @@ public class OVRPlayerController : OVRComponent
 		YRotation = 0.0f;
 	}
 	
-	/// <summary>
-	/// Sets the cameras.
-	/// </summary>
+	// SetCameras
 	public void SetCameras()
 	{
 		if(CameraController != null)
@@ -392,69 +387,41 @@ public class OVRPlayerController : OVRComponent
 		}
 	}
 	
-	/// <summary>
-	/// Gets the move scale multiplier.
-	/// </summary>
-	/// <param name="moveScaleMultiplier">Move scale multiplier.</param>
+	// Get/SetMoveScaleMultiplier
 	public void GetMoveScaleMultiplier(ref float moveScaleMultiplier)
 	{
 		moveScaleMultiplier = MoveScaleMultiplier;
 	}
-	/// <summary>
-	/// Sets the move scale multiplier.
-	/// </summary>
-	/// <param name="moveScaleMultiplier">Move scale multiplier.</param>
 	public void SetMoveScaleMultiplier(float moveScaleMultiplier)
 	{
 		MoveScaleMultiplier = moveScaleMultiplier;
 	}
 	
-	/// <summary>
-	/// Gets the rotation scale multiplier.
-	/// </summary>
-	/// <param name="rotationScaleMultiplier">Rotation scale multiplier.</param>
+	// Get/SetRotationScaleMultiplier
 	public void GetRotationScaleMultiplier(ref float rotationScaleMultiplier)
 	{
 		rotationScaleMultiplier = RotationScaleMultiplier;
 	}
-	/// <summary>
-	/// Sets the rotation scale multiplier.
-	/// </summary>
-	/// <param name="rotationScaleMultiplier">Rotation scale multiplier.</param>
 	public void SetRotationScaleMultiplier(float rotationScaleMultiplier)
 	{
 		RotationScaleMultiplier = rotationScaleMultiplier;
 	}
 	
-	/// <summary>
-	/// Gets the allow mouse rotation.
-	/// </summary>
-	/// <param name="allowMouseRotation">Allow mouse rotation.</param>
+	// Get/SetAllowMouseRotation
 	public void GetAllowMouseRotation(ref bool allowMouseRotation)
 	{
 		allowMouseRotation = AllowMouseRotation;
 	}
-	/// <summary>
-	/// Sets the allow mouse rotation.
-	/// </summary>
-	/// <param name="allowMouseRotation">If set to <c>true</c> allow mouse rotation.</param>
 	public void SetAllowMouseRotation(bool allowMouseRotation)
 	{
 		AllowMouseRotation = allowMouseRotation;
 	}
 	
-	/// <summary>
-	/// Gets the halt update movement.
-	/// </summary>
-	/// <param name="haltUpdateMovement">Halt update movement.</param>
+	// Get/SetHaltUpdateMovement
 	public void GetHaltUpdateMovement(ref bool haltUpdateMovement)
 	{
 		haltUpdateMovement = HaltUpdateMovement;
 	}
-	/// <summary>
-	/// Sets the halt update movement.
-	/// </summary>
-	/// <param name="haltUpdateMovement">If set to <c>true</c> halt update movement.</param>
 	public void SetHaltUpdateMovement(bool haltUpdateMovement)
 	{
 		HaltUpdateMovement = haltUpdateMovement;

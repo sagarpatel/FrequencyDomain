@@ -65,9 +65,9 @@ public class AudioDirectorScript : MonoBehaviour
 		if(audioSourceArray[0].clip != null)
 			currentlyPlayingFileName = audioSourceArray[0].clip.name;
 	
-		//lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
+		lowPassFilter = (AudioLowPassFilter)GetComponent("AudioLowPassFilter");
 		//mainCamera = (Camera)GameObject.FindWithTag("MainCamera").GetComponent("Camera"); // read only, don't need to account for L+R cameras
-		//initialFOV = ( (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
+		initialFOV = ( (PlayerScript)GameObject.FindWithTag("Player").GetComponent("PlayerScript") ).originalFieldOfView;
 
 		if(isLiveAudio)
 		{
@@ -135,7 +135,7 @@ public class AudioDirectorScript : MonoBehaviour
 
 		CalculateAverageAmplitude();
 
-		//HandleLowPassFilter(); // does affect the landscape
+		HandleLowPassFilter(); // does affect the landscape
 
 
 		//update buffer
@@ -309,7 +309,7 @@ public class AudioDirectorScript : MonoBehaviour
 			if (livePosition < liveAudioSamplesArray.Length) 
 				livePosition += liveAudioClipLength * liveAudioSampleRate;
 
-			liveAudioSource.clip.GetData(liveAudioSamplesArray, Microphone.GetPosition(currentLiveDeviceName) /*livePosition - liveAudioSamplesArray.Length*/);
+			liveAudioSource.clip.GetData(liveAudioSamplesArray, livePosition - liveAudioSamplesArray.Length);
 			liveAudioSource.timeSamples = livePosition;
 
 			yield return null;

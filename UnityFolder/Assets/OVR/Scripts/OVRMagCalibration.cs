@@ -5,16 +5,16 @@ Content     :   Magnetometer calibration helper class
 Created     :   May 1, 2013
 Authors     :   Peter Giokaris
 
-Copyright   :   Copyright 2014 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
 
-Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License"); 
-you may not use the Oculus VR Rift SDK except in compliance with the License, 
+Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
+you may not use the Oculus VR SDK except in compliance with the License, 
 which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-3.1 
+http://www.oculusvr.com/licenses/LICENSE-2.0 
 
 Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,19 +26,18 @@ limitations under the License.
 using UnityEngine;
 using System.Collections.Generic;
 
+
 //-------------------------------------------------------------------------------------
 // ***** OVRMagCalibration
 //
- 
-/// <summary>
-/// OVRMagCalibration is a helper class that allows for calibrating the magnetometer to be
-/// used for Yaw-drift corection. It can be used in either manual or auto mode.
-/// Manual mode will prompt the user to look in certain directions to calibrate the mag.
-/// Auto mode will let the user move the rift around and find arbitraty points for calibration
-/// to take place.
-///
-/// When calibration is done, the user must set an orientation that will be used for yaw correction.
-/// </summary>
+// OVRMagCalibration is a helper class that allows for calibrating the magnetometer to be
+// used for Yaw-drift corection. It can be used in either manual or auto mode.
+// Manual mode will prompt the user to look in certain directions to calibrate the mag.
+// Auto mode will let the user move the rift around and find arbitraty points for calibration
+// to take place.
+//
+// When calibration is done, the user must set an orientation that will be used for yaw correction.
+// 
 public class OVRMagCalibration
 {
 	public enum MagCalibrationState { MagUncalibrated, MagDisabled, MagReady };
@@ -56,14 +55,12 @@ public class OVRMagCalibration
 	
 	// * * * * * * * * * * * * *
 	
-	/// <summary>
-	/// SetInitialCalibrationState
-	/// We call this before we start the Update loop to see if
-	/// Mag has been set by Calibration tool
-	/// </summary>
+	// SetInitialCalibrationState
+	// We call this before we start the Update loop to see if
+	// Mag has been set by Calibration tool
 	public void SetInitialCalibarationState()
 	{
-		if(OVRDevice.IsMagCalibrated() && OVRDevice.IsYawCorrectionEnabled())
+		if(OVRDevice.IsMagCalibrated(0) && OVRDevice.IsYawCorrectionEnabled(0))
 		{
 			MagCalState = MagCalibrationState.MagReady;
 		}
@@ -73,19 +70,13 @@ public class OVRMagCalibration
 		}
 	}
 		
-	/// <summary>
-	/// Sets the OVR camera controller.
-	/// </summary>
-	/// <param name="cameraController">Camera controller.</param>
+	// SetOVRCameraController
 	public void SetOVRCameraController(ref OVRCameraController cameraController)
 	{
 		CameraController = cameraController;
 	}
 	
-	/// <summary>
-	/// Shows the geometry.
-	/// </summary>
-	/// <param name="show">If set to <c>true</c> show.</param>
+	// ShowGeometry
 	public void ShowGeometry(bool show)
 	{
 		// Load up the prefab
@@ -116,11 +107,7 @@ public class OVRMagCalibration
   		}
 	}
 	
-	/// <summary>
-	/// Attachs the geometry to camera.
-	/// </summary>
-	/// <param name="attach">If set to <c>true</c> attach.</param>
-	/// <param name="go">Go.</param>
+	// AttachGeometryToCamera
 	public void AttachGeometryToCamera(bool attach, ref GameObject go)
 	{
 		if(CameraController != null)
@@ -140,9 +127,7 @@ public class OVRMagCalibration
 		}
 	}	
 	
-	/// <summary>
-	/// Updates the geometry.
-	/// </summary>
+	// UpdateGeometry
 	public void UpdateGeometry()
 	{
 		if(MagShowGeometry == false)
@@ -154,11 +139,11 @@ public class OVRMagCalibration
 		
 		// All set, we can update the geometry with camera and positon values
 		Quaternion q = Quaternion.identity;
-		Vector3 o    = Vector3.zero; // This is not used
-
-		if(CameraController != null)
-			OVRDevice.GetCameraPositionOrientation(ref o, ref q);
-	
+		if((CameraController != null) && (CameraController.PredictionOn == true))
+			OVRDevice.GetPredictedOrientation(0, ref q);
+		else
+			OVRDevice.GetOrientation(0, ref q);
+			
 		Vector3 v = GeometryCompass.transform.localEulerAngles;
 		v.y = -q.eulerAngles.y + CurEulerRef.y;
 		GeometryCompass.transform.localEulerAngles = v;
@@ -172,9 +157,7 @@ public class OVRMagCalibration
 		}
 	}
 	
-	/// <summary>
-	/// Updates the mag yaw drift correction.
-	/// </summary>
+	// UpdateMagYawDriftCorrection
 	public void UpdateMagYawDriftCorrection()
 	{	
 		// If uncalibrated, do not bother turning it on or off
@@ -187,7 +170,7 @@ public class OVRMagCalibration
 			if (Input.GetKeyDown( KeyCode.X))
 			{
 				MagCalState = MagCalibrationState.MagDisabled;
-				OVRDevice.EnableMagYawCorrection(false);
+				OVRDevice.EnableMagYawCorrection(0, false);
 				MagShowGeometry = false;
 				ShowGeometry (MagShowGeometry);
 			}
@@ -214,19 +197,12 @@ public class OVRMagCalibration
 			if (Input.GetKeyDown(KeyCode.X))
 			{
 				MagCalState = MagCalibrationState.MagReady;
-				EnableYawCorrection();
+				EnableYawCorrection(0);
 			}
 		}
 	}
 	
-	/// <summary>
-	/// GUIs the mag yaw drift correction.
-	/// </summary>
-	/// <param name="xLoc">X location.</param>
-	/// <param name="yLoc">Y location.</param>
-	/// <param name="xWidth">X width.</param>
-	/// <param name="yWidth">Y width.</param>
-	/// <param name="guiHelper">GUI helper.</param>
+	// GUIMagYawDriftCorrection
 	public void GUIMagYawDriftCorrection(int xLoc, int yLoc, 
 										 int xWidth, int yWidth, 
 										 ref OVRGUI guiHelper)
@@ -255,19 +231,16 @@ public class OVRMagCalibration
 		guiHelper.StereoBox (xloc, yLoc, xwidth, yWidth, ref strMagCal, c);		
 	}
 		
-	/// <summary>
-	/// Enables the yaw correction.
-	/// </summary>
-	void EnableYawCorrection()
+	// EnableYawCorrection
+	void EnableYawCorrection(int sensor)
 	{
-		OVRDevice.EnableMagYawCorrection(true);
+		OVRDevice.EnableMagYawCorrection(sensor, true);
 				
-		// All set, we can update the geometry with camera and positon values
 		Quaternion q = Quaternion.identity;
-		Vector3 o    = Vector3.zero; // This is not used
-		
-		if(CameraController != null)
-			OVRDevice.GetCameraPositionOrientation(ref o, ref q);
+		if((CameraController != null) && (CameraController.PredictionOn == true))
+			OVRDevice.GetPredictedOrientation(sensor, ref q);
+		else
+			OVRDevice.GetOrientation(sensor, ref q);
 
 		CurEulerRef = q.eulerAngles;
 	}
