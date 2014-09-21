@@ -53,14 +53,14 @@ public class AcrobaticsScript : MonoBehaviour
 				if( Input.GetKey("q") )
 				{
 					if( barrelRollTriggerCounter > 0)
-						barrelRollTriggerCounter += 1.5f * Time.deltaTime;
+						barrelRollTriggerCounter += 1.0f * Time.deltaTime;
 					else
 						barrelRollTriggerCounter +=  Time.deltaTime * 3.0f ; //reverse faster
 				}
 				if( Input.GetKey("e") )
 				{
 					if( barrelRollTriggerCounter < 0)
-						barrelRollTriggerCounter -= 1.5f * Time.deltaTime;
+						barrelRollTriggerCounter -= 1.0f * Time.deltaTime;
 					else
 						barrelRollTriggerCounter -=  Time.deltaTime * 3.0f; //reverse faster
 				}
@@ -72,7 +72,7 @@ public class AcrobaticsScript : MonoBehaviour
 		if(playerScript.isOVR == false)
 		{
 			
-			if( Mathf.Abs(Input.GetAxis("LeftTrigger")) < 0.1f )
+			if( Input.GetKey(KeyCode.W) ) //Mathf.Abs(Input.GetAxis("LeftTrigger")) < 0.1f )
 				barrelRollTriggerCounter =  barrelRollTriggerCounter * barrelRollDegradation;
 
 			transform.Rotate( -barrelRollTriggerCounter * barrelRollSensitivity, 0, 0);

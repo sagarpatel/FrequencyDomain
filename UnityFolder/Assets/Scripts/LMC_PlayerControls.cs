@@ -25,6 +25,8 @@ public class LMC_PlayerControls : MonoBehaviour
 
 	float ballRadius = 0;
 
+	public bool isActive = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -43,6 +45,9 @@ public class LMC_PlayerControls : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{		
+		if(isActive == false)
+			return;
+
 		Frame currentFrame = controller.Frame();
 
 		// using palm / hand 		

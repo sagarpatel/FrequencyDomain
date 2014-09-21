@@ -11,6 +11,8 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 
 	AudioDirectorScript audioDirector;
 
+	float guiDisplayCooldownCounter = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -23,8 +25,10 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	{
 		if(isActive)
 		{
-			if(Input.GetButtonDown("Warp"))
+			if(Input.GetKeyDown(KeyCode.T))
 			{
+				guiDisplayCooldownCounter = 0;
+
 				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
 						currentlySelectedDeviceIndex = 0;
 					else
@@ -33,6 +37,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 				// Call Audiodirector function with new device
 				audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
 			}
+			guiDisplayCooldownCounter += Time.deltaTime;
 		}
 	
 	}
@@ -40,10 +45,11 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 
 	void OnGUI()
 	{
-
-
 		if(isActive)
 		{
+			if(guiDisplayCooldownCounter > 0.75f)
+				return;
+
 			devicesArray = Microphone.devices;
 
 	    	GUI.Label(new Rect(0,textVerticalOffset+0,200,20),"List of available devices:");
