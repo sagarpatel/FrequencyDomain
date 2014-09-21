@@ -29,8 +29,15 @@ public class CameraHolderTargetMovement : MonoBehaviour
 		MoveCameraTargetPosition(localPosMin, localPosMax, step);
 	}
 
+	// deprecated
 	public void MoveCameraTargetPosition(Vector3 localMin, Vector3 localMax, float lerpStep)
 	{
 		transform.localPosition = Vector3.Lerp(localMin, localMax, lerpStep);
 	}
+
+	public void SetNewLocalPos(Vector3 localPos)
+	{
+		transform.localPosition = localPos;
+	}
+
 }

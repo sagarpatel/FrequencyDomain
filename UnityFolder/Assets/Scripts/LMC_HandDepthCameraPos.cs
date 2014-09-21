@@ -7,7 +7,7 @@ public class LMC_HandDepthCameraPos : MonoBehaviour
 	Controller lmcController;
 
 	CameraHolderTargetMovement cameraHolderTagetMovement;
-	Vector3 localPosMin = new Vector3(0, 4, -10);
+	Vector3 localPosMin = new Vector3(0, -5, 5);
 	Vector3 localPosMax = new Vector3(0, 100, -1000);
 
 	void Start () 
@@ -31,10 +31,22 @@ public class LMC_HandDepthCameraPos : MonoBehaviour
 		HandList hands = frame.Hands;
 		Hand firstHand = hands[0];
 
+		if(hands.Count == 0)
+			return;
+
 		Vector3 relativePalmPos = firstHand.PalmPosition.ToUnityScaled();
 		float handDepth = Mathf.Clamp( -relativePalmPos.z, -0.3f, 0.3f); // seems to range between -0.3 and 0.3
-		float normalizedStep = 0.5f + (0.5f * ( handDepth * 1.0f / 0.3f )); // this should range between 0 and 1
+		float handHeight = Mathf.Clamp( relativePalmPos.y, 0.0f, 0.4f);
 
-		cameraHolderTagetMovement.MoveCameraTargetPosition(localPosMin, localPosMax, normalizedStep);
+		float normalizedDepthStep = 0.5f + (0.5f * ( handDepth * 1.0f / 0.3f )); // this should range between 0 and 1
+		float normalizedHeightStep = handHeight * (1.0f/0.4f);
+
+		float localDepth = Mathf.Lerp(localPosMin.z, localPosMax.z, normalizedDepthStep);
+		float localHeight = Mathf.Lerp(localPosMin.y, localPosMax.y, normalizedHeightStep);
+
+		cameraHolderTagetMovement.SetNewLocalPos(new Vector3(0, localHeight, localDepth));
+
+		//cameraHolderTagetMovement.MoveCameraTargetPosition(localPosMin, localPosMax, normalizedDepthStep);
+		
 	}
 }
