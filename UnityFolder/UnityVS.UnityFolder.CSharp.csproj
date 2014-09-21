@@ -228,6 +228,7 @@
     <Compile Include="Assets\Scripts\CameraOrbit.cs" />
     <Compile Include="Assets\Scripts\CameraTypeHandler.cs" />
     <Compile Include="Assets\Scripts\CameraTypeSelectorScript.cs" />
+    <Compile Include="Assets\Scripts\ControlsInputHold.cs" />
     <Compile Include="Assets\Scripts\CreatureManagerEmittedParts.cs" />
     <Compile Include="Assets\Scripts\CreatureManagerScript.cs" />
     <Compile Include="Assets\Scripts\CreaturePart.cs" />
