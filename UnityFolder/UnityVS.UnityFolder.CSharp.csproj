@@ -223,6 +223,7 @@
     <Compile Include="Assets\Scripts\AmplitudeDispersalArrayScript.cs" />
     <Compile Include="Assets\Scripts\AmplitudeEditorScript.cs" />
     <Compile Include="Assets\Scripts\AudioDirectorScript.cs" />
+    <Compile Include="Assets\Scripts\AudioLightsScaler.cs" />
     <Compile Include="Assets\Scripts\CameraHolderLerp.cs" />
     <Compile Include="Assets\Scripts\CameraHolderTargetMovement.cs" />
     <Compile Include="Assets\Scripts\CameraOrbit.cs" />
