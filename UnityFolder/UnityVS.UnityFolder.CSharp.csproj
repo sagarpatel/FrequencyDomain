@@ -254,6 +254,7 @@
     <Compile Include="Assets\Scripts\LMC_FingertipsStitch.cs" />
     <Compile Include="Assets\Scripts\LMC_GrabColorChange.cs" />
     <Compile Include="Assets\Scripts\LMC_HandDepthCameraPos.cs" />
+    <Compile Include="Assets\Scripts\LMC_HandLight.cs" />
     <Compile Include="Assets\Scripts\LMC_PlayerControls.cs" />
     <Compile Include="Assets\Scripts\LMC_SetImageAsMaterialTexture.cs" />
     <Compile Include="Assets\Scripts\LevelSelectDirectorScript.cs" />

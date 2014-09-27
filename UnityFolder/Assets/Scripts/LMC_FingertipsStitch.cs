@@ -26,6 +26,8 @@ public class LMC_FingertipsStitch : MonoBehaviour
 	GameObject rotGO;
 	Transform rotTransform;
 
+	public Vector3 jointsAveragePos = Vector3.zero;
+
 	void Start () 
 	{
 		audioDirector = GameObject.FindGameObjectWithTag("AudioDirector").GetComponent<AudioDirectorScript>();
@@ -130,6 +132,9 @@ public class LMC_FingertipsStitch : MonoBehaviour
 		int stitchesPerFinger = stitchesCount / fingerCount; //stitchPosArray.Length / fingerCount;
 
 		int remainder = 0;
+
+		Vector3 posAccumulator = Vector3.zero;
+		float posCounter = 0;
 		// going through each collumn
 		for (int i = 0; i < stitchesCount; i++)
 		{
@@ -145,12 +150,18 @@ public class LMC_FingertipsStitch : MonoBehaviour
 					float progression = (float)remainder / (float)stitchesPerFinger;
 					Vector3 jointPosition = fingersArrayJointsPositionsPosArray[fingerIndex][j];
 					fingerJointsArrayStitchesPosArray[j][i] = CalculatePosAroundJoint(firstHand, fingerIndex, jointsPerFinger - 1 - j, progression, jointPosition);
-				}		
+				}
+
+				posAccumulator += fingerJointsArrayStitchesPosArray[j][i];
+				posCounter ++;
 			}
 			remainder = (i + 1) % stitchesPerFinger;
 			if ( remainder == 0)
 				fingerIndex++;
 		}
+
+		jointsAveragePos = posAccumulator/posCounter;
+
 		// send data over
 		meshlinesGenerator.fingerJointsArrayStitchesPosArray = fingerJointsArrayStitchesPosArray;
 		isValidData = true;
