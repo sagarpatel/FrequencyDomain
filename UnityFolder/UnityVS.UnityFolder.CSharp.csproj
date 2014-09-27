@@ -266,6 +266,7 @@
     <Compile Include="Assets\Scripts\PVA.cs" />
     <Compile Include="Assets\Scripts\ParametersFilesImportScript.cs" />
     <Compile Include="Assets\Scripts\ParticleGeneratorScript.cs" />
+    <Compile Include="Assets\Scripts\ParticleGrid.cs" />
     <Compile Include="Assets\Scripts\PerspectiveTransition.cs" />
     <Compile Include="Assets\Scripts\PlayerScript.cs" />
     <Compile Include="Assets\Scripts\ReverseMeshFieldScript.cs" />
