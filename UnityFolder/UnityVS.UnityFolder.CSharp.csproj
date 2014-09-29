@@ -238,6 +238,7 @@
     <Compile Include="Assets\Scripts\CreaturePartsGeneralScript.cs" />
     <Compile Include="Assets\Scripts\Credits.cs" />
     <Compile Include="Assets\Scripts\DebugAudioScale.cs" />
+    <Compile Include="Assets\Scripts\DebugColorScale.cs" />
     <Compile Include="Assets\Scripts\DebugMove.cs" />
     <Compile Include="Assets\Scripts\DebugPointLight.cs" />
     <Compile Include="Assets\Scripts\EnergyBarGeneratorScript.cs" />

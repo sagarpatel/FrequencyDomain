@@ -36,7 +36,7 @@ public class DebugAudioScale : MonoBehaviour
 		float currentScale = audioDirector.overallAmplitudeScaler;
 		currentScale += scaleIncrement;
 
-		currentScale = Mathf.Clamp(currentScale, 0.1f, 100.0f);
+		currentScale = Mathf.Clamp(currentScale, 0.1f, 200.0f);
 		audioDirector.overallAmplitudeScaler = currentScale;
 
 
