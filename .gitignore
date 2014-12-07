@@ -28,3 +28,19 @@ UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 *.unityproj
 
 *.csproj
+
+UnityFolder/Assembly-UnityScript-Editor-vs.unityproj
+
+UnityFolder/Assembly-UnityScript-Editor.unityproj
+
+UnityFolder/Assembly-UnityScript-firstpass-vs.unityproj
+
+UnityFolder/Assembly-UnityScript-firstpass.unityproj
+
+UnityFolder/Assets/Materials/FD_Materials/ParallaxDiffuseMaterial.mat
+
+UnityFolder/UnityVS.UnityFolder.CSharp.csproj
+
+UnityFolder/UnityVS.UnityFolder.CSharp.Editor.csproj
+
+UnityFolder/UnityVS.UnityFolder.CSharp.Plugins.csproj
