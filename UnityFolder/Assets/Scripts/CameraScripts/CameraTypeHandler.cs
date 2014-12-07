@@ -9,7 +9,6 @@ public class CameraTypeHandler : MonoBehaviour
 	public GameObject normalCameraObject;
 	public GameObject ovrCameraControllerObject;
 
-	public Transform lookAtTarget;
 
 	public bool isOVR = false;
 
@@ -42,8 +41,6 @@ public class CameraTypeHandler : MonoBehaviour
 
 		}
 
-		normalCameraObject.transform.LookAt(lookAtTarget, transform.root.up);
-		ovrCameraControllerObject.transform.LookAt(lookAtTarget, transform.root.up);
-	
+
 	}
 }
