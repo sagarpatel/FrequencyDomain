@@ -8,23 +8,34 @@ public class CameraHolderRotation : MonoBehaviour
 	Transform calculationsTransform;
 	float lerpScale = 1.0f;
 
+	PVA creaturePVA;
+
 	void Start()
 	{
 		GameObject temp = new GameObject();
 		temp.name = "CameraHolderRotation_CalculationsTransform";
 		calculationsTransform = temp.transform;
 
-		calculationsTransform.rotation = targetLookAtTransform.rotation;
+		calculationsTransform.LookAt(targetLookAtTransform, targetLookAtTransform.up);
+		transform.rotation = calculationsTransform.rotation;
+
+		creaturePVA = GameObject.FindGameObjectWithTag("MeshCreature").GetComponent<PVA>();
 	}
 
 
 	void Update()
 	{
-		//calculationsTransform.rotation = Quaternion.Slerp(calculationsTransform.rotation, targetLookAtTransform.rotation, lerpScale * Time.deltaTime );
-		//transform.rotation = calculationsTransform.rotation;
+		calculationsTransform.position = transform.position;
+		calculationsTransform.LookAt(targetLookAtTransform, targetLookAtTransform.up);
 
-		transform.LookAt(targetLookAtTransform, targetLookAtTransform.up);
+		// keeps its tight on y axis rot to avoid joing offscreen
+		float axisAvg = 0.75f * Mathf.Abs(creaturePVA.rotationalVelocity.y) + 0.25f * Mathf.Abs(creaturePVA.rotationalVelocity.x);
+		float rotLerpAdd = axisAvg / creaturePVA.maxRotationalVelocityMagnitude;
 
+		transform.rotation = Quaternion.Slerp(transform.rotation, calculationsTransform.rotation , rotLerpAdd + lerpScale * Time.deltaTime);
+
+
+	
 	}
 
 }
