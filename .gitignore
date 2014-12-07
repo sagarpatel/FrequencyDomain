@@ -24,3 +24,7 @@ UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 UnityFolder/UnityVS.UnityFolder.v11.suo
 *.cache
 UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+
+*.unityproj
+
+*.csproj
