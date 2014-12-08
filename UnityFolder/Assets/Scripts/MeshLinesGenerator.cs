@@ -91,6 +91,9 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshLinesPoolArray[i].GetComponentInChildren<MeshRenderer>().sharedMaterial = meshMaterial;
 			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponentInChildren<MeshFilter>().mesh;
 			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
+			// TODO  no need for PVA, will probably remove entirely later
+			meshLinesPVAComponentArray[i].enabled = false;
+			// left/right offset to center mesh realtive to camera
 			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(-0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
 			meshLinesPoolArray[i].SetActive(false);
 		}
@@ -341,8 +344,9 @@ public class MeshLinesGenerator : MonoBehaviour
 		tempMesh.normals = freshLineMeshNormalsArray; //calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
 		Profiler.EndSample();
 
-		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
-		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed * transform.forward;
+		// TODO  : no need for pva, will probabbly remove entierly later
+		//meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
+		//meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed * transform.forward;
 
 		
 	}
