@@ -70,6 +70,8 @@ public class MeshLinesGenerator : MonoBehaviour
 	int jointsPerFinger = 5;
 	public Vector3[][] fingerJointsArrayStitchesPosArray;
 
+	int currentMeshlineFetchIndex = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -246,10 +248,14 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	int GetFreeMeshLineIndex()
 	{
-		for(int i = 0; i < meshLinesPoolArray.Length; i++)
+		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
 		{
-			if(meshLinesPoolArray[i].activeSelf == false)
-				return i;
+			int newIndex = i % meshLinesPoolArray.Length;
+			if(meshLinesPoolArray[newIndex].activeSelf == false)
+			{
+				currentMeshlineFetchIndex = newIndex;
+				return newIndex;
+			}
 		}
 		// if nothing found
 			return -1;
