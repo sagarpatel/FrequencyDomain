@@ -85,6 +85,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
+			meshLinesPoolArray[i].name = meshLinesPoolArray[i].name + "_" + i.ToString();
 			meshLinesPoolArray[i].GetComponentInChildren<MeshRenderer>().sharedMaterial = meshMaterial;
 			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponentInChildren<MeshFilter>().mesh;
 			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
