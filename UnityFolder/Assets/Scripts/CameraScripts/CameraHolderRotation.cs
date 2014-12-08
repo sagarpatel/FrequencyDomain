@@ -6,7 +6,7 @@ public class CameraHolderRotation : MonoBehaviour
 
 	public Transform targetLookAtTransform;
 	Transform calculationsTransform;
-	float lerpScale = 1.0f;
+	float lerpScale = 8.0f;
 
 	PVA creaturePVA;
 
@@ -28,14 +28,45 @@ public class CameraHolderRotation : MonoBehaviour
 		calculationsTransform.position = transform.position;
 		calculationsTransform.LookAt(targetLookAtTransform, targetLookAtTransform.up);
 
-		// keeps its tight on y axis rot to avoid joing offscreen
-		float axisAvg = 0.75f * Mathf.Abs(creaturePVA.rotationalVelocity.y) + 0.25f * Mathf.Abs(creaturePVA.rotationalVelocity.x);
-		float rotLerpAdd = axisAvg / creaturePVA.maxRotationalVelocityMagnitude;
+		Quaternion relativeRot = Quaternion.Inverse(targetLookAtTransform.rotation) * transform.rotation;
+		Vector3 diffedEuler = -GetDiffEuler(relativeRot.eulerAngles);
+		//Debug.Log(diffedEuler);
+		//diffedEuler.z = Mathf.Lerp(0, diffedEuler.z, lerpScale * Time.deltaTime);
+		//diffedEuler.z *= lerpScale * Time.deltaTime; //Mathf.Clamp( lerpScale * Time.deltaTime, 0, 1);
 
-		transform.rotation = Quaternion.Slerp(transform.rotation, calculationsTransform.rotation , rotLerpAdd + lerpScale * Time.deltaTime);
+
+		//Quaternion targetRot = calculationsTransform.rotation * Quaternion.Euler(diffedEuler);
+
+		//transform.rotation = Quaternion.Slerp(transform.rotation, targetRot , lerpScale * Time.deltaTime);
+
+		transform.rotation *= Quaternion.Euler(diffedEuler);
 
 
-	
+	}
+
+
+	Vector3 GetDiffEuler(Vector3 eulerAngle)
+	{
+		Vector3 temp = Vector3.zero;
+
+		if(eulerAngle.x > 180)
+			temp.x = eulerAngle.x - 360.0f;
+		else
+			temp.x = eulerAngle.x;
+
+		if(eulerAngle.y > 180)
+			temp.y = eulerAngle.y - 360.0f;
+		else
+			temp.y = eulerAngle.y;
+
+
+		if(eulerAngle.z > 180)
+			temp.z = eulerAngle.z - 360.0f;
+		else
+			temp.z = eulerAngle.z;
+
+
+		return temp;
 	}
 
 }
