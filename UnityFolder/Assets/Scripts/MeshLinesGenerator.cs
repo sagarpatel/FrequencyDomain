@@ -252,7 +252,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	public Vector3 GetClosestMeshLinePosition(Vector3 currenPos)
+	public Transform GetClosestMeshLineTransform(Vector3 currenPos)
 	{
 		float previousDiff = 0;
 		int previousIndex = currentMeshlineFetchIndex;
@@ -268,7 +268,7 @@ public class MeshLinesGenerator : MonoBehaviour
 				if( isFirstDistCheck == false )
 				{
 					if(currentDiff >= previousDiff)
-						return meshLinesPoolArray[previousIndex].transform.position;
+						return meshLinesPoolArray[previousIndex].transform;
 				}
 				else
 					isFirstDistCheck = false;
@@ -280,7 +280,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		//shouldnt get here normally
 		Debug.Log ("FAILED TO GET CLOSEST POS");
-		return Vector3.zero;
+		return null;
 
 	}
 
