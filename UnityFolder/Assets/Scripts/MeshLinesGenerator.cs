@@ -206,6 +206,9 @@ public class MeshLinesGenerator : MonoBehaviour
 			fingerJointsArrayStitchesPosArray[i] = new Vector3[verticesFrequencyDepthCount];
 		}
 		//stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
+
+		//GenerateLineMesh();
+		//StitchNewRowIntoCollumns()
 	}
 	
 	// Update is called once per frame
@@ -246,6 +249,38 @@ public class MeshLinesGenerator : MonoBehaviour
 		   System.GC.Collect();
 		}
 		*/
+
+	}
+
+	public Vector3 GetClosestMeshLinePosition(Vector3 currenPos)
+	{
+		float previousDiff = 0;
+		int previousIndex = currentMeshlineFetchIndex;
+		bool isFirstDistCheck = true;
+
+		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
+		{
+			int newIndex = i % meshLinesPoolArray.Length;
+			if(meshLinesPoolArray[newIndex].activeSelf == true)
+			{
+				float currentDiff = Vector3.Distance(currenPos, meshLinesPoolArray[newIndex].transform.position);
+				// skip first loop to ensure previousDiff gets a legit value
+				if( isFirstDistCheck == false )
+				{
+					if(currentDiff >= previousDiff)
+						return meshLinesPoolArray[previousIndex].transform.position;
+				}
+				else
+					isFirstDistCheck = false;
+
+				previousDiff = currentDiff;
+				previousIndex = newIndex;
+			}
+		}
+
+		//shouldnt get here normally
+		Debug.Log ("FAILED TO GET CLOSEST POS");
+		return Vector3.zero;
 
 	}
 
