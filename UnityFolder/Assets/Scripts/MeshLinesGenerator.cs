@@ -94,7 +94,7 @@ public class MeshLinesGenerator : MonoBehaviour
 			// TODO  no need for PVA, will probably remove entirely later
 			meshLinesPVAComponentArray[i].enabled = false;
 			// left/right offset to center mesh realtive to camera
-			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(-0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
+			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
 			meshLinesPoolArray[i].SetActive(false);
 		}
 
