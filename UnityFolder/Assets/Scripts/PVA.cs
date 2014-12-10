@@ -8,51 +8,115 @@ public class PVA : MonoBehaviour
 	public Vector3 position;
 	public Vector3 velocity;
 	public Vector3 acceleration;
+	public float velocityMagnitude;
 
-	[Range(0,0.1f)]
-	public float velocityDecay = 0;
+	public Vector3 rotationalVelocity;
+	public Vector3 rotationalAcceleration;
 
-	[Range(0,1)]
-	public float accelerationDecay = 0;
+	public float zRotationVelocity;
+	public float zRotationAcceleration;
 
+
+	public bool isLinearDecay = false;
+	public bool isAngularDecay = false;
+
+	[Range(0.0f,1.0f)]
+	public float linearVelocityDecay = 0;
+
+	[Range(0.0f,1.0f)]
+	public float angularVelocityDecay = 0;
+	public Vector3 angularFrictionAxisToggle = Vector3.zero;
+
+	public Space refrenceFrame = Space.World;
+	Vector3 deltaPos;
+
+	public float velocityKillThreashold = 0.0f;
+	public float maxVelocityMagnitude = 300.0f;
+	public float maxRotationalVelocityMagnitude = 400.0f;
+	Vector3 deltaV;
+	Vector3 previousV;
+
+	public float timeStep = 1.0f/1000.0f;
+	public float stepCounter = 0;
+	public int loopCounter = 0;
 
 	// Use this for initialization
 	void Start () 
 	{
-		position = transform.position;	
+		Init();
+		//previousV = new Vector3(0, 0, 0);
+	}
+
+	void Init()
+	{
+		position = transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 
-		ApplyPVA();
-		
-		// do rotation, if necessary
-		if(rotationPointsToCurrentVelocity)
+		float currentDT = Time.deltaTime;
+
+		loopCounter = 0;
+		while(stepCounter < currentDT)
 		{
-			if(velocity.magnitude != 0)
-			{
-				Vector3 direction = velocity;
-				direction.Normalize();
-				transform.forward = Vector3.Lerp(transform.forward, direction, 20.0f *Time.deltaTime);
-			}
+			CalculatePVA();
+			stepCounter += timeStep;
+			loopCounter ++;
 		}
-	
+		stepCounter -= currentDT;
+			
+		transform.Translate(deltaPos, refrenceFrame);
+		deltaPos = Vector3.zero;
+
+		velocityMagnitude = velocity.magnitude;
 
 	}
 
-	public void ApplyPVA()
+	private void CalculatePVA()
 	{
 		// do core PVA update
-		//position = transform.position;
-		position += velocity * Time.deltaTime;
-		velocity += acceleration * Time.deltaTime;
-		transform.position = position;
 
-		// apply decay
-		velocity = (1.0f - velocityDecay) * velocity;
-		acceleration = (1.0f - accelerationDecay) * acceleration;
+		velocity += acceleration * timeStep;
+		velocity = Vector3.ClampMagnitude(velocity, maxVelocityMagnitude);
+		deltaPos += (velocity + previousV) * 0.5f * timeStep;
+
+		rotationalVelocity += rotationalAcceleration * timeStep;
+		rotationalVelocity = Vector3.ClampMagnitude(rotationalVelocity, maxRotationalVelocityMagnitude);
+		
+		if(isLinearDecay)
+		{
+			// apply decay
+			velocity -= linearVelocityDecay * velocity * timeStep;
+		}
+		
+
+		// always do angular friction, just apply depending on toggle
+		Vector3 amountToRemove =  new Vector3(angularFrictionAxisToggle.x * rotationalVelocity.x,
+											 angularFrictionAxisToggle.y * rotationalVelocity.y,
+											 angularFrictionAxisToggle.z * rotationalVelocity.z);
+		amountToRemove *= angularVelocityDecay * timeStep;
+		rotationalVelocity -= amountToRemove;			
+
+		if( Mathf.Abs(velocity.x) <= velocityKillThreashold )
+			velocity.x = 0;
+		if( Mathf.Abs(velocity.y) <= velocityKillThreashold )
+			velocity.y = 0;
+		if( Mathf.Abs(velocity.z) <= velocityKillThreashold )
+			velocity.z = 0;
+		if( Mathf.Abs(zRotationVelocity) <= velocityKillThreashold )
+			zRotationVelocity = 0;
+
+		deltaV = velocity - previousV;
+		previousV = velocity;
+
+
+	}
+
+	public void ResetPVA()
+	{
+		Init();
 	}
 
 

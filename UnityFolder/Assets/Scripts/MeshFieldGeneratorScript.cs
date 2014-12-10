@@ -7,6 +7,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 
 	public float xScale = 1;
 	public float zScale = 1;
+	public float yScale = 1;
 
 	public Vector3[] verticesArray;
 	public int[] trianglesArray;
@@ -111,7 +112,8 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 		mesh.MarkDynamic();
 		mesh.vertices = verticesArray;
 		mesh.uv = uvArray;
-		mesh.triangles = trianglesArray;
+		//mesh.triangles = trianglesArray;
+		mesh.SetIndices (trianglesArray, MeshTopology.Lines, 0);
 		mesh.RecalculateNormals();
 
 		normalsArray = mesh.normals;
@@ -157,7 +159,7 @@ public class MeshFieldGeneratorScript : MonoBehaviour
 			{
 				tempVector = verticesArray[i];
 				tempHeight = audioDirector.pseudoLogArrayBuffer[i/(dataRepCount+1)];
-				tempVector.y = tempHeight * verticesAudioHeightScale; // normal version
+				tempVector.y = tempHeight * verticesAudioHeightScale * yScale; // normal version
 				//tempVector.y = ( tempHeight * verticesAudioHeightScale + verticesArray[i + verticesFrequencyDepthCount].y)/2.0f ; // time axis smoothing version
 				verticesArray[i] = tempVector;
 			}

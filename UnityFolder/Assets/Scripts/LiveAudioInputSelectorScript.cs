@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
 
 public class LiveAudioInputSelectorScript : MonoBehaviour 
 {
@@ -10,6 +11,9 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	float textVerticalOffset = 100.0f;
 
 	AudioDirectorScript audioDirector;
+
+	float timeSinceChange = 0;
+	bool isGUI = true;
 
 	// Use this for initialization
 	void Start () 
@@ -23,7 +27,7 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 	{
 		if(isActive)
 		{
-			if(Input.GetButtonDown("Warp"))
+			if(InputManager.ActiveDevice.GetControl( InputControlType.Action4 ).WasPressed)
 			{
 				if(currentlySelectedDeviceIndex >= devicesArray.Length -1)
 						currentlySelectedDeviceIndex = 0;
@@ -32,17 +36,26 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 
 				// Call Audiodirector function with new device
 				audioDirector.HandleLiveInputSwitch(devicesArray[currentlySelectedDeviceIndex]);
+
+				timeSinceChange = 0;
 			}
 		}
+
+		timeSinceChange += Time.deltaTime;
+
+		if(timeSinceChange > 3.0f)
+			isGUI = false;
+		else
+			isGUI = true;
 	
 	}
 
-
+	
 	void OnGUI()
 	{
 
 
-		if(isActive)
+		if(isActive && isGUI)
 		{
 			devicesArray = Microphone.devices;
 
@@ -62,4 +75,5 @@ public class LiveAudioInputSelectorScript : MonoBehaviour
 		}
 
 	}
+	
 }

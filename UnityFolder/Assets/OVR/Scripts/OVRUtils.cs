@@ -5,16 +5,16 @@ Content     :   Base component OVR class
 Created     :  	May 13, 2013
 Authors     :   Peter Giokaris
 
-Copyright   :   Copyright 2013 Oculus VR, Inc. All Rights reserved.
+Copyright   :   Copyright 2014 Oculus VR, Inc. All Rights reserved.
 
-Licensed under the Oculus VR SDK License Version 2.0 (the "License"); 
-you may not use the Oculus VR SDK except in compliance with the License, 
+Licensed under the Oculus VR Rift SDK License Version 3.1 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
 which is provided at the time of installation or download, or which 
 otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
 
-http://www.oculusvr.com/licenses/LICENSE-2.0 
+http://www.oculusvr.com/licenses/LICENSE-3.1 
 
 Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,29 +30,43 @@ using System.Collections.Generic;
 //-------------------------------------------------------------------------------------
 // ***** OVRUtils
 //
-// OVRUtils holds misc. static utility functions that can be used by any script.
-//
 
+/// <summary>
+/// OVRUtils holds misc. static utility functions that can be used by any script.
+/// </summary>
 public class OVRUtils
 {
-	// SetLocalTransformIdentity
+	/// <summary>
+	/// Sets the local transform identity.
+	/// </summary>
+	/// <param name="gameObject">Game object.</param>
 	public static void SetLocalTransformIdentity(ref GameObject gameObject)
 	{
 		gameObject.transform.localPosition = Vector3.zero;
 		gameObject.transform.localRotation = Quaternion.identity;
 		gameObject.transform.localScale    = Vector3.one;
 	}
-	
-	// SetLocalTransformIdentity	
+
+	/// <summary>
+	/// Sets the local transform.
+	/// </summary>
+	/// <param name="gameObject">Game object.</param>
+	/// <param name="xfrm">Xfrm.</param>
 	public static void SetLocalTransform(ref GameObject gameObject, ref Transform xfrm)
 	{
 		gameObject.transform.localPosition = xfrm.position;
 		gameObject.transform.localRotation = xfrm.rotation;
 		gameObject.transform.localScale    = xfrm.localScale;
 	}
-	
-	// Blit - Copies one render texture onto another through a material
-	// flip will flip the render horizontally
+
+	/// <summary>
+	/// Blit - Copies one render texture onto another through a material
+	/// flip will flip the render horizontally
+	/// </summary>
+	/// <param name="source">Source.</param>
+	/// <param name="dest">Destination.</param>
+	/// <param name="m">M.</param>
+	/// <param name="flip">If set to <c>true</c> flip.</param>
 	public void Blit (RenderTexture source, RenderTexture dest, Material m, bool flip) 
 	{
 		Material material = m;
@@ -74,7 +88,10 @@ public class OVRUtils
 		GL.PopMatrix ();
 	}
 	
-	// DrawQuad
+	/// <summary>
+	/// Draws the quad.
+	/// </summary>
+	/// <param name="flip">If set to <c>true</c> flip.</param>
 	public void DrawQuad(bool flip)
 	{
 		GL.Begin (GL.QUADS);

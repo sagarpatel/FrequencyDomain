@@ -20,7 +20,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	string lastUsedDirectorytxt = null;
 	string mostRecentExtension = null;
 
-	MP3Import mp3Importer;
+	//MP3Import mp3Importer;
 	AudioDirectorScript audioDirector;
 	AudioListener audioListener;
 	GeneralEditorScript genralEditorScript;
@@ -28,7 +28,7 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		mp3Importer = (MP3Import)GetComponent("MP3Import");
+		//mp3Importer = (MP3Import)GetComponent("MP3Import");
 		audioDirector = (AudioDirectorScript) GameObject.FindWithTag("AudioDirector").GetComponent("AudioDirectorScript");
 		audioListener = (AudioListener) GameObject.FindWithTag("AudioDirector").GetComponent("AudioListener");
 		genralEditorScript = (GeneralEditorScript)GetComponent("GeneralEditorScript");
@@ -127,13 +127,13 @@ public class FileBrowserGameObjectScript : MonoBehaviour
 
         	 if(filePathmp3 != null)
 	        {
-		        mp3Importer = (MP3Import)GetComponent("MP3Import");
-		        mp3Importer.StartImport(filePathmp3);
+		        //mp3Importer = (MP3Import)GetComponent("MP3Import");
+		        //mp3Importer.StartImport(filePathmp3);
 
 		        audioDirector.audioSourceArray[0].Stop();
 		        audioDirector.audioSourceArray[0] = null;
 
-		        audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
+		        //audioDirector.audioSourceArray[0] = mp3Importer.audioSource;
 		        audioDirector.audioSourceArray[0].Play();
 		        audioDirector.currentlyPlayingFileName = Path.GetFileName(path);
 
