@@ -48,8 +48,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	public Vector3[][] collumnsArrayVerticesArray;
 	Vector3[][] collumnsArrayNormalsArray;
 
-	[Range(1, 10)]
-	public int collumnStitchIndex = 1;
+	const int collumnStitchIndex = 5;
 	public Vector3 stitchAnchorOffset = new Vector3(0, 0, 0);
 	GameObject stitchPosObject;
 
@@ -68,7 +67,10 @@ public class MeshLinesGenerator : MonoBehaviour
 	public float staticAmpltiudeScale = 4.0f;
 
 	LMC_FingertipsStitch fingertipStitch;
-	public Vector3[] stitchOriginPosArray;
+	int jointsPerFinger = 5;
+	public Vector3[][] fingerJointsArrayStitchesPosArray;
+
+	int currentMeshlineFetchIndex = 0;
 
 	// Use this for initialization
 	void Start () 
@@ -85,27 +87,23 @@ public class MeshLinesGenerator : MonoBehaviour
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
+			meshLinesPoolArray[i].name = meshLinesPoolArray[i].name + "_" + i.ToString();
 			meshLinesPoolArray[i].GetComponentInChildren<MeshRenderer>().sharedMaterial = meshMaterial;
-			
 			meshLinesMeshComponentArray[i] = meshLinesPoolArray[i].GetComponentInChildren<MeshFilter>().mesh;
 			meshLinesPVAComponentArray[i] = meshLinesPoolArray[i].GetComponent<PVA>();
-
-			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(-0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
-
+			// TODO  no need for PVA, will probably remove entirely later
+			meshLinesPVAComponentArray[i].enabled = false;
+			// left/right offset to center mesh realtive to camera
+			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
 			meshLinesPoolArray[i].SetActive(false);
 		}
-		
-
 
 		// do basic setup for all meshe lines / rows
 		verticesArray = new Vector3[verticesFrequencyDepthCount];
 		freshLineMeshNormalsArray = new Vector3[verticesFrequencyDepthCount];
 		for(int i = 0; i < verticesArray.Length; i++)
-		{
 			verticesArray[i] = new Vector3(i * verticesSpread , 0, 0);
-		}
 
-		
 		List<int> indicesList = new List<int>();
 		List<Vector2> uvsLinesList = new List<Vector2>();
 		List<Vector4> tangentLinesList = new List<Vector4>();
@@ -197,11 +195,20 @@ public class MeshLinesGenerator : MonoBehaviour
 		stitchPosObject = new GameObject();
 		stitchPosObject.transform.parent = transform;
 		stitchPosObject.transform.localPosition = stitchAnchorOffset;
-
 		tempVector = new Vector3(0, 0, 0);
 
 		fingertipStitch = GetComponent<LMC_FingertipsStitch>();
-		stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
+		//  array structured so that for [i][j], i represents the joint index (ex: fingertip row) and j represents the vertices
+		// see https://developer.leapmotion.com/documentation/skeletal/csharp/devguide/Intro_Skeleton_API.html
+		fingerJointsArrayStitchesPosArray = new Vector3[jointsPerFinger][];
+		for (int i = 0; i < fingerJointsArrayStitchesPosArray.Length; i++)
+		{
+			fingerJointsArrayStitchesPosArray[i] = new Vector3[verticesFrequencyDepthCount];
+		}
+		//stitchOriginPosArray = new Vector3[verticesFrequencyDepthCount];
+
+		//GenerateLineMesh();
+		//StitchNewRowIntoCollumns()
 	}
 	
 	// Update is called once per frame
@@ -245,12 +252,48 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
+	public Transform GetClosestMeshLineTransform(Vector3 currenPos)
+	{
+		float previousDiff = 0;
+		int previousIndex = currentMeshlineFetchIndex;
+		bool isFirstDistCheck = true;
+
+		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
+		{
+			int newIndex = i % meshLinesPoolArray.Length;
+			if(meshLinesPoolArray[newIndex].activeSelf == true)
+			{
+				float currentDiff = Vector3.Distance(currenPos, meshLinesPoolArray[newIndex].transform.position);
+				// skip first loop to ensure previousDiff gets a legit value
+				if( isFirstDistCheck == false )
+				{
+					if(currentDiff >= previousDiff)
+						return meshLinesPoolArray[previousIndex].transform;
+				}
+				else
+					isFirstDistCheck = false;
+
+				previousDiff = currentDiff;
+				previousIndex = newIndex;
+			}
+		}
+
+		//shouldnt get here normally
+		Debug.Log ("FAILED TO GET CLOSEST POS");
+		return null;
+
+	}
+
 	int GetFreeMeshLineIndex()
 	{
-		for(int i = 0; i < meshLinesPoolArray.Length; i++)
+		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
 		{
-			if(meshLinesPoolArray[i].activeSelf == false)
-				return i;
+			int newIndex = i % meshLinesPoolArray.Length;
+			if(meshLinesPoolArray[newIndex].activeSelf == false)
+			{
+				currentMeshlineFetchIndex = newIndex;
+				return newIndex;
+			}
 		}
 		// if nothing found
 			return -1;
@@ -336,8 +379,9 @@ public class MeshLinesGenerator : MonoBehaviour
 		tempMesh.normals = freshLineMeshNormalsArray; //calculationsMiniMesh.normals.Take(verticesFrequencyDepthCount).ToArray();
 		Profiler.EndSample();
 
-		meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
-		meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed * transform.forward;
+		// TODO  : no need for pva, will probabbly remove entierly later
+		//meshLinesPVAComponentArray[freshMeshLineIndex].ResetPVA();
+		//meshLinesPVAComponentArray[freshMeshLineIndex].velocity = meshSpeed * transform.forward;
 
 		
 	}
@@ -369,36 +413,48 @@ public class MeshLinesGenerator : MonoBehaviour
 	void UpdateCollumnVerticesPosition()
 	{
 		Profiler.BeginSample("Update Collumn Vertices");
-		Vector3 tempPosition = transform.position;
 		Vector3 forwardVec = transform.forward;
 		float deltaT = Time.deltaTime;
+		Vector3 posIncrement =  meshSpeed * forwardVec * deltaT;
+		Vector3 tempPos = Vector3.zero;
+
+		Vector3 anchorLocalPos = stitchAnchorOffset * audioDirector.averageAmplitude;
 
 		for(int h = 0; h < meshCollumnsArray.Length; h++)
 		{	
-			for(int i = collumnStitchIndex ; i < collumnDepth ; i++)
+			for(int i = 0 ; i < collumnDepth ; i++)
 			{
-				//Profiler.BeginSample("Inner loop");
-				//// not unified physics now, could cause trouble later`
-				collumnsArrayVerticesArray[h][i] += meshSpeed * forwardVec * deltaT;
-				//Profiler.EndSample();
+				// handle origin stitches/vertices
+				if (i < collumnStitchIndex)
+				{
+					// leap motion finger stitching 
+					if (fingertipStitch.isValidData == true)
+					{
+						int reversedJointsOrderIndex = (jointsPerFinger - i) - 1;
+						collumnsArrayVerticesArray[h][i] = fingerJointsArrayStitchesPosArray[reversedJointsOrderIndex][h];
+					}
+					else
+					{
+						// default to common origin stitch point
+						// old/normal way, unified origin point
+						stitchPosObject.transform.localPosition = anchorLocalPos;
+						collumnsArrayVerticesArray[h][i] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
+					}
+				}
+				else // oridinary vertices
+				{
+					//// not unified physics now, could cause trouble later`
+					// doing in line for perf as seen in --> https://www.youtube.com/watch?v=WE3PWHLGsX4
+					
+					tempPos = collumnsArrayVerticesArray[h][i];
+					tempPos.x += posIncrement.x;
+					tempPos.y += posIncrement.y;
+					tempPos.z += posIncrement.z;
+					collumnsArrayVerticesArray[h][i] = tempPos;
+				}
 			}
 
-			//Profiler.BeginSample("Outter loop");
-			
-			// leap motion finger stitching 
-			if (fingertipStitch.isValidData == true)
-			{
-				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchOriginPosArray[h];
-			}
-			else
-			{
-				// old/normal way, unified origin point
-				stitchPosObject.transform.localPosition = stitchAnchorOffset * audioDirector.averageAmplitude;
-				collumnsArrayVerticesArray[h][collumnStitchIndex - 1] = stitchPosObject.transform.position; //stitchAnchorOffset + tempPosition;
-			}
-			
 			meshCollumnsMeshComponentArray[h].vertices = collumnsArrayVerticesArray[h];
-			//Profiler.EndSample();
 		}
 		Profiler.EndSample();
 	}

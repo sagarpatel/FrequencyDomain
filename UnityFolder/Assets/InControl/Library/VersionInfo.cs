@@ -26,9 +26,9 @@ namespace InControl
 		{
 			return new VersionInfo() {
 				Major = 1,
-				Minor = 2,
-				Patch = 1,
-				Build = 2709
+				Minor = 3,
+				Patch = 4,
+				Build = 3382
 			};
 		}
 
@@ -46,7 +46,7 @@ namespace InControl
 		}
 
 
-		public int CompareTo(VersionInfo other)
+		public int CompareTo( VersionInfo other )
 		{
 			if (Major < other.Major) return -1;
 			if (Major > other.Major) return +1;
@@ -60,39 +60,39 @@ namespace InControl
 		}
 
 
-		public static bool operator ==(VersionInfo a, VersionInfo b)
+		public static bool operator ==( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) == 0;
+			return a.CompareTo( b ) == 0;
 		}
 
 
-		public static bool operator !=(VersionInfo a, VersionInfo b)
+		public static bool operator !=( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) != 0;
+			return a.CompareTo( b ) != 0;
 		}
 
 
-		public static bool operator <=(VersionInfo a, VersionInfo b)
+		public static bool operator <=( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) <= 0;
+			return a.CompareTo( b ) <= 0;
 		}
 
 
-		public static bool operator >=(VersionInfo a, VersionInfo b)
+		public static bool operator >=( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) >= 0;
+			return a.CompareTo( b ) >= 0;
 		}
 
 
-		public static bool operator <(VersionInfo a, VersionInfo b)
+		public static bool operator <( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) < 0;
+			return a.CompareTo( b ) < 0;
 		}
 
 
-		public static bool operator >(VersionInfo a, VersionInfo b)
+		public static bool operator >( VersionInfo a, VersionInfo b )
 		{
-			return a.CompareTo(b) > 0;
+			return a.CompareTo( b ) > 0;
 		}
 
 
@@ -106,7 +106,17 @@ namespace InControl
 		}
 
 
-		public override bool Equals(object other)
+		public string ToShortString()
+		{
+			if (Build == 0)
+			{
+				return string.Format( "{0}.{1}.{2}", Major, Minor, Patch );
+			}
+			return string.Format( "{0}.{1}.{2}b{3}", Major, Minor, Patch, Build );
+		}
+
+
+		public override bool Equals( object other )
 		{
 			if (other is VersionInfo)
 			{
