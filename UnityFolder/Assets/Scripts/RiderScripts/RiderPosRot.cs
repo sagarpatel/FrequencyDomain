@@ -15,8 +15,10 @@ public class RiderPosRot : MonoBehaviour
 	
 	void Update()
 	{
-		
-		Transform closestMeshlineTransform = meshlinesGenerator.GetClosestMeshLineTransform(transform.position);
+
+		Transform closestMeshlineTransform = meshlinesGenerator.GetClosestMeshLineTransform(transform.position, transform.rotation);
+
+
 
 		if(closestMeshlineTransform == null)
 			return;

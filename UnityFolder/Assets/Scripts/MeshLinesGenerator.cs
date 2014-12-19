@@ -252,7 +252,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	public Transform GetClosestMeshLineTransform(Vector3 currenPos)
+	public Transform GetClosestMeshLineTransform(Vector3 currenPos, Quaternion riderRot)
 	{
 		float previousDiff = 0;
 		int previousIndex = currentMeshlineFetchIndex;
@@ -268,7 +268,21 @@ public class MeshLinesGenerator : MonoBehaviour
 				if( isFirstDistCheck == false )
 				{
 					if(currentDiff >= previousDiff)
+					{
+						float distBetweenClosest = Vector3.Distance(currenPos, meshLinesPoolArray[previousIndex].transform.position);
+						float distCurrent = Vector3.Distance(currenPos, meshLinesPoolArray[newIndex].transform.position);
+
+						int nextIndex = (i+1) % meshLinesPoolArray.Length;
+						float distNext = Vector3.Distance(currenPos, meshLinesPoolArray[nextIndex].transform.position);
+
+						Debug.Log("Dists");
+						Debug.Log(distBetweenClosest);
+						Debug.Log(distCurrent);
+						Debug.Log(distNext);
+
+
 						return meshLinesPoolArray[previousIndex].transform;
+					}
 				}
 				else
 					isFirstDistCheck = false;
