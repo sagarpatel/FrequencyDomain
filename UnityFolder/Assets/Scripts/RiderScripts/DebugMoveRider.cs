@@ -3,7 +3,7 @@ using System.Collections;
 
 public class DebugMoveRider : MonoBehaviour 
 {
-	float forwardSpeedScale = 100.0f;
+	float forwardSpeedScale = 600.0f;
 	float reverseSpeedScale = 400.0f;
 
 	void Update()

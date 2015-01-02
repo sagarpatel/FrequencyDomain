@@ -15,16 +15,15 @@ public class RiderPosRot : MonoBehaviour
 	
 	void Update()
 	{
+		Vector3 calPos = Vector3.zero;
+		Quaternion calRot = Quaternion.identity;
 
-		Transform closestMeshlineTransform = meshlinesGenerator.GetClosestMeshLineTransform(transform.position, transform.rotation);
+		meshlinesGenerator.GetClosestMeshLineTransform(transform.position, out calPos, out calRot);
 
+	
 
-
-		if(closestMeshlineTransform == null)
-			return;
-
-		transform.position = closestMeshlineTransform.position;
-		transform.rotation = closestMeshlineTransform.rotation;
+		transform.position = calPos;
+		transform.rotation = calRot;
 		
 	
 	}

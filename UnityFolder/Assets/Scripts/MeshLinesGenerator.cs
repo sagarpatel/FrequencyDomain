@@ -252,11 +252,14 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	public Transform GetClosestMeshLineTransform(Vector3 currenPos, Quaternion riderRot)
+	public void GetClosestMeshLineTransform(Vector3 currenPos, out Vector3 calculatedPos, out Quaternion calculatedRot)
 	{
 		float previousDiff = 0;
 		int previousIndex = currentMeshlineFetchIndex;
+		int previousPreviousIndex = previousIndex;
 		bool isFirstDistCheck = true;
+		Quaternion lerpedRot;
+		Vector3 lerpedPos;
 
 		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
 		{
@@ -269,32 +272,74 @@ public class MeshLinesGenerator : MonoBehaviour
 				{
 					if(currentDiff >= previousDiff)
 					{
-						float distBetweenClosest = Vector3.Distance(currenPos, meshLinesPoolArray[previousIndex].transform.position);
-						float distCurrent = Vector3.Distance(currenPos, meshLinesPoolArray[newIndex].transform.position);
+						// dist to closest/ cetern ref line
+						Transform centerLineTransform = meshLinesPoolArray[previousIndex].transform;
+						Vector3 centerLinePos = centerLineTransform.position;
+						float distBetweenClosest = Vector3.Distance(currenPos, centerLinePos);
 
-						int nextIndex = (i+1) % meshLinesPoolArray.Length;
-						float distNext = Vector3.Distance(currenPos, meshLinesPoolArray[nextIndex].transform.position);
+						// dist to lower line
+						Transform lowerLineTransform = meshLinesPoolArray[newIndex].transform;
+						Vector3 lowerLinePos = lowerLineTransform.position;
+						float distCurrent = Vector3.Distance(currenPos, lowerLinePos);
 
+						// dist to upper line
+						Transform upperLineTransform = meshLinesPoolArray[previousPreviousIndex].transform;
+						Vector3 upperLinePos = upperLineTransform.position;
+						float distPrePre = Vector3.Distance(currenPos, upperLinePos);
+
+						float nanConst = 0.000001f;
+						
 						Debug.Log("Dists");
 						Debug.Log(distBetweenClosest);
 						Debug.Log(distCurrent);
-						Debug.Log(distNext);
+						Debug.Log(distPrePre);
 
 
-						return meshLinesPoolArray[previousIndex].transform;
+						// if between center line and lower line
+						if(distCurrent < distPrePre)
+						{
+							float distBetweenCenterAndLower = nanConst + Vector3.Distance(lowerLinePos, centerLinePos);
+							float step = distBetweenClosest/distBetweenCenterAndLower;
+
+							lerpedPos = Vector3.Lerp( centerLineTransform.position, lowerLineTransform.position, step);
+							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, lowerLineTransform.rotation,step);
+
+							Debug.Log("Step: " + step);
+
+							calculatedPos = lerpedPos;
+							calculatedRot = lerpedRot;
+							return;
+						}
+						else
+						{
+							float distBetweenCenterAndUpper = nanConst + Vector3.Distance(upperLinePos, centerLinePos);
+							float step = distBetweenClosest/distBetweenCenterAndUpper;
+
+							lerpedPos = Vector3.Lerp( centerLineTransform.position, upperLineTransform.position, step);
+							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, upperLineTransform.rotation,step);
+
+							Debug.Log("Step: " + step);
+
+							calculatedPos = lerpedPos;
+							calculatedRot = lerpedRot;
+							return;
+						}
+
 					}
 				}
 				else
 					isFirstDistCheck = false;
 
 				previousDiff = currentDiff;
+				previousPreviousIndex = previousIndex;
 				previousIndex = newIndex;
 			}
 		}
 
-		//shouldnt get here normally
-		Debug.Log ("FAILED TO GET CLOSEST POS");
-		return null;
+		// if reached here, failed
+		Debug.Log("FAILED TO GET POS/ROT");
+		calculatedPos = Vector3.zero;
+		calculatedRot = Quaternion.identity;
 
 	}
 
