@@ -9,11 +9,11 @@ public class DebugMoveRider : MonoBehaviour
 	float sideSpeedScale = 100.0f;
 
 	public Transform meshHeadObject;
-	RiderPosRot riderPosRot;
+	RiderPhysics riderPhysics;
 
 	void Start()
 	{
-		riderPosRot = GetComponent<RiderPosRot>();
+		riderPhysics = GetComponent<RiderPhysics>();
 	}
 
 	void Update()
@@ -22,22 +22,21 @@ public class DebugMoveRider : MonoBehaviour
 
 		if(Input.GetKey(KeyCode.Y) == true)
 		{
-			transform.position += transform.forward * forwardSpeedScale * Time.deltaTime;
-			//Debug.Log(transform.position);
+			riderPhysics.MoveForward(1.0f);
 		}
 		if(Input.GetKey(KeyCode.H) == true)
 		{
-			transform.position += -transform.forward * reverseSpeedScale * Time.deltaTime;
+			riderPhysics.MoveForward(-1.0f);
 		}
 
 		if(Input.GetKey(KeyCode.J) == true)
 		{
-			riderPosRot.widthOffset += sideSpeedScale * Time.deltaTime;
+			riderPhysics.MoveSideways(1.0f);
 		}
 
 		if(Input.GetKey(KeyCode.G) == true)
 		{
-			riderPosRot.widthOffset -= sideSpeedScale * Time.deltaTime;
+			riderPhysics.MoveSideways(-1.0f);
 		}
 
 		Vector3 after = transform.position;

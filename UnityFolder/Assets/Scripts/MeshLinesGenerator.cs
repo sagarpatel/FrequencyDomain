@@ -302,7 +302,7 @@ public class MeshLinesGenerator : MonoBehaviour
 						//if(previousIndex == currentMeshlineFetchIndex )
 						//	continue;
 
-						Debug.Log("Front index: " + currentMeshlineFetchIndex +  " | Closest index: " + previousIndex);
+						//Debug.Log("Front index: " + currentMeshlineFetchIndex +  " | Closest index: " + previousIndex);
 
 						//Debug.Log("Dists");
 						//Debug.Log(distBetweenClosest);
