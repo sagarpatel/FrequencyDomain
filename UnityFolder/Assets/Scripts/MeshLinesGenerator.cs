@@ -261,7 +261,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		Quaternion lerpedRot;
 		Vector3 lerpedPos;
 
-		for(int i = currentMeshlineFetchIndex; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
+		for(int i = currentMeshlineFetchIndex + 1; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
 		{
 			int newIndex = i % meshLinesPoolArray.Length;
 			if(meshLinesPoolArray[newIndex].activeSelf == true)
@@ -288,11 +288,17 @@ public class MeshLinesGenerator : MonoBehaviour
 						float distPrePre = Vector3.Distance(currenPos, upperLinePos);
 
 						float nanConst = 0.000001f;
-						
-						Debug.Log("Dists");
-						Debug.Log(distBetweenClosest);
-						Debug.Log(distCurrent);
-						Debug.Log(distPrePre);
+
+						// don't allow the use of the freshes mesh line
+						if(previousIndex == currentMeshlineFetchIndex )
+							continue;
+
+						Debug.Log("Front index: " + currentMeshlineFetchIndex +  " | Closest index: " + previousIndex);
+
+						//Debug.Log("Dists");
+						//Debug.Log(distBetweenClosest);
+						//Debug.Log(distCurrent);
+						//Debug.Log(distPrePre);
 
 
 						// if between center line and lower line
@@ -304,7 +310,7 @@ public class MeshLinesGenerator : MonoBehaviour
 							lerpedPos = Vector3.Lerp( centerLineTransform.position, lowerLineTransform.position, step);
 							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, lowerLineTransform.rotation,step);
 
-							Debug.Log("Step: " + step);
+							//Debug.Log("Step: " + step);
 
 							calculatedPos = lerpedPos;
 							calculatedRot = lerpedRot;
@@ -318,7 +324,7 @@ public class MeshLinesGenerator : MonoBehaviour
 							lerpedPos = Vector3.Lerp( centerLineTransform.position, upperLineTransform.position, step);
 							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, upperLineTransform.rotation,step);
 
-							Debug.Log("Step: " + step);
+							//Debug.Log("Step: " + step);
 
 							calculatedPos = lerpedPos;
 							calculatedRot = lerpedRot;

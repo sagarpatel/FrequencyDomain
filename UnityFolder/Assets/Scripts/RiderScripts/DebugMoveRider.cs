@@ -3,8 +3,10 @@ using System.Collections;
 
 public class DebugMoveRider : MonoBehaviour 
 {
-	float forwardSpeedScale = 600.0f;
+	float forwardSpeedScale = 500.0f;
 	float reverseSpeedScale = 400.0f;
+
+	public Transform meshHeadObject;
 
 	void Update()
 	{
@@ -25,10 +27,14 @@ public class DebugMoveRider : MonoBehaviour
 		
 		if(before.magnitude != after.magnitude)
 		{
-			Debug.Log("DIFFERENT");
-			Debug.Log(before);
-			Debug.Log(after);
+			//Debug.Log("DIFFERENT");
+			//Debug.Log(before);
+			//Debug.Log(after);
 		}
+
+		//Debug.Log("diff: " + Vector3.Distance(transform.position, meshHeadObject.position));
+
+
 	}
 
 }
