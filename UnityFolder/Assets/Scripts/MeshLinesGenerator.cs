@@ -252,7 +252,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	public void GetClosestMeshLineTransform(Vector3 currenPos, out Vector3 calculatedPos, out Quaternion calculatedRot)
+	public void GetClosestMeshLineTransform(Vector3 currenPos, Quaternion currentRot, out Vector3 calculatedPos, out Quaternion calculatedRot)
 	{
 		float previousDiff = 0;
 		int previousIndex = currentMeshlineFetchIndex;
@@ -290,8 +290,8 @@ public class MeshLinesGenerator : MonoBehaviour
 						float nanConst = 0.000001f;
 
 						// don't allow the use of the freshes mesh line
-						if(previousIndex == currentMeshlineFetchIndex )
-							continue;
+						//if(previousIndex == currentMeshlineFetchIndex )
+						//	continue;
 
 						Debug.Log("Front index: " + currentMeshlineFetchIndex +  " | Closest index: " + previousIndex);
 
@@ -343,9 +343,12 @@ public class MeshLinesGenerator : MonoBehaviour
 		}
 
 		// if reached here, failed
-		Debug.Log("FAILED TO GET POS/ROT");
-		calculatedPos = Vector3.zero;
-		calculatedRot = Quaternion.identity;
+		Debug.LogWarning("FAILED TO GET POS/ROT, sticking in front");
+		Debug.Log("Front index: " + currentMeshlineFetchIndex +  " | Closest index: " + previousIndex);
+		Transform frontTransform = meshLinesPoolArray[currentMeshlineFetchIndex].transform;
+
+		calculatedPos = frontTransform.position; //currenPos; //Vector3.zero;
+		calculatedRot = frontTransform.rotation; //currentRot; //Quaternion.identity;
 
 	}
 

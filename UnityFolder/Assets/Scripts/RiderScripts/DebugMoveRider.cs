@@ -6,7 +6,15 @@ public class DebugMoveRider : MonoBehaviour
 	float forwardSpeedScale = 500.0f;
 	float reverseSpeedScale = 400.0f;
 
+	float sideSpeedScale = 100.0f;
+
 	public Transform meshHeadObject;
+	RiderPosRot riderPosRot;
+
+	void Start()
+	{
+		riderPosRot = GetComponent<RiderPosRot>();
+	}
 
 	void Update()
 	{
@@ -20,6 +28,16 @@ public class DebugMoveRider : MonoBehaviour
 		if(Input.GetKey(KeyCode.H) == true)
 		{
 			transform.position += -transform.forward * reverseSpeedScale * Time.deltaTime;
+		}
+
+		if(Input.GetKey(KeyCode.J) == true)
+		{
+			riderPosRot.widthOffset += sideSpeedScale * Time.deltaTime;
+		}
+
+		if(Input.GetKey(KeyCode.G) == true)
+		{
+			riderPosRot.widthOffset -= sideSpeedScale * Time.deltaTime;
 		}
 
 		Vector3 after = transform.position;
