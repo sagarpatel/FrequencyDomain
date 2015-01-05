@@ -72,6 +72,8 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	int currentMeshlineFetchIndex = 0;
 
+	MeshLine[] meshLineDataArray;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -84,6 +86,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		meshLinesPoolArray = new GameObject[meshLinesPoolSize];
 		meshLinesMeshComponentArray = new Mesh[meshLinesPoolSize];
 		meshLinesPVAComponentArray = new PVA[meshLinesPoolSize];
+		meshLineDataArray = new MeshLine[meshLinesPoolSize];
 		for(int i = 0; i < meshLinesPoolSize; i++)
 		{
 			meshLinesPoolArray[i] = (GameObject)Instantiate(meshLinePrefab, transform.position, Quaternion.identity);
@@ -95,6 +98,8 @@ public class MeshLinesGenerator : MonoBehaviour
 			meshLinesPVAComponentArray[i].enabled = false;
 			// left/right offset to center mesh realtive to camera
 			meshLinesPoolArray[i].transform.GetChild(0).transform.localPosition = new Vector3(0.5f  * verticesFrequencyDepthCount * verticesSpread, 0, 0);
+			meshLineDataArray[i] =  meshLinesPoolArray[i].transform.GetComponent<MeshLine>();
+			meshLineDataArray[i].meshlineVerticesArray = new Vector3[verticesFrequencyDepthCount];
 			meshLinesPoolArray[i].SetActive(false);
 		}
 
@@ -252,7 +257,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
-	public void GetClosestMeshLineTransform(Vector3 currenPos, Quaternion currentRot, out Vector3 calculatedPos, out Quaternion calculatedRot)
+	public void CalculateClosestMeshLinePosition(Vector3 currenPos, Quaternion currentRot,float widthOffset ,out Vector3 calculatedPos, out Quaternion calculatedRot, out float calculatedHeightValue)
 	{
 		float previousDiff = 0;
 		int previousIndex = currentMeshlineFetchIndex;
@@ -260,6 +265,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		bool isFirstDistCheck = true;
 		Quaternion lerpedRot;
 		Vector3 lerpedPos;
+		float lerpedHeight;
 
 		for(int i = currentMeshlineFetchIndex + 1; i < meshLinesPoolArray.Length + currentMeshlineFetchIndex; i++)
 		{
@@ -276,16 +282,19 @@ public class MeshLinesGenerator : MonoBehaviour
 						Transform centerLineTransform = meshLinesPoolArray[previousIndex].transform;
 						Vector3 centerLinePos = centerLineTransform.position;
 						float distBetweenClosest = Vector3.Distance(currenPos, centerLinePos);
+						float centerHeight = meshLineDataArray[previousIndex].CalculateHeighOnLine(widthOffset);
 
 						// dist to lower line
 						Transform lowerLineTransform = meshLinesPoolArray[newIndex].transform;
 						Vector3 lowerLinePos = lowerLineTransform.position;
 						float distCurrent = Vector3.Distance(currenPos, lowerLinePos);
+						float lowerHeight = meshLineDataArray[newIndex].CalculateHeighOnLine(widthOffset);
 
 						// dist to upper line
 						Transform upperLineTransform = meshLinesPoolArray[previousPreviousIndex].transform;
 						Vector3 upperLinePos = upperLineTransform.position;
 						float distPrePre = Vector3.Distance(currenPos, upperLinePos);
+						float upperHeight = meshLineDataArray[previousPreviousIndex].CalculateHeighOnLine(widthOffset);
 
 						float nanConst = 0.000001f;
 
@@ -309,11 +318,12 @@ public class MeshLinesGenerator : MonoBehaviour
 
 							lerpedPos = Vector3.Lerp( centerLineTransform.position, lowerLineTransform.position, step);
 							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, lowerLineTransform.rotation,step);
-
+							lerpedHeight =  Mathf.Lerp(centerHeight, lowerHeight, step);
 							//Debug.Log("Step: " + step);
 
 							calculatedPos = lerpedPos;
 							calculatedRot = lerpedRot;
+							calculatedHeightValue = lerpedHeight;
 							return;
 						}
 						else
@@ -323,11 +333,12 @@ public class MeshLinesGenerator : MonoBehaviour
 
 							lerpedPos = Vector3.Lerp( centerLineTransform.position, upperLineTransform.position, step);
 							lerpedRot = Quaternion.Slerp( centerLineTransform.rotation, upperLineTransform.rotation,step);
-
+							lerpedHeight = Mathf.Lerp(centerHeight, upperHeight, step);
 							//Debug.Log("Step: " + step);
 
 							calculatedPos = lerpedPos;
 							calculatedRot = lerpedRot;
+							calculatedHeightValue = lerpedHeight;
 							return;
 						}
 
@@ -349,6 +360,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		calculatedPos = frontTransform.position; //currenPos; //Vector3.zero;
 		calculatedRot = frontTransform.rotation; //currentRot; //Quaternion.identity;
+		calculatedHeightValue = 0;
 
 	}
 
@@ -439,6 +451,12 @@ public class MeshLinesGenerator : MonoBehaviour
 		
 		// apply data to mesh
 		tempMesh.vertices = verticesArray;
+		for(int i = 0 ; i < verticesArray.Length; i++)
+		{
+			meshLineDataArray[freshMeshLineIndex].meshlineVerticesArray[i] = verticesArray[i];
+		}
+
+		//meshLineDataArray[freshMeshLineIndex].meshlineVerticesArray = verticesArray;// this jsut passes a refrence to the array, we need a copy 
 		
 		// looks like copying values from one array to another causes GC to go wilde spikes >_<
 		// Take() is much better than manual copy though

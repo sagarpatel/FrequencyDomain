@@ -11,6 +11,8 @@ public class MeshLine : MonoBehaviour
 
 	Transform lineTransform;
 
+	public Vector3[] meshlineVerticesArray;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -37,6 +39,30 @@ public class MeshLine : MonoBehaviour
 		}
 	
 	}
+
+	// 0 for relativesOnLine means left most part of line, value mus be between 0 and 1
+	public float CalculateHeighOnLine(float relativeOnLine)
+	{
+		if(meshlineVerticesArray == null)
+		{
+			Debug.LogWarning("MeshLine component vertices not yet initialized, failed to get height value ");
+			return 0;
+		}
+
+		relativeOnLine = 1.0f - relativeOnLine; // because mesh line is mirrored on x axis, ned to flip here
+
+		float posOnLine = relativeOnLine * (float)(meshlineVerticesArray.Length -1);
+		int floorIndex = Mathf.FloorToInt(posOnLine);
+		int ceilIndex = Mathf.FloorToInt(posOnLine);
+
+		float lerpStep = (float)ceilIndex - posOnLine;
+
+		float heightValue = transform.localScale.y *  Mathf.Lerp(meshlineVerticesArray[floorIndex].y, meshlineVerticesArray[ceilIndex].y, lerpStep);
+		return heightValue;
+
+	}
+
+
 	/*
 	public void UpdateCenter(float verticesFrequencyDepthCount, float verticesSpread)
 	{
