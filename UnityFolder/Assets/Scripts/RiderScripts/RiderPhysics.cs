@@ -9,6 +9,7 @@ public class RiderPhysics : MonoBehaviour
 	public Vector3 relativeVelocity =  new Vector3();
 	float maxForwardVelocityMagnitude = 0.150f;
 	float maxSidewaysVelocityMagnitude = 100.0f;
+	float maxUpVelocity = 500.0f;
 	float linearVelocityDecay = 0.2f;
 
 	float progressionOnMesh = 0; // should be clamped between 0 and 1
@@ -18,7 +19,7 @@ public class RiderPhysics : MonoBehaviour
 
 	float forwardMoveScale = 0.005f;
 	float sideMoveScale = 10.0f;
-	float gravityScale = -0.1f;
+	float gravityScale = -200.0f;
 	float maxHeight = 200.0f;
 
 	float rampupVelocityIncrementScale = 100.0f;
@@ -69,9 +70,10 @@ public class RiderPhysics : MonoBehaviour
 		if(newHeight > previousHeight)
 		{
 			relativeVelocity.y += rampupVelocityIncrementScale * Time.deltaTime;
+			relativeVelocity.y = Mathf.Clamp(relativeVelocity.y,0,maxUpVelocity);
 			heightOffset = newHeight;
 		}
-		else if(newHeight < previousHeight)
+		else if(newHeight < previousHeight) // if fallingß
 		{
 			relativeVelocity.y += gravityScale * Time.deltaTime;
 			heightOffset += relativeVelocity.y * Time.deltaTime;
@@ -85,7 +87,7 @@ public class RiderPhysics : MonoBehaviour
 
 		heightOffset =  Mathf.Clamp( heightOffset, 0, maxHeight);
 
-		previousHeight = newHeight;
+		previousHeight = heightOffset;
 	}
 
 	public void MoveForward(float controlMagnitude)
