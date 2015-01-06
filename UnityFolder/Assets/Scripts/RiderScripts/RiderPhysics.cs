@@ -14,11 +14,14 @@ public class RiderPhysics : MonoBehaviour
 	float progressionOnMesh = 0; // should be clamped between 0 and 1
 	float widthOffset = 0;
 	float heightOffset = 0;
+	float previousHeight = 0;
 
 	float forwardMoveScale = 0.005f;
 	float sideMoveScale = 10.0f;
-	float gravityScale = -0.50f;
+	float gravityScale = -0.1f;
 	float maxHeight = 200.0f;
+
+	float rampupVelocityIncrementScale = 100.0f;
 
 	MeshLinesGenerator meshlinesGenerator;
 
@@ -30,7 +33,6 @@ public class RiderPhysics : MonoBehaviour
 	void Update()
 	{
 		Vector3 tempPos = transform.position;
-		relativeVelocity.y = gravityScale;
 
 		Vector3 calPos = Vector3.zero;
 		Quaternion calRot = Quaternion.identity;
@@ -48,9 +50,7 @@ public class RiderPhysics : MonoBehaviour
 
 		meshlinesGenerator.CalculatePositionAndRotationOnMesh(progressionOnMesh, relativeLocationOnLine , out calPos, out calRot, out newHeightOffset);
 
-		if( newHeightOffset > heightOffset )
-			heightOffset = newHeightOffset;
-
+		HandleNewHeight(newHeightOffset);
 
 		transform.position = calPos; // set base meshline postion
 		transform.rotation = calRot;
@@ -60,8 +60,32 @@ public class RiderPhysics : MonoBehaviour
 
 		// apply friction to velocities
 		relativeVelocity -=  linearVelocityDecay * relativeVelocity * Time.deltaTime;
-		heightOffset += heightOffset * relativeVelocity.y * Time.deltaTime;
+
+	}
+
+	void HandleNewHeight(float newHeight)
+	{
+		// if rising
+		if(newHeight > previousHeight)
+		{
+			relativeVelocity.y += rampupVelocityIncrementScale * Time.deltaTime;
+			heightOffset = newHeight;
+		}
+		else if(newHeight < previousHeight)
+		{
+			relativeVelocity.y += gravityScale * Time.deltaTime;
+			heightOffset += relativeVelocity.y * Time.deltaTime;
+		}
+		else if( newHeight == previousHeight)
+		{
+			relativeVelocity.y = 0;
+			heightOffset = newHeight;
+		}
+
+
 		heightOffset =  Mathf.Clamp( heightOffset, 0, maxHeight);
+
+		previousHeight = newHeight;
 	}
 
 	public void MoveForward(float controlMagnitude)
