@@ -12,12 +12,14 @@ public class MeshLine : MonoBehaviour
 	Transform lineTransform;
 
 	public Vector3[] meshlineVerticesArray;
+	MeshLinesGenerator meshlinesGenerator;
 
 	// Use this for initialization
 	void Start () 
 	{
 		tempVector = new Vector3(0, 0, 0);
 		lineTransform = transform.GetChild(0); // assuming only child
+		meshlinesGenerator = FindObjectOfType<MeshLinesGenerator>();
 	}
 	/*
 	void Awake()
@@ -36,6 +38,7 @@ public class MeshLine : MonoBehaviour
 		{
 			lifeTimeCounter = 0;
 			gameObject.SetActive(false);
+			meshlinesGenerator.RemoveMeshLineFromActiveList(gameObject);
 		}
 	
 	}

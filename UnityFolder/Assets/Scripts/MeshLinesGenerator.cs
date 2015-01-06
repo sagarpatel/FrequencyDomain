@@ -73,6 +73,7 @@ public class MeshLinesGenerator : MonoBehaviour
 	int currentMeshlineFetchIndex = 0;
 
 	MeshLine[] meshLineDataArray;
+	List<GameObject> activeMeshLinesList;
 
 	// Use this for initialization
 	void Start () 
@@ -214,6 +215,8 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		//GenerateLineMesh();
 		//StitchNewRowIntoCollumns()
+
+		activeMeshLinesList = new List<GameObject>();
 	}
 	
 	// Update is called once per frame
@@ -248,6 +251,7 @@ public class MeshLinesGenerator : MonoBehaviour
 
 		meshColorViewer = meshMaterial.color;
 
+
 		/*
 		if (Time.frameCount % 30 == 0)
 		{
@@ -257,6 +261,40 @@ public class MeshLinesGenerator : MonoBehaviour
 
 	}
 
+	public void RemoveMeshLineFromActiveList(GameObject meshLineGO)
+	{
+		activeMeshLinesList.Remove(meshLineGO);
+	}
+
+	public void CalculatePositionAndRotationOnMesh(float progressionOnMesh, float widthOffset, out Vector3 calculatedPos, out Quaternion calculatedRot, out float calculatedHeightValue)
+	{
+		float fractionalIndex = progressionOnMesh * ((float)activeMeshLinesList.Count - 1);
+		int ceilIndex = Mathf.CeilToInt(fractionalIndex);
+		int floorIndex = Mathf.FloorToInt(fractionalIndex);
+		float lerpStep = ceilIndex - fractionalIndex;
+
+		Transform ceilTransform = activeMeshLinesList[ceilIndex].transform;
+		Vector3 ceilPos = ceilTransform.position;
+		Quaternion ceiltRot = ceilTransform.rotation;
+		float ceilHeight = ceilTransform.GetComponent<MeshLine>().CalculateHeighOnLine(widthOffset); // might be worth caching the component
+
+		Transform floorTransform = activeMeshLinesList[floorIndex].transform;
+		Vector3 floorPos = floorTransform.position;
+		Quaternion floorRot = floorTransform.rotation;
+		float floorHeight = floorTransform.GetComponent<MeshLine>().CalculateHeighOnLine(widthOffset);
+
+		Vector3 lerpedPos = Vector3.Lerp(floorPos, ceilPos, lerpStep);
+		Quaternion lerpedRot = Quaternion.Slerp(floorRot, ceiltRot, lerpStep);
+		float lerpedHeight = Mathf.Lerp(floorHeight, ceilHeight, lerpStep);
+
+		calculatedPos = lerpedPos;
+		calculatedRot = lerpedRot;
+		calculatedHeightValue = lerpedHeight;
+	}
+
+
+	// old version based on moving player forward then finding closets meshline and reposition accordingly
+	/*
 	public void CalculateClosestMeshLinePosition(Vector3 currenPos, Quaternion currentRot,float widthOffset ,out Vector3 calculatedPos, out Quaternion calculatedRot, out float calculatedHeightValue)
 	{
 		float previousDiff = 0;
@@ -363,6 +401,8 @@ public class MeshLinesGenerator : MonoBehaviour
 		calculatedHeightValue = 0;
 
 	}
+	*/
+
 
 	int GetFreeMeshLineIndex()
 	{
@@ -389,6 +429,7 @@ public class MeshLinesGenerator : MonoBehaviour
 		{
 			tempMeshLineGO = meshLinesPoolArray[freshMeshLineIndex];
 			tempMeshLineGO.SetActive(true);
+			activeMeshLinesList.Add(tempMeshLineGO);
 
 			tempMeshLineGO.transform.rotation = transform.rotation;
 

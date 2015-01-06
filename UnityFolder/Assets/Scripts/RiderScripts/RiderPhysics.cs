@@ -7,16 +7,17 @@ public class RiderPhysics : MonoBehaviour
 
 	// where y is height.up, x is width and z is forwawrd
 	public Vector3 relativeVelocity =  new Vector3();
-	float maxForwardVelocityMagnitude = 300.0f;
+	float maxForwardVelocityMagnitude = 0.150f;
 	float maxSidewaysVelocityMagnitude = 100.0f;
 	float linearVelocityDecay = 0.2f;
 
+	float progressionOnMesh = 0; // should be clamped between 0 and 1
 	float widthOffset = 0;
 	float heightOffset = 0;
 
-	float forwardMoveScale = 7.0f;
+	float forwardMoveScale = 0.005f;
 	float sideMoveScale = 10.0f;
-	float gravityScale = -10.0f;
+	float gravityScale = -0.50f;
 	float maxHeight = 200.0f;
 
 	MeshLinesGenerator meshlinesGenerator;
@@ -42,10 +43,10 @@ public class RiderPhysics : MonoBehaviour
 
 
 		// move rider forward before looking for closest meshline
-		transform.position += transform.forward * relativeVelocity.z * Time.deltaTime;
+		progressionOnMesh += relativeVelocity.z * Time.deltaTime;
+		progressionOnMesh = Mathf.Clamp(progressionOnMesh, 0,1);
 
-
-		meshlinesGenerator.CalculateClosestMeshLinePosition(transform.position, transform.rotation, relativeLocationOnLine , out calPos, out calRot, out newHeightOffset);
+		meshlinesGenerator.CalculatePositionAndRotationOnMesh(progressionOnMesh, relativeLocationOnLine , out calPos, out calRot, out newHeightOffset);
 
 		if( newHeightOffset > heightOffset )
 			heightOffset = newHeightOffset;
