@@ -3,12 +3,12 @@ using System.Collections;
 
 public class RiderPhysics : MonoBehaviour 
 {
-	float meshlineWidth = 600; // TODO: need to get world size of mesh instead of hardoding measured value editor. Myabe using mesh Bounds could work
+	float meshlineWidth = 4800; // TODO: need to get world size of mesh instead of hardoding measured value editor. Myabe using mesh Bounds could work
 
 	// where y is height.up, x is width and z is forwawrd
 	public Vector3 relativeVelocity =  new Vector3();
 	float maxForwardVelocityMagnitude = 0.150f;
-	float maxSidewaysVelocityMagnitude = 400.0f;
+	float maxSidewaysVelocityMagnitude = 1600.0f;
 	float maxUpVelocity = 500.0f;
 	float linearVelocityDecay = 1.2f;
 
@@ -25,6 +25,9 @@ public class RiderPhysics : MonoBehaviour
 	float rampupVelocityIncrementScale = 100.0f;
 
 	MeshLinesGenerator meshlinesGenerator;
+
+	bool wasSidePressed = false;
+	bool wasForwardPressed = false;
 
 	void Start()
 	{
@@ -60,8 +63,19 @@ public class RiderPhysics : MonoBehaviour
 
 
 		// apply friction to velocities
-		relativeVelocity -=  linearVelocityDecay * relativeVelocity * Time.deltaTime;
+		//relativeVelocity -=  linearVelocityDecay * relativeVelocity * Time.deltaTime;
 
+		if(wasSidePressed == false)
+		{
+			relativeVelocity.x -= linearVelocityDecay * relativeVelocity.x * Time.deltaTime;
+		}
+		if(wasForwardPressed == false)
+		{
+			relativeVelocity.z -= linearVelocityDecay * relativeVelocity.z * Time.deltaTime;
+		}
+
+		wasSidePressed = false;
+		wasForwardPressed = false;
 	}
 
 	void HandleNewHeight(float newHeight)
@@ -94,12 +108,14 @@ public class RiderPhysics : MonoBehaviour
 	{
 		relativeVelocity.z += controlMagnitude * forwardMoveScale;
 		relativeVelocity.z = Mathf.Clamp(relativeVelocity.z, -maxForwardVelocityMagnitude, maxForwardVelocityMagnitude);
+		wasForwardPressed = true;
 	}
 
 	public void MoveSideways(float controlMagnitude)
 	{
 		relativeVelocity.x += controlMagnitude * sideMoveScale;
 		relativeVelocity.x = Mathf.Clamp(relativeVelocity.x, -maxSidewaysVelocityMagnitude , maxSidewaysVelocityMagnitude);
+		wasSidePressed = true;
 	}
 
 	// ranges from -1 to 1
