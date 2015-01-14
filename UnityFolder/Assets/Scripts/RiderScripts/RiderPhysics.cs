@@ -20,7 +20,7 @@ public class RiderPhysics : MonoBehaviour
 	float forwardMoveScale = 0.005f;
 	float sideMoveScale = 10.0f;
 	float gravityScale = -200.0f;
-	float maxHeight = 200.0f;
+	float maxHeight = 10000.0f;
 
 	float rampupVelocityIncrementScale = 100.0f;
 
