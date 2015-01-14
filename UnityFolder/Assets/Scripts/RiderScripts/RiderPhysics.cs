@@ -8,9 +8,9 @@ public class RiderPhysics : MonoBehaviour
 	// where y is height.up, x is width and z is forwawrd
 	public Vector3 relativeVelocity =  new Vector3();
 	float maxForwardVelocityMagnitude = 0.150f;
-	float maxSidewaysVelocityMagnitude = 100.0f;
+	float maxSidewaysVelocityMagnitude = 400.0f;
 	float maxUpVelocity = 500.0f;
-	float linearVelocityDecay = 0.2f;
+	float linearVelocityDecay = 1.2f;
 
 	float progressionOnMesh = 0; // should be clamped between 0 and 1
 	float widthOffset = 0;
@@ -102,5 +102,10 @@ public class RiderPhysics : MonoBehaviour
 		relativeVelocity.x = Mathf.Clamp(relativeVelocity.x, -maxSidewaysVelocityMagnitude , maxSidewaysVelocityMagnitude);
 	}
 
-
+	// ranges from -1 to 1
+	public float GetSideMoveProgressRatio()
+	{
+		float ratio = relativeVelocity.x/maxSidewaysVelocityMagnitude;
+		return ratio;
+	}
 }
