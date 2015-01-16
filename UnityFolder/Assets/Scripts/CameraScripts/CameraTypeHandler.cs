@@ -20,7 +20,7 @@ public class CameraTypeHandler : MonoBehaviour
 		normalCameraObject.SetActive(!isOVR);
 		ovrCameraControllerObject.SetActive(isOVR);
 
-		ovrCameraControllerObject.GetComponent<OVRCameraController>().SetVerticalFOV(ovrFOV);
+		//ovrCameraControllerObject.GetComponent<OVRCameraController>().SetVerticalFOV(ovrFOV);
 
 		ovrCameraControllerObject.transform.GetChild(0).camera.fieldOfView = ovrFOV;
 		ovrCameraControllerObject.transform.GetChild(1).camera.fieldOfView = ovrFOV;
@@ -37,7 +37,7 @@ public class CameraTypeHandler : MonoBehaviour
 			isOVR = !isOVR;
 			
 			normalCameraObject.SetActive(!isOVR);
-			ovrCameraControllerObject.SetActive(isOVR);
+			//ovrCameraControllerObject.SetActive(isOVR);
 
 		}
 

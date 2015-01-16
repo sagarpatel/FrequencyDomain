@@ -67,7 +67,7 @@ public class PlayerScript : MonoBehaviour
 	bool wasOVR = false;
 	public float ovrHorizontalSpeedScale = 0.4f;
 	public float ovrVerticalSpeedScale = 0.03f;
-	OVRCameraController ovrCameraController;
+	//OVRCameraController ovrCameraController;
 
 
 	public GameObject mainCameraGameObject;
@@ -224,7 +224,7 @@ public class PlayerScript : MonoBehaviour
 			//ovrModule.transform.Rotate(new Vector3(0, -90, 0), Space.Self);
 			ovrModule.transform.parent = cameraHolder.transform;
 			ovrModule.transform.localPosition = new Vector3();
-			ovrCameraController = (OVRCameraController)GameObject.FindWithTag("OVRCameraController").GetComponent("OVRCameraController");
+			//ovrCameraController = (OVRCameraController)GameObject.FindWithTag("OVRCameraController").GetComponent("OVRCameraController");
 			mainCameraGameObject =  GameObject.FindWithTag("MainCamera");
 			
 			GameObject[] tempCameraObjectArray =  GameObject.FindGameObjectsWithTag("MainCamera");
@@ -302,8 +302,8 @@ public class PlayerScript : MonoBehaviour
 
 				if(isOVR)
 				{
-					ovrCameraController.SetVerticalFOV(1.5f*mainCameraComponent.fieldOfView);
-					ovrCameraController.BackgroundColor = 1.5f * mainCameraComponent.backgroundColor;
+					//ovrCameraController.SetVerticalFOV(1.5f*mainCameraComponent.fieldOfView);
+					//ovrCameraController.BackgroundColor = 1.5f * mainCameraComponent.backgroundColor;
 				}
 			}
 		}
