@@ -18,7 +18,7 @@ public class RiderPhysics : MonoBehaviour
 	float previousHeight = 0;
 
 	float forwardMoveScale = 0.005f;
-	float sideMoveScale = 10.0f;
+	float sideMoveScale = 20.0f;
 	float gravityScale = -200.0f;
 	float maxHeight = 100000.0f;
 
@@ -68,6 +68,8 @@ public class RiderPhysics : MonoBehaviour
 		if(wasSidePressed == false)
 		{
 			relativeVelocity.x -= linearVelocityDecay * relativeVelocity.x * Time.deltaTime;
+			if(Mathf.Abs(relativeVelocity.x) < 0.01f)
+				relativeVelocity.x =0;
 		}
 		if(wasForwardPressed == false)
 		{
@@ -113,7 +115,16 @@ public class RiderPhysics : MonoBehaviour
 
 	public void MoveSideways(float controlMagnitude)
 	{
-		relativeVelocity.x += controlMagnitude * sideMoveScale;
+
+			
+		if(relativeVelocity.x > 0 && controlMagnitude < 0)
+			relativeVelocity.x += controlMagnitude * sideMoveScale * 2.0f;
+		else if(relativeVelocity.x < 0 && controlMagnitude > 0)
+			relativeVelocity.x += controlMagnitude * sideMoveScale * 2.0f;
+		else
+			relativeVelocity.x += controlMagnitude * sideMoveScale;
+
+
 		relativeVelocity.x = Mathf.Clamp(relativeVelocity.x, -maxSidewaysVelocityMagnitude , maxSidewaysVelocityMagnitude);
 		wasSidePressed = true;
 	}
