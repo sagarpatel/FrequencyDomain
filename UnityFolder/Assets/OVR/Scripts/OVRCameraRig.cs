@@ -186,7 +186,7 @@ public class OVRCameraRig : MonoBehaviour
 
 		OVRDisplay.EyeRenderDesc eyeDesc = OVRManager.display.GetEyeRenderDesc(eye);
 
-		cam.fieldOfView = eyeDesc.fov.y;
+		//cam.fieldOfView = eyeDesc.fov.y;
 		cam.aspect = eyeDesc.resolution.x / eyeDesc.resolution.y;
 		cam.rect = new Rect(0f, 0f, OVRManager.instance.virtualTextureScale, OVRManager.instance.virtualTextureScale);
 		cam.targetTexture = OVRManager.display.GetEyeTexture(eye);
