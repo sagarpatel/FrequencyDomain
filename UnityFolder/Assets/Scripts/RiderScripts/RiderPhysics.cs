@@ -19,10 +19,10 @@ public class RiderPhysics : MonoBehaviour
 
 	float forwardMoveScale = 0.005f;
 	float sideMoveScale = 20.0f;
-	float gravityScale = -200.0f;
+	float gravityScale = -800.0f;
 	float maxHeight = 100000.0f;
 
-	float rampupVelocityIncrementScale = 100.0f;
+	float rampupVelocityIncrementScale = 400.0f;
 
 	MeshLinesGenerator meshlinesGenerator;
 
@@ -93,6 +93,7 @@ public class RiderPhysics : MonoBehaviour
 		{
 			relativeVelocity.y += gravityScale * Time.deltaTime;
 			heightOffset += relativeVelocity.y * Time.deltaTime;
+			//Debug.Log("FALLING vel: " + relativeVelocity.y + "  at time: " + Time.time);
 		}
 		else if( newHeight == previousHeight)
 		{
