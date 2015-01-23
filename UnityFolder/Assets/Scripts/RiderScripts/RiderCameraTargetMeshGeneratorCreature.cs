@@ -3,27 +3,31 @@ using System.Collections;
 
 public class RiderCameraTargetMeshGeneratorCreature : MonoBehaviour 
 {
-	public GameObject meshCreatureGeneratorHead;
-	public Camera riderCamera;
-	Plane[] riderCamPlanes;
-	Collider meshCreatureGeneratorHeadCollider;
+	public GameObject meshCreatureGenerator;
 
 	void Start()
 	{
-		riderCamPlanes = GeometryUtility.CalculateFrustumPlanes(riderCamera);
-		meshCreatureGeneratorHeadCollider = meshCreatureGeneratorHead.GetComponent<Collider>();
+	
+	
 	}
 
 	void Update()
 	{
-		if(GeometryUtility.TestPlanesAABB(riderCamPlanes, meshCreatureGeneratorHeadCollider.bounds))
-		{
 
-		}
-		else
-		{
-			Debug.Log(" MESH HEAD OUTOF VIEW!");
-		}
+		//Vector3 deOrientedCreaturePos = Quaternion.Inverse( meshCreatureGenerator.transform.rotation ) * meshCreatureGenerator.transform.position; 
+		//Vector3 deOrientedCameraHolderPos = Quaternion.Inverse( transform.rotation) * transform.position;
+
+		//float yDiff = Mathf.Abs( deOrientedCreaturePos.y - deOrientedCameraHolderPos.y );
+		//loat zDiff = Mathf.Abs( deOrientedCreaturePos.z - deOrientedCameraHolderPos.z );
+
+		//Debug.Log (yDiff + "   " + zDiff);
+
+		//Debug.Log("Normal camera pos" + transform.position + "  deoriented: " + deOrientedCameraHolderPos  );
+
+		Vector3 diffVec = meshCreatureGenerator.transform.position - transform.position;
+		Vector3 deoritentedDiff = Quaternion.Inverse(transform.rotation) * diffVec ;
+		Debug.Log(transform.position);
+
 
 	}
 
