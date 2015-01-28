@@ -26,7 +26,7 @@ public class RiderCameraTargetMeshGeneratorCreature : MonoBehaviour
 
 		Vector3 diffVec = meshCreatureGenerator.transform.position - transform.position;
 		Vector3 deoritentedDiff = Quaternion.Inverse(transform.rotation) * diffVec ;
-		Debug.Log(transform.position);
+		//Debug.Log(transform.position);
 
 
 	}
