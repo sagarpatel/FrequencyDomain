@@ -7,9 +7,9 @@ using InControl.ReorderableList;
 
 namespace InControl
 {
-	[CustomEditor(typeof(InControlManager))]
+	[CustomEditor( typeof(InControlManager) )]
 	public class InControlManagerEditor : Editor
-	{	
+	{
 		SerializedProperty logDebugInfo;
 		SerializedProperty invertYAxis;
 		SerializedProperty enableXInput;

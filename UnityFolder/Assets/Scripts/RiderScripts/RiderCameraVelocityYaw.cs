@@ -5,7 +5,7 @@ public class RiderCameraVelocityYaw : MonoBehaviour
 {
 
 	RiderPhysics riderPhysics;
-	float maxYawAngle = 17.0f;
+	float maxYawAngle = 10.0f;
 	public AnimationCurve velocityToYawStepCurve;
 	
 	void Start()
