@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
+
 
 public class DebugMoveRider : MonoBehaviour 
 {
@@ -38,6 +40,20 @@ public class DebugMoveRider : MonoBehaviour
 		{
 			riderPhysics.MoveSideways(-1.0f);
 		}
+
+		var inputDeviceRider = InputManager.Devices[0];
+
+		if(inputDeviceRider == null)
+		{
+			Debug.Log("No player 1! controller");
+		}
+		else
+		{
+			riderPhysics.MoveForward(  inputDeviceRider.LeftStickY );
+			riderPhysics.MoveSideways(  inputDeviceRider.LeftStickX );
+		}
+
+
 
 		Vector3 after = transform.position;
 
