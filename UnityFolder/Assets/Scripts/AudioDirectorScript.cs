@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class AudioDirectorScript : MonoBehaviour 
 {
@@ -50,6 +51,10 @@ public class AudioDirectorScript : MonoBehaviour
 	AudioLowPassFilter lowPassFilter;
 	Camera mainCamera;
 
+	BCIDataDirector bciDataDirector;
+
+	public bool isBCIData = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -82,6 +87,8 @@ public class AudioDirectorScript : MonoBehaviour
 
 			StartCoroutine("LaunchLiveAudioSource");
 		}
+
+		bciDataDirector = FindObjectOfType<BCIDataDirector>();
 	}
 	
 	// Update is called once per frame
@@ -138,9 +145,24 @@ public class AudioDirectorScript : MonoBehaviour
 		//HandleLowPassFilter(); // does affect the landscape
 
 
+		
+		if(Input.GetKeyDown(KeyCode.B) == true)
+		{
+			isBCIData = !isBCIData;
+		}
+		
+		
+		if(isBCIData == true)
+		{
+			pseudoLogArray = bciDataDirector.currentDataArray.Take(pseudoLogArray.Length).ToArray();
+		}
+
+
+
 		//update buffer
 		for(int i = 0; i < pseudoLogArray.Length; i++)
 			pseudoLogArrayBuffer[i] += pseudoLogArray[i];
+
 
 
 
