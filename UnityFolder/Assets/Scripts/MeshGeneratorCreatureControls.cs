@@ -58,13 +58,27 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 			// -------- FORWARD ACCELERATION --------------
 
 			// Use last device which provided input.
-			var inputDevice = InputManager.ActiveDevice;		
-			zAcc = inputDevice.Action1 * forwardControlScale ;//* Time.deltaTime;
+
+
 
 			//  --------  ROTATIONAL ACCELERATION --------------
 
-			float triggerLeft = inputDevice.LeftTrigger * rotationControlScale;
-			float triggerRight = -inputDevice.RightTrigger * rotationControlScale;
+			float triggerLeft = 0 ; 
+			float triggerRight = 0 ; 
+			float xAcc = 0;
+			float yAcc = 0;
+
+			if(InputManager.Devices.Count > 1)
+			{
+				var inputDeviceConductor = InputManager.Devices[1];		
+				zAcc = inputDeviceConductor.Action1 * forwardControlScale ;//* Time.deltaTime;
+				
+				triggerLeft = inputDeviceConductor.LeftTrigger * rotationControlScale;
+				triggerRight = -inputDeviceConductor.RightTrigger * rotationControlScale;
+				xAcc = 0.25f * inputDeviceConductor.LeftStickX * hControlScale;
+				yAcc = inputDeviceConductor.LeftStickY * vControlScale;
+			}
+
 
 			
 			if(Input.GetKey(KeyCode.Q))
@@ -73,9 +87,6 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 			if(Input.GetKey(KeyCode.E))
 				triggerRight += 1.0f * -rotationControlScale;
 
-
-			float xAcc = inputDevice.LeftStickX * hControlScale;
-			float yAcc = inputDevice.LeftStickY * vControlScale;
 
 			// --------- LEAP PART ------------
 			applyLMCInput = false;

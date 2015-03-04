@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using InControl;
 
 public class DebugMoveRider : MonoBehaviour 
 {
@@ -41,15 +42,21 @@ public class DebugMoveRider : MonoBehaviour
 
 		Vector3 after = transform.position;
 
+
+
+
+		var inputDeviceRider = InputManager.Devices[0];
 		
-		if(before.magnitude != after.magnitude)
+		if(inputDeviceRider == null)
 		{
-			//Debug.Log("DIFFERENT");
-			//Debug.Log(before);
-			//Debug.Log(after);
+			Debug.Log("No player 1! controller");
+		}
+		else
+		{
+			riderPhysics.MoveForward(  inputDeviceRider.LeftStickY );
+			riderPhysics.MoveSideways(  inputDeviceRider.LeftStickX );
 		}
 
-		//Debug.Log("diff: " + Vector3.Distance(transform.position, meshHeadObject.position));
 
 
 	}

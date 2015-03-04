@@ -22,7 +22,7 @@ public class RiderPhysics : MonoBehaviour
 	float gravityScale = -800.0f;
 	float maxHeight = 100000.0f;
 
-	float rampupVelocityIncrementScale = 400.0f;
+	float rampupVelocityIncrementScale = 600.0f;
 
 	MeshLinesGenerator meshlinesGenerator;
 
@@ -50,7 +50,7 @@ public class RiderPhysics : MonoBehaviour
 
 		// move rider forward before looking for closest meshline
 		progressionOnMesh += relativeVelocity.z * Time.deltaTime;
-		progressionOnMesh = Mathf.Clamp(progressionOnMesh, 0,1);
+		progressionOnMesh = Mathf.Clamp(progressionOnMesh, 0, 0.9f);
 
 		meshlinesGenerator.CalculatePositionAndRotationOnMesh(progressionOnMesh, relativeLocationOnLine , out calPos, out calRot, out newHeightOffset);
 
@@ -111,7 +111,9 @@ public class RiderPhysics : MonoBehaviour
 	{
 		relativeVelocity.z += controlMagnitude * forwardMoveScale;
 		relativeVelocity.z = Mathf.Clamp(relativeVelocity.z, -maxForwardVelocityMagnitude, maxForwardVelocityMagnitude);
-		wasForwardPressed = true;
+		
+		if(Mathf.Abs(controlMagnitude) > 0.05f)
+			wasForwardPressed = true;
 	}
 
 	public void MoveSideways(float controlMagnitude)
@@ -127,7 +129,9 @@ public class RiderPhysics : MonoBehaviour
 
 
 		relativeVelocity.x = Mathf.Clamp(relativeVelocity.x, -maxSidewaysVelocityMagnitude , maxSidewaysVelocityMagnitude);
-		wasSidePressed = true;
+
+		if(Mathf.Abs(controlMagnitude) > 0.05f)
+			wasSidePressed = true;
 	}
 
 	// ranges from -1 to 1
