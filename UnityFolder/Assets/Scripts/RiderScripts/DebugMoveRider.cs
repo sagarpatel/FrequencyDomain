@@ -44,19 +44,20 @@ public class DebugMoveRider : MonoBehaviour
 
 
 
-
-		var inputDeviceRider = InputManager.Devices[0];
-		
-		if(inputDeviceRider == null)
+		if(InputManager.Devices.Count > 1)
 		{
-			Debug.Log("No player 1! controller");
+			var inputDeviceRider = InputManager.Devices[0];
+			
+			if(inputDeviceRider == null)
+			{
+				Debug.Log("No player 1! controller");
+			}
+			else
+			{
+				riderPhysics.MoveForward(  inputDeviceRider.LeftStickY );
+				riderPhysics.MoveSideways(  inputDeviceRider.LeftStickX );
+			}
 		}
-		else
-		{
-			riderPhysics.MoveForward(  inputDeviceRider.LeftStickY );
-			riderPhysics.MoveSideways(  inputDeviceRider.LeftStickX );
-		}
-
 
 
 	}

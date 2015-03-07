@@ -87,6 +87,15 @@ public class MeshGeneratorCreatureControls : MonoBehaviour
 			if(Input.GetKey(KeyCode.E))
 				triggerRight += 1.0f * -rotationControlScale;
 
+			if(Input.GetKey(KeyCode.W))
+			   yAcc += 1.0f * vControlScale;
+			if(Input.GetKey(KeyCode.S))
+				yAcc += -1.0f *vControlScale;
+			if(Input.GetKey(KeyCode.A))
+				xAcc -= 1.0f * hControlScale;
+			if(Input.GetKey(KeyCode.D))
+				xAcc += 1.0f * hControlScale;
+
 
 			// --------- LEAP PART ------------
 			applyLMCInput = false;

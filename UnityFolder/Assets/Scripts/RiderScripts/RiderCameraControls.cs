@@ -12,7 +12,7 @@ public class RiderCameraControls : MonoBehaviour
 	void Update()
 	{
 
-		if(InputManager.Devices.Count > 0)
+		if(InputManager.Devices.Count > 1)
 		{
 			var inputDeviceRider = InputManager.Devices[0];
 
