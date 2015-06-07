@@ -1,7 +1,7 @@
 
-UnityFolder/Builds
-UnityFolder/Assets/Audio
-UnityFolder/Library
+FD_Reboot/Builds
+FD_Reboot/Assets/Audio
+FD_Reboot/Library
 [Tt]emp/
 [Oo]bj/
 
@@ -17,30 +17,30 @@ UnityFolder/Library
 
 #Unity3D Generated File On Crash Reports
 sysinfo.txt
-UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+FD_Reboot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 *.suo
 *.cache
 *.suo
-UnityFolder/UnityVS.UnityFolder.v11.suo
+FD_Reboot/UnityVS.FD_Reboot.v11.suo
 *.cache
-UnityFolder/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+FD_Reboot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 
 *.unityproj
 
 *.csproj
 
-UnityFolder/Assembly-UnityScript-Editor-vs.unityproj
+FD_Reboot/Assembly-UnityScript-Editor-vs.unityproj
 
-UnityFolder/Assembly-UnityScript-Editor.unityproj
+FD_Reboot/Assembly-UnityScript-Editor.unityproj
 
-UnityFolder/Assembly-UnityScript-firstpass-vs.unityproj
+FD_Reboot/Assembly-UnityScript-firstpass-vs.unityproj
 
-UnityFolder/Assembly-UnityScript-firstpass.unityproj
+FD_Reboot/Assembly-UnityScript-firstpass.unityproj
 
-UnityFolder/Assets/Materials/FD_Materials/ParallaxDiffuseMaterial.mat
+FD_Reboot/Assets/Materials/FD_Materials/ParallaxDiffuseMaterial.mat
 
-UnityFolder/UnityVS.UnityFolder.CSharp.csproj
+FD_Reboot/UnityVS.FD_Reboot.CSharp.csproj
 
-UnityFolder/UnityVS.UnityFolder.CSharp.Editor.csproj
+FD_Reboot/UnityVS.FD_Reboot.CSharp.Editor.csproj
 
-UnityFolder/UnityVS.UnityFolder.CSharp.Plugins.csproj
+FD_Reboot/UnityVS.FD_Reboot.CSharp.Plugins.csproj
