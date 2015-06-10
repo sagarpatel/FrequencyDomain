@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class MeshStripGenerator : MonoBehaviour 
 {
-	List<int> m_trianglesList;
+	List<int> m_trianglesList_Up;
+	List<int> m_trianglesList_Down;
 	List<Vector3> m_normalsList;
 
 	Vector3[] m_verticesArray;
@@ -13,7 +14,8 @@ public class MeshStripGenerator : MonoBehaviour
 
 	int m_widthVerticesCount;
 
-	Mesh m_mesh;
+	Mesh m_mesh_Up;
+	Mesh m_mesh_Down;
 
 	void Start()
 	{
@@ -24,15 +26,24 @@ public class MeshStripGenerator : MonoBehaviour
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth)
 	{
 
-		GameObject meshStripGO = new GameObject();
-		meshStripGO.transform.parent = transform;
-		meshStripGO.transform.localPosition = Vector3.zero;
-		meshStripGO.transform.localRotation = Quaternion.identity;
-		meshStripGO.transform.localScale = Vector3.one;
-		meshStripGO.name = transform.name + "_MeshStrip";
+		GameObject meshStripGO_Up = new GameObject();
+		meshStripGO_Up.transform.parent = transform;
+		meshStripGO_Up.transform.localPosition = Vector3.zero;
+		meshStripGO_Up.transform.localRotation = Quaternion.identity;
+		meshStripGO_Up.transform.localScale = Vector3.one;
+		meshStripGO_Up.name = transform.name + "_MeshStrip_Up";
+		meshStripGO_Up.AddComponent<MeshRenderer>();
+		meshStripGO_Up.AddComponent<MeshFilter>();
 
-		meshStripGO.AddComponent<MeshRenderer>();
-		meshStripGO.AddComponent<MeshFilter>();
+
+		GameObject meshStripGO_Down = new GameObject();
+		meshStripGO_Down.transform.parent = transform;
+		meshStripGO_Down.transform.localPosition = Vector3.zero;
+		meshStripGO_Down.transform.localRotation = Quaternion.identity;
+		meshStripGO_Down.transform.localScale = Vector3.one;
+		meshStripGO_Down.name = transform.name + "_MeshStripn_Down";
+		meshStripGO_Down.AddComponent<MeshRenderer>();
+		meshStripGO_Down.AddComponent<MeshFilter>();
 
 		List<Vector3> verticesList =  new List<Vector3>();
 		// generate vertices , in collumns pairs
@@ -42,30 +53,31 @@ public class MeshStripGenerator : MonoBehaviour
 			verticesList.Add( new Vector3(i * collumnWidth, 0, rowDepth));
 		}
 
-		m_trianglesList = new List<int>();
+		m_trianglesList_Up = new List<int>();
+		m_trianglesList_Down = new List<int>();
 		// generate triangles
 		for(int i = 0; i < collumnsCount - 1; i += 2)
 		{
 			// bottom left triangle top side
-			m_trianglesList.Add(i);
-			m_trianglesList.Add(i+1);
-			m_trianglesList.Add(i+2);
+			m_trianglesList_Up.Add(i);
+			m_trianglesList_Up.Add(i+1);
+			m_trianglesList_Up.Add(i+2);
 
 			// bottom left triangle bottom side
-			m_trianglesList.Add(i);
-			m_trianglesList.Add(i+2);
-			m_trianglesList.Add(i+1);
+			m_trianglesList_Down.Add(i);
+			m_trianglesList_Down.Add(i+2);
+			m_trianglesList_Down.Add(i+1);
 
 			// top right triangle top side
-			m_trianglesList.Add(i+1);
-			m_trianglesList.Add(i+3);
-			m_trianglesList.Add(i+2);
+			m_trianglesList_Up.Add(i+1);
+			m_trianglesList_Up.Add(i+3);
+			m_trianglesList_Up.Add(i+2);
 
 
 			// top right triangle bottom side
-			m_trianglesList.Add(i+1);
-			m_trianglesList.Add(i+2);
-			m_trianglesList.Add(i+3);
+			m_trianglesList_Down.Add(i+1);
+			m_trianglesList_Down.Add(i+2);
+			m_trianglesList_Down.Add(i+3);
 
 		}
 
@@ -80,12 +92,20 @@ public class MeshStripGenerator : MonoBehaviour
 		m_verticesArray_FrontRow = frontRowVertsList.ToArray();
 		m_verticesArray_BackRow = backRowVertsList.ToArray();
 
-		Mesh mesh = meshStripGO.GetComponent<MeshFilter>().mesh;
-		mesh.MarkDynamic();
-		mesh.vertices = m_verticesArray;
-		mesh.triangles = m_trianglesList.ToArray();
+		Mesh mesh_Up = meshStripGO_Up.GetComponent<MeshFilter>().mesh;
+		mesh_Up.MarkDynamic();
+		mesh_Up.vertices = m_verticesArray;
+		mesh_Up.triangles = m_trianglesList_Up.ToArray();
+		m_mesh_Up = mesh_Up;
 
-		m_mesh = mesh;
+		Mesh mesh_Down = meshStripGO_Down.GetComponent<MeshFilter>().mesh;
+		mesh_Down.MarkDynamic();
+		mesh_Down.vertices = m_verticesArray;
+		mesh_Down.triangles = m_trianglesList_Down.ToArray();
+		m_mesh_Down = mesh_Down;
+
+		m_mesh_Up.RecalculateNormals();
+		m_mesh_Down.RecalculateNormals();
 	}
 
 	void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)
@@ -108,8 +128,13 @@ public class MeshStripGenerator : MonoBehaviour
 			m_verticesArray_BackRow = backRowVerts_Array;
 		}
 
-		m_mesh.MarkDynamic();
-		m_mesh.vertices = m_verticesArray;
+		m_mesh_Up.MarkDynamic();
+		m_mesh_Down.MarkDynamic();
+		m_mesh_Up.vertices = m_verticesArray;
+		m_mesh_Down.vertices = m_verticesArray;
+		m_mesh_Up.RecalculateNormals();
+		m_mesh_Down.RecalculateNormals();
+
 	}
 
 
