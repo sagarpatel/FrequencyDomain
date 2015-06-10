@@ -18,6 +18,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray;
 	Vector3[] t_calcFrontRowVertsArray; // used as buffer to perform calculations on
 
+	public Material meshStripsMaterial;
+
 	void Start()
 	{
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
@@ -36,7 +38,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
-			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f);
+			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, meshStripsMaterial);
 			m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
 

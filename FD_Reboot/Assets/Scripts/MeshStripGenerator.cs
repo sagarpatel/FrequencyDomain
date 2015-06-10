@@ -18,7 +18,7 @@ public class MeshStripGenerator : MonoBehaviour
 	Mesh m_mesh_Down;
 
 
-	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth)
+	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth, Material meshMaterial)
 	{
 		m_widthVerticesCount = collumnsCount;
 
@@ -40,6 +40,9 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Down.name = transform.name + "_MeshStripn_Down";
 		meshStripGO_Down.AddComponent<MeshRenderer>();
 		meshStripGO_Down.AddComponent<MeshFilter>();
+
+		meshStripGO_Up.GetComponent<MeshRenderer>().material = meshMaterial;
+		meshStripGO_Down.GetComponent<MeshRenderer>().material = meshMaterial;
 
 		List<Vector3> verticesList =  new List<Vector3>();
 		// generate vertices , in collumns pairs
