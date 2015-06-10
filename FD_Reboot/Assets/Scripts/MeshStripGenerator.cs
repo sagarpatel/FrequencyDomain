@@ -9,8 +9,8 @@ public class MeshStripGenerator : MonoBehaviour
 	List<Vector3> m_normalsList;
 
 	Vector3[] m_verticesArray;
-	Vector3[] m_verticesArray_FrontRow;
 	Vector3[] m_verticesArray_BackRow;
+	Vector3[] m_verticesArray_FrontRow;
 
 	int m_widthVerticesCount;
 
@@ -89,8 +89,8 @@ public class MeshStripGenerator : MonoBehaviour
 			frontRowVertsList.Add(verticesList[i]);
 			backRowVertsList.Add(verticesList[i+1]);
 		}
-		m_verticesArray_FrontRow = frontRowVertsList.ToArray();
-		m_verticesArray_BackRow = backRowVertsList.ToArray();
+		m_verticesArray_BackRow = frontRowVertsList.ToArray();
+		m_verticesArray_FrontRow = backRowVertsList.ToArray();
 
 		Mesh mesh_Up = meshStripGO_Up.GetComponent<MeshFilter>().mesh;
 		mesh_Up.MarkDynamic();
@@ -116,7 +116,7 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray[i] = frontRow_VertsArray[i/2];
 			}
-			m_verticesArray_FrontRow = frontRow_VertsArray;
+			m_verticesArray_BackRow = frontRow_VertsArray;
 		}
 
 		if(backRowVerts_Array != null && backRowVerts_Array.Length != 0)
@@ -125,7 +125,7 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray[i+1] = backRowVerts_Array[i/2 + 1];
 			}
-			m_verticesArray_BackRow = backRowVerts_Array;
+			m_verticesArray_FrontRow = backRowVerts_Array;
 		}
 
 		m_mesh_Up.MarkDynamic();
@@ -137,16 +137,25 @@ public class MeshStripGenerator : MonoBehaviour
 
 	}
 
+	public Vector3[] GetBackRowVertices()
+	{
+		return m_verticesArray_BackRow;
+	}
+
+	public Vector3[] GetFrontRowVertices()
+	{
+		return m_verticesArray_FrontRow;
+	}
 
 	void Update()
 	{
-		Vector3[] freshFrontRow = m_verticesArray_FrontRow;
-		for(int i = 0; i < freshFrontRow.Length; i++)
+		Vector3[] freshBackRow = GetBackRowVertices();
+		for(int i = 0; i < freshBackRow.Length; i++)
 		{
-			freshFrontRow[i].y =  Mathf.Sin( 0.50025f * Time.time * i);
+			freshBackRow[i].y =  Mathf.Sin( 20.50025f * Time.time * (float)i/(float)freshBackRow.Length);
 		}
 
-		SetRowsVertices(freshFrontRow, null);
+		SetRowsVertices(freshBackRow, null);
 
 	}
 
