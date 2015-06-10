@@ -4,13 +4,20 @@ using System.Collections.Generic;
 
 public class MeshStripGenerator : MonoBehaviour 
 {
-	List<Vector3> m_verticesList;
 	List<int> m_trianglesList;
 	List<Vector3> m_normalsList;
 
+	Vector3[] m_verticesArray;
+	Vector3[] m_verticesArray_FrontRow;
+	Vector3[] m_verticesArray_BackRow;
+
+	int m_widthVerticesCount;
+
+	Mesh m_mesh;
+
 	void Start()
 	{
-		GenerateMeshStrip(4, 2.4f, 1.7f);
+		GenerateMeshStrip(256, 0.50f, 1.7f);
 	}
 
 
@@ -27,12 +34,12 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO.AddComponent<MeshRenderer>();
 		meshStripGO.AddComponent<MeshFilter>();
 
-		m_verticesList =  new List<Vector3>();
+		List<Vector3> verticesList =  new List<Vector3>();
 		// generate vertices , in collumns pairs
 		for(int i = 0; i < collumnsCount; i++)
 		{
-			m_verticesList.Add( new Vector3(i * collumnWidth, 0, 0));
-			m_verticesList.Add( new Vector3(i * collumnWidth, 0, rowDepth));
+			verticesList.Add( new Vector3(i * collumnWidth, 0, 0));
+			verticesList.Add( new Vector3(i * collumnWidth, 0, rowDepth));
 		}
 
 		m_trianglesList = new List<int>();
@@ -62,9 +69,61 @@ public class MeshStripGenerator : MonoBehaviour
 
 		}
 
+		m_verticesArray = verticesList.ToArray();
+		List<Vector3> frontRowVertsList = new List<Vector3>();
+		List<Vector3> backRowVertsList = new List<Vector3>();
+		for(int i = 0; i < verticesList.Count; i += 2)
+		{
+			frontRowVertsList.Add(verticesList[i]);
+			backRowVertsList.Add(verticesList[i+1]);
+		}
+		m_verticesArray_FrontRow = frontRowVertsList.ToArray();
+		m_verticesArray_BackRow = backRowVertsList.ToArray();
+
 		Mesh mesh = meshStripGO.GetComponent<MeshFilter>().mesh;
-		mesh.vertices = m_verticesList.ToArray();
+		mesh.MarkDynamic();
+		mesh.vertices = m_verticesArray;
 		mesh.triangles = m_trianglesList.ToArray();
+
+		m_mesh = mesh;
 	}
+
+	void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)
+	{
+		if(frontRow_VertsArray != null && frontRow_VertsArray.Length != 0)
+		{
+			for(int i = 0; i < m_verticesArray.Length; i += 2)
+			{
+				m_verticesArray[i] = frontRow_VertsArray[i/2];
+			}
+			m_verticesArray_FrontRow = frontRow_VertsArray;
+		}
+
+		if(backRowVerts_Array != null && backRowVerts_Array.Length != 0)
+		{
+			for(int i = 0; i < m_verticesArray.Length; i += 2)
+			{
+				m_verticesArray[i+1] = backRowVerts_Array[i/2 + 1];
+			}
+			m_verticesArray_BackRow = backRowVerts_Array;
+		}
+
+		m_mesh.MarkDynamic();
+		m_mesh.vertices = m_verticesArray;
+	}
+
+
+	void Update()
+	{
+		Vector3[] freshFrontRow = m_verticesArray_FrontRow;
+		for(int i = 0; i < freshFrontRow.Length; i++)
+		{
+			freshFrontRow[i].y =  Mathf.Sin( 0.50025f * Time.time * i);
+		}
+
+		SetRowsVertices(freshFrontRow, null);
+
+	}
+
 
 }
