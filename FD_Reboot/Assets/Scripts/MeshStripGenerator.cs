@@ -20,6 +20,7 @@ public class MeshStripGenerator : MonoBehaviour
 
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth)
 	{
+		m_widthVerticesCount = collumnsCount;
 
 		GameObject meshStripGO_Up = new GameObject();
 		meshStripGO_Up.transform.parent = transform;

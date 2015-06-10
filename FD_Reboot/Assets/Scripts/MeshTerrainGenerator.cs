@@ -20,12 +20,13 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void Start()
 	{
+		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
 		m_meshStripGeneratorsGOArray = new GameObject[m_meshStripsPoolCount];
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
 			m_meshStripGeneratorsGOArray[i] = new GameObject();
 			m_meshStripGeneratorsGOArray[i].name = "MeshStripGenerator_" + i.ToString();
-			m_meshStripGeneratorsGOArray[i].transform.parent = transform;
+			m_meshStripGeneratorsGOArray[i].transform.parent = meshStripsHolder.transform;
 			m_meshStripGeneratorsGOArray[i].transform.localPosition = Vector3.zero;
 			m_meshStripGeneratorsGOArray[i].transform.localRotation = Quaternion.identity;
 			m_meshStripGeneratorsGOArray[i].transform.localScale = Vector3.one;
@@ -35,14 +36,16 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
-			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 1.0f);
+			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f);
 			m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
 
 		// for initing arrays with legit values
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray = m_meshStripGeneratorsArray[0].GetFrontRowVertices();
 		t_calcFrontRowVertsArray = new Vector3[m_lastGeneratedMeshStrip_FrontRowVerticesArray.Length];
-		t_calcFrontRowVertsArray = m_meshStripGeneratorsArray[0].GetFrontRowVertices();
+		//t_calcFrontRowVertsArray = m_meshStripGeneratorsArray[0].GetFrontRowVertices(); // this just made a refernece, need pure local copy
+		for(int i = 0; i < t_calcFrontRowVertsArray.Length; i++)
+			t_calcFrontRowVertsArray[i] = new Vector3();
 		m_meshStripGeneratorsGOArray[0].SetActive(true);
 	}
 
@@ -55,8 +58,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 			t_calcFrontRowVertsArray[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray[i] + transform.forward * stripDistanceFromPrevious ;
 		}
 		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices(t_calcFrontRowVertsArray, m_lastGeneratedMeshStrip_FrontRowVerticesArray);
-		m_meshStripGeneratorsGOArray[stripIndex].transform.localPosition = Vector3.zero;
-		m_meshStripGeneratorsGOArray[stripIndex].transform.localRotation = Quaternion.identity;
+		m_meshStripGeneratorsGOArray[stripIndex].transform.position = transform.position;
+		m_meshStripGeneratorsGOArray[stripIndex].transform.rotation = transform.rotation;
 		m_meshStripGeneratorsGOArray[stripIndex].transform.localScale = Vector3.one;
 
 		m_lastActivatedStripIndex = stripIndex;
@@ -70,8 +73,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 		SpawnMeshStrip(nextStripSpawnIndex, travelledDistance);
 
-		transform.Translate( transform.forward * m_moveSpeed * Time.deltaTime );
 		t_previousPosition = transform.position;
+		transform.Translate( transform.forward * m_moveSpeed * Time.deltaTime );
+
 	}
 
 }
