@@ -102,6 +102,14 @@ public class MeshStripGenerator : MonoBehaviour
 
 		m_mesh_Up.RecalculateNormals();
 		m_mesh_Down.RecalculateNormals();
+
+		m_mesh_Up.RecalculateBounds();
+		m_mesh_Down.RecalculateBounds();
+
+		float xOffset = m_mesh_Up.bounds.extents.x / 2.0f;
+		meshStripGO_Up.transform.localPosition = new Vector3(-xOffset, 0, 0);
+		meshStripGO_Down.transform.localPosition = new Vector3(-xOffset, 0, 0);
+
 	}
 
 	public void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)

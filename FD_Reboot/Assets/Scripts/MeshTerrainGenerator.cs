@@ -9,7 +9,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	int m_meshStripsPoolCount = 200;
 	int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
-	float m_moveSpeed = 10.0f;
+	float m_moveSpeed = 40.0f;
 	Vector3 t_previousPosition;
 
 	int m_stripsWidthVerticesCount = 256;
