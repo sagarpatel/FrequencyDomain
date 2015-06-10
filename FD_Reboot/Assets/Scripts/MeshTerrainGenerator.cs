@@ -67,7 +67,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	}
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		float travelledDistance = Vector3.Distance(transform.position, t_previousPosition);
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
