@@ -17,11 +17,6 @@ public class MeshStripGenerator : MonoBehaviour
 	Mesh m_mesh_Up;
 	Mesh m_mesh_Down;
 
-	void Start()
-	{
-		GenerateMeshStrip(256, 0.50f, 1.7f);
-	}
-
 
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth)
 	{
@@ -108,7 +103,7 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Down.RecalculateNormals();
 	}
 
-	void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)
+	public void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)
 	{
 		if(frontRow_VertsArray != null && frontRow_VertsArray.Length != 0)
 		{
@@ -147,6 +142,13 @@ public class MeshStripGenerator : MonoBehaviour
 		return m_verticesArray_FrontRow;
 	}
 
+	// Just used for testing
+	/*
+	void Start()
+	{
+		GenerateMeshStrip(256, 0.50f, 1.7f);
+	}
+
 	void Update()
 	{
 		Vector3[] freshBackRow = GetBackRowVertices();
@@ -158,6 +160,6 @@ public class MeshStripGenerator : MonoBehaviour
 		SetRowsVertices(freshBackRow, null);
 
 	}
-
+	*/
 
 }
