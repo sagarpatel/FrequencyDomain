@@ -118,7 +118,7 @@ public class MeshStripGenerator : MonoBehaviour
 		{
 			for(int i = 0; i < m_verticesArray.Length; i += 2)
 			{
-				m_verticesArray[i+1] = backRowVerts_Array[i/2 + 1];
+				m_verticesArray[i+1] = backRowVerts_Array[i/2];
 			}
 			m_verticesArray_FrontRow = backRowVerts_Array;
 		}
