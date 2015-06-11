@@ -6,52 +6,108 @@ public class MeshStripGenerator : MonoBehaviour
 {
 	List<int> m_trianglesList_Up;
 	List<int> m_trianglesList_Down;
-	List<Vector3> m_normalsList;
+	
+	Vector3[] m_verticesArray_Right;
+	Vector3[] m_verticesArray_BackRow_Right;
+	Vector3[] m_verticesArray_FrontRow_Right;
 
-	Vector3[] m_verticesArray;
-	Vector3[] m_verticesArray_BackRow;
-	Vector3[] m_verticesArray_FrontRow;
+	Mesh m_mesh_Up_Right;
+	Mesh m_mesh_Down_Right;
+
+	Vector3[] m_verticesArray_Left;
+	Vector3[] m_verticesArray_BackRow_Left;
+	Vector3[] m_verticesArray_FrontRow_Left;
+
+	Mesh m_mesh_Up_Left;
+	Mesh m_mesh_Down_Left;
 
 	int m_widthVerticesCount;
-
-	Mesh m_mesh_Up;
-	Mesh m_mesh_Down;
-
+	
 
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth, Material meshMaterial)
 	{
 		m_widthVerticesCount = collumnsCount;
 
-		GameObject meshStripGO_Up = new GameObject();
-		meshStripGO_Up.transform.parent = transform;
-		meshStripGO_Up.transform.localPosition = Vector3.zero;
-		meshStripGO_Up.transform.localRotation = Quaternion.identity;
-		meshStripGO_Up.transform.localScale = Vector3.one;
-		meshStripGO_Up.name = transform.name + "_MeshStrip_Up";
-		meshStripGO_Up.AddComponent<MeshRenderer>();
-		meshStripGO_Up.AddComponent<MeshFilter>();
+		// setup GameObjects that will be holding the meshses
+		GameObject meshStripGO_Up_Right = new GameObject();
+		meshStripGO_Up_Right.transform.parent = transform;
+		meshStripGO_Up_Right.transform.localPosition = Vector3.zero;
+		meshStripGO_Up_Right.transform.localRotation = Quaternion.identity;
+		meshStripGO_Up_Right.transform.localScale = Vector3.one;
+		meshStripGO_Up_Right.name = transform.name + "_MeshStrip_Up_Right";
+		meshStripGO_Up_Right.AddComponent<MeshRenderer>();
+		meshStripGO_Up_Right.AddComponent<MeshFilter>();
 
 
-		GameObject meshStripGO_Down = new GameObject();
-		meshStripGO_Down.transform.parent = transform;
-		meshStripGO_Down.transform.localPosition = Vector3.zero;
-		meshStripGO_Down.transform.localRotation = Quaternion.identity;
-		meshStripGO_Down.transform.localScale = Vector3.one;
-		meshStripGO_Down.name = transform.name + "_MeshStripn_Down";
-		meshStripGO_Down.AddComponent<MeshRenderer>();
-		meshStripGO_Down.AddComponent<MeshFilter>();
+		GameObject meshStripGO_Down_Right = new GameObject();
+		meshStripGO_Down_Right.transform.parent = transform;
+		meshStripGO_Down_Right.transform.localPosition = Vector3.zero;
+		meshStripGO_Down_Right.transform.localRotation = Quaternion.identity;
+		meshStripGO_Down_Right.transform.localScale = Vector3.one;
+		meshStripGO_Down_Right.name = transform.name + "_MeshStrip_Down_Right";
+		meshStripGO_Down_Right.AddComponent<MeshRenderer>();
+		meshStripGO_Down_Right.AddComponent<MeshFilter>();
 
-		meshStripGO_Up.GetComponent<MeshRenderer>().material = meshMaterial;
-		meshStripGO_Down.GetComponent<MeshRenderer>().material = meshMaterial;
+		
+		GameObject meshStripGO_Up_Left = new GameObject();
+		meshStripGO_Up_Left.transform.parent = transform;
+		meshStripGO_Up_Left.transform.localPosition = Vector3.zero;
+		meshStripGO_Up_Left.transform.localRotation = Quaternion.identity;
+		meshStripGO_Up_Left.transform.localScale = Vector3.one;
+		meshStripGO_Up_Left.name = transform.name + "_MeshStrip_Up_Left";
+		meshStripGO_Up_Left.AddComponent<MeshRenderer>();
+		meshStripGO_Up_Left.AddComponent<MeshFilter>();
+		
+		
+		GameObject meshStripGO_Down_Left = new GameObject();
+		meshStripGO_Down_Left.transform.parent = transform;
+		meshStripGO_Down_Left.transform.localPosition = Vector3.zero;
+		meshStripGO_Down_Left.transform.localRotation = Quaternion.identity;
+		meshStripGO_Down_Left.transform.localScale = Vector3.one;
+		meshStripGO_Down_Left.name = transform.name + "_MeshStrip_Down_Left";
+		meshStripGO_Down_Left.AddComponent<MeshRenderer>();
+		meshStripGO_Down_Left.AddComponent<MeshFilter>();
 
-		List<Vector3> verticesList =  new List<Vector3>();
+		// set meshes material
+		meshStripGO_Up_Right.GetComponent<MeshRenderer>().material = meshMaterial;
+		meshStripGO_Down_Right.GetComponent<MeshRenderer>().material = meshMaterial;
+		meshStripGO_Up_Left.GetComponent<MeshRenderer>().material = meshMaterial;
+		meshStripGO_Down_Left.GetComponent<MeshRenderer>().material = meshMaterial;
+
+
+		// generate vertices, Right, Left get their unique set 
+		List<Vector3> verticesList_Right = new List<Vector3>();
+		List<Vector3> verticesList_Left = new List<Vector3>();
 		// generate vertices , in collumns pairs
 		for(int i = 0; i < collumnsCount; i++)
 		{
-			verticesList.Add( new Vector3(i * collumnWidth, 0, 0));
-			verticesList.Add( new Vector3(i * collumnWidth, 0, rowDepth));
+			verticesList_Right.Add( new Vector3(i * collumnWidth, 0, 0));
+			verticesList_Right.Add( new Vector3(i * collumnWidth, 0, rowDepth));
+
+			verticesList_Left.Add( new Vector3(-i * collumnWidth, 0, 0)); 
+			verticesList_Left.Add( new Vector3(-i * collumnWidth, 0, rowDepth));
 		}
 
+		// save vertices into arrays, setup the rows vertices arrays
+		m_verticesArray_Right = verticesList_Right.ToArray();
+		m_verticesArray_Left = verticesList_Left.ToArray();
+		List<Vector3> frontRowVertsList_Right = new List<Vector3>();
+		List<Vector3> backRowVertsList_Right = new List<Vector3>();
+		List<Vector3> frontRowVertsList_Left = new List<Vector3>();
+		List<Vector3> backRowVertsList_Left = new List<Vector3>();
+		for(int i = 0; i < verticesList_Right.Count; i += 2)
+		{
+			frontRowVertsList_Right.Add(verticesList_Right[i]);
+			backRowVertsList_Right.Add(verticesList_Right[i+1]);
+			frontRowVertsList_Left.Add(verticesList_Left[i]);
+			backRowVertsList_Left.Add(verticesList_Left[i+1]);
+		}
+		m_verticesArray_BackRow_Right = frontRowVertsList_Right.ToArray();
+		m_verticesArray_FrontRow_Right = backRowVertsList_Right.ToArray();
+		m_verticesArray_BackRow_Left = frontRowVertsList_Left.ToArray();
+		m_verticesArray_FrontRow_Left = backRowVertsList_Left.ToArray();
+
+		// generate triangles list, will be the same indicies for Right and Left, so no need to have their own set
 		m_trianglesList_Up = new List<int>();
 		m_trianglesList_Down = new List<int>();
 		// generate triangles
@@ -72,87 +128,139 @@ public class MeshStripGenerator : MonoBehaviour
 			m_trianglesList_Up.Add(i+3);
 			m_trianglesList_Up.Add(i+2);
 
-
 			// top right triangle bottom side
 			m_trianglesList_Down.Add(i+1);
 			m_trianglesList_Down.Add(i+2);
 			m_trianglesList_Down.Add(i+3);
-
 		}
 
-		m_verticesArray = verticesList.ToArray();
-		List<Vector3> frontRowVertsList = new List<Vector3>();
-		List<Vector3> backRowVertsList = new List<Vector3>();
-		for(int i = 0; i < verticesList.Count; i += 2)
-		{
-			frontRowVertsList.Add(verticesList[i]);
-			backRowVertsList.Add(verticesList[i+1]);
-		}
-		m_verticesArray_BackRow = frontRowVertsList.ToArray();
-		m_verticesArray_FrontRow = backRowVertsList.ToArray();
+		//////////// Calculations End
 
-		Mesh mesh_Up = meshStripGO_Up.GetComponent<MeshFilter>().mesh;
-		mesh_Up.MarkDynamic();
-		mesh_Up.vertices = m_verticesArray;
-		mesh_Up.triangles = m_trianglesList_Up.ToArray();
-		m_mesh_Up = mesh_Up;
+		// assign calculated vertices, etc to the mesh component, call refresh functions etc.
 
-		Mesh mesh_Down = meshStripGO_Down.GetComponent<MeshFilter>().mesh;
-		mesh_Down.MarkDynamic();
-		mesh_Down.vertices = m_verticesArray;
-		mesh_Down.triangles = m_trianglesList_Down.ToArray();
-		m_mesh_Down = mesh_Down;
+		// Right side mesh
+		Mesh mesh_Up_Right = meshStripGO_Up_Right.GetComponent<MeshFilter>().mesh;
+		mesh_Up_Right.MarkDynamic();
+		mesh_Up_Right.vertices = m_verticesArray_Right;
+		mesh_Up_Right.triangles = m_trianglesList_Up.ToArray();
+		m_mesh_Up_Right = mesh_Up_Right;
 
-		m_mesh_Up.RecalculateNormals();
-		m_mesh_Down.RecalculateNormals();
+		Mesh mesh_Down_Right = meshStripGO_Down_Right.GetComponent<MeshFilter>().mesh;
+		mesh_Down_Right.MarkDynamic();
+		mesh_Down_Right.vertices = m_verticesArray_Right;
+		mesh_Down_Right.triangles = m_trianglesList_Down.ToArray();
+		m_mesh_Down_Right = mesh_Down_Right;
 
-		m_mesh_Up.RecalculateBounds();
-		m_mesh_Down.RecalculateBounds();
+		m_mesh_Up_Right.RecalculateNormals();
+		m_mesh_Down_Right.RecalculateNormals();
 
-		float xOffset = m_mesh_Up.bounds.extents.x / 2.0f;
-		meshStripGO_Up.transform.localPosition = new Vector3(-xOffset, 0, 0);
-		meshStripGO_Down.transform.localPosition = new Vector3(-xOffset, 0, 0);
+		m_mesh_Up_Right.RecalculateBounds();
+		m_mesh_Down_Right.RecalculateBounds();
+
+		// Left side mesh
+		Mesh mesh_Up_Left = meshStripGO_Up_Left.GetComponent<MeshFilter>().mesh;
+		mesh_Up_Left.MarkDynamic();
+		mesh_Up_Left.vertices = m_verticesArray_Left;
+		mesh_Up_Left.triangles = m_trianglesList_Up.ToArray();
+		m_mesh_Up_Left = mesh_Up_Left;
+
+		Mesh mesh_Down_Left = meshStripGO_Down_Left.GetComponent<MeshFilter>().mesh;
+		mesh_Down_Left.MarkDynamic();
+		mesh_Down_Left.vertices = m_verticesArray_Left;
+		mesh_Down_Left.triangles = m_trianglesList_Down.ToArray();
+		m_mesh_Down_Left = mesh_Down_Left;
+
+		m_mesh_Up_Left.RecalculateNormals();
+		m_mesh_Down_Left.RecalculateNormals();
+
+		m_mesh_Up_Left.RecalculateBounds();
+		m_mesh_Down_Left.RecalculateBounds();
+
+
+
+		//float xOffset = m_mesh_Up_Right.bounds.extents.x / 2.0f;
+		//meshStripGO_Up_Right.transform.localPosition = new Vector3(-xOffset, 0, 0);
+		//meshStripGO_Down_Right.transform.localPosition = new Vector3(-xOffset, 0, 0);
 
 	}
 
-	public void SetRowsVertices(Vector3[] frontRow_VertsArray, Vector3[] backRowVerts_Array)
+	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right)
 	{
-		if(frontRow_VertsArray != null && frontRow_VertsArray.Length != 0)
+		if(frontRow_VertsArray_Right != null && frontRow_VertsArray_Right.Length != 0)
 		{
-			for(int i = 0; i < m_verticesArray.Length; i += 2)
+			for(int i = 0; i < m_verticesArray_Right.Length; i += 2)
 			{
-				m_verticesArray[i] = frontRow_VertsArray[i/2];
+				m_verticesArray_Right[i] = frontRow_VertsArray_Right[i/2];
+				m_verticesArray_Left[i] = frontRow_VertsArray_Right[i/2];
 			}
-			m_verticesArray_BackRow = frontRow_VertsArray;
+			m_verticesArray_BackRow_Right = frontRow_VertsArray_Right;
 		}
 
-		if(backRowVerts_Array != null && backRowVerts_Array.Length != 0)
+		if(backRowVerts_Array_Right != null && backRowVerts_Array_Right.Length != 0)
 		{
-			for(int i = 0; i < m_verticesArray.Length; i += 2)
+			for(int i = 0; i < m_verticesArray_Right.Length; i += 2)
 			{
-				m_verticesArray[i+1] = backRowVerts_Array[i/2];
+				m_verticesArray_Right[i+1] = backRowVerts_Array_Right[i/2];
 			}
-			m_verticesArray_FrontRow = backRowVerts_Array;
+			m_verticesArray_FrontRow_Right = backRowVerts_Array_Right;
 		}
 
-		m_mesh_Up.MarkDynamic();
-		m_mesh_Down.MarkDynamic();
-		m_mesh_Up.vertices = m_verticesArray;
-		m_mesh_Down.vertices = m_verticesArray;
-		m_mesh_Up.RecalculateNormals();
-		m_mesh_Down.RecalculateNormals();
-
+		m_mesh_Up_Right.MarkDynamic();
+		m_mesh_Down_Right.MarkDynamic();
+		m_mesh_Up_Right.vertices = m_verticesArray_Right;
+		m_mesh_Down_Right.vertices = m_verticesArray_Right;
+		m_mesh_Up_Right.RecalculateNormals();
+		m_mesh_Down_Right.RecalculateNormals();
 	}
 
-	public Vector3[] GetBackRowVertices()
+	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left)
 	{
-		return m_verticesArray_BackRow;
+		if(frontRow_VertsArray_Left != null && frontRow_VertsArray_Left.Length != 0)
+		{
+			for(int i = 0; i < m_verticesArray_Left.Length; i += 2)
+			{
+				m_verticesArray_Left[i] = frontRow_VertsArray_Left[i/2];
+				m_verticesArray_Left[i] = frontRow_VertsArray_Left[i/2];
+			}
+			m_verticesArray_BackRow_Left = frontRow_VertsArray_Left;
+		}
+		
+		if(backRowVerts_Array_Left != null && backRowVerts_Array_Left.Length != 0)
+		{
+			for(int i = 0; i < m_verticesArray_Left.Length; i += 2)
+			{
+				m_verticesArray_Left[i+1] = backRowVerts_Array_Left[i/2];
+			}
+			m_verticesArray_FrontRow_Left = backRowVerts_Array_Left;
+		}
+		
+		m_mesh_Up_Left.MarkDynamic();
+		m_mesh_Down_Left.MarkDynamic();
+		m_mesh_Up_Left.vertices = m_verticesArray_Left;
+		m_mesh_Down_Left.vertices = m_verticesArray_Left;
+		m_mesh_Up_Left.RecalculateNormals();
+		m_mesh_Down_Left.RecalculateNormals();
 	}
 
-	public Vector3[] GetFrontRowVertices()
+	public Vector3[] GetBackRowVertices_Right()
 	{
-		return m_verticesArray_FrontRow;
+		return m_verticesArray_BackRow_Right;
 	}
+	public Vector3[] GetFrontRowVertices_Right()
+	{
+		return m_verticesArray_FrontRow_Right;
+	}
+
+	public Vector3[] GetBackRowVertices_Left()
+	{
+		return m_verticesArray_BackRow_Left;
+	}
+	public Vector3[] GetFrontRowVertices_Left()
+	{
+		return m_verticesArray_FrontRow_Left;
+	}
+
+
 
 	// Just used for testing
 	/*
