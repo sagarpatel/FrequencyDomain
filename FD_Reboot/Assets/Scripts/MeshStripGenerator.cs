@@ -97,15 +97,15 @@ public class MeshStripGenerator : MonoBehaviour
 		List<Vector3> backRowVertsList_Left = new List<Vector3>();
 		for(int i = 0; i < verticesList_Right.Count; i += 2)
 		{
-			frontRowVertsList_Right.Add(verticesList_Right[i]);
-			backRowVertsList_Right.Add(verticesList_Right[i+1]);
-			frontRowVertsList_Left.Add(verticesList_Left[i]);
-			backRowVertsList_Left.Add(verticesList_Left[i+1]);
+			backRowVertsList_Right.Add(verticesList_Right[i]);
+			frontRowVertsList_Right.Add(verticesList_Right[i+1]);
+			backRowVertsList_Left.Add(verticesList_Left[i]);
+			frontRowVertsList_Left.Add(verticesList_Left[i+1]);
 		}
-		m_verticesArray_BackRow_Right = frontRowVertsList_Right.ToArray();
-		m_verticesArray_FrontRow_Right = backRowVertsList_Right.ToArray();
-		m_verticesArray_BackRow_Left = frontRowVertsList_Left.ToArray();
-		m_verticesArray_FrontRow_Left = backRowVertsList_Left.ToArray();
+		m_verticesArray_BackRow_Right = backRowVertsList_Right.ToArray();
+		m_verticesArray_FrontRow_Right = frontRowVertsList_Right.ToArray();
+		m_verticesArray_BackRow_Left = backRowVertsList_Left.ToArray();
+		m_verticesArray_FrontRow_Left = frontRowVertsList_Left.ToArray();
 
 		// generate triangles list, will be the same indicies for Right and Left, so no need to have their own set
 		m_trianglesList_Up = new List<int>();
@@ -191,9 +191,8 @@ public class MeshStripGenerator : MonoBehaviour
 			for(int i = 0; i < m_verticesArray_Right.Length; i += 2)
 			{
 				m_verticesArray_Right[i] = frontRow_VertsArray_Right[i/2];
-				m_verticesArray_Left[i] = frontRow_VertsArray_Right[i/2];
 			}
-			m_verticesArray_BackRow_Right = frontRow_VertsArray_Right;
+			m_verticesArray_FrontRow_Right = frontRow_VertsArray_Right;
 		}
 
 		if(backRowVerts_Array_Right != null && backRowVerts_Array_Right.Length != 0)
@@ -202,7 +201,7 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Right[i+1] = backRowVerts_Array_Right[i/2];
 			}
-			m_verticesArray_FrontRow_Right = backRowVerts_Array_Right;
+			m_verticesArray_BackRow_Right = backRowVerts_Array_Right;
 		}
 
 		m_mesh_Up_Right.MarkDynamic();
@@ -220,9 +219,8 @@ public class MeshStripGenerator : MonoBehaviour
 			for(int i = 0; i < m_verticesArray_Left.Length; i += 2)
 			{
 				m_verticesArray_Left[i] = frontRow_VertsArray_Left[i/2];
-				m_verticesArray_Left[i] = frontRow_VertsArray_Left[i/2];
 			}
-			m_verticesArray_BackRow_Left = frontRow_VertsArray_Left;
+			m_verticesArray_FrontRow_Left = frontRow_VertsArray_Left;
 		}
 		
 		if(backRowVerts_Array_Left != null && backRowVerts_Array_Left.Length != 0)
@@ -231,7 +229,7 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Left[i+1] = backRowVerts_Array_Left[i/2];
 			}
-			m_verticesArray_FrontRow_Left = backRowVerts_Array_Left;
+			m_verticesArray_BackRow_Left = backRowVerts_Array_Left;
 		}
 		
 		m_mesh_Up_Left.MarkDynamic();
