@@ -69,10 +69,10 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Down_Left.AddComponent<MeshFilter>();
 
 		// set meshes material
-		meshStripGO_Up_Right.GetComponent<MeshRenderer>().material = meshMaterial;
-		meshStripGO_Down_Right.GetComponent<MeshRenderer>().material = meshMaterial;
-		meshStripGO_Up_Left.GetComponent<MeshRenderer>().material = meshMaterial;
-		meshStripGO_Down_Left.GetComponent<MeshRenderer>().material = meshMaterial;
+		meshStripGO_Up_Right.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
+		meshStripGO_Down_Right.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
+		meshStripGO_Up_Left.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
+		meshStripGO_Down_Left.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
 
 
 		// generate vertices, Right, Left get their unique set 
@@ -142,13 +142,13 @@ public class MeshStripGenerator : MonoBehaviour
 		Mesh mesh_Up_Right = meshStripGO_Up_Right.GetComponent<MeshFilter>().mesh;
 		mesh_Up_Right.MarkDynamic();
 		mesh_Up_Right.vertices = m_verticesArray_Right;
-		mesh_Up_Right.triangles = m_trianglesList_Up.ToArray();
+		mesh_Up_Right.triangles = m_trianglesList_Down.ToArray(); //m_trianglesList_Up.ToArray();
 		m_mesh_Up_Right = mesh_Up_Right;
 
 		Mesh mesh_Down_Right = meshStripGO_Down_Right.GetComponent<MeshFilter>().mesh;
 		mesh_Down_Right.MarkDynamic();
 		mesh_Down_Right.vertices = m_verticesArray_Right;
-		mesh_Down_Right.triangles = m_trianglesList_Down.ToArray();
+		mesh_Down_Right.triangles = m_trianglesList_Up.ToArray(); //m_trianglesList_Down.ToArray();
 		m_mesh_Down_Right = mesh_Down_Right;
 
 		m_mesh_Up_Right.RecalculateNormals();
