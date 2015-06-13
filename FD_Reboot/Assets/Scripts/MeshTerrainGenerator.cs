@@ -6,7 +6,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 {
 	GameObject[] m_meshStripGeneratorsGOArray;
 	MeshStripGenerator[] m_meshStripGeneratorsArray;
-	int m_meshStripsPoolCount = 200;
+	int m_meshStripsPoolCount = 300;
 	int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
 	float m_moveSpeed = 40.0f;
@@ -46,7 +46,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
 			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, meshStripsMaterial);
-			m_meshStripGeneratorsGOArray[i].SetActive(false);
+			//m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
 
 		// for initing arrays with legit values
@@ -68,6 +68,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_lastGeneratedMeshStrip_Rotation = m_meshStripGeneratorsGOArray[0].transform.rotation;
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[0].transform;
 		m_meshStripGeneratorsGOArray[0].SetActive(true);
+
+		meshStripsHolder.SetActive(false);
+		meshStripsHolder.SetActive(true);
 	}
 
 	void SpawnMeshStrip(int stripIndex)//, float stripDistanceFromPrevious)
@@ -104,7 +107,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	}
 
 
-	void FixedUpdate()
+	void Update()
 	{
 		t_previousPosition = transform.position;
 		transform.Translate( transform.forward * m_moveSpeed * Time.deltaTime );
