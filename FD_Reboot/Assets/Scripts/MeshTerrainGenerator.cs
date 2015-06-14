@@ -12,7 +12,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_moveSpeed = 40.0f;
 	Vector3 t_previousPosition;
 
-	int m_stripsWidthVerticesCount = 256;
+	int m_stripsWidthVerticesCount = 512;
 	float m_stripsWidthVerticesScale = 0.5f;
 
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right;
