@@ -134,7 +134,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	{
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			testHeightValues[i] = 1.0f * Mathf.Sin( (float)i * Time.time);
+			testHeightValues[i] = 0.0250f * Mathf.Sin( 0.01f * (float)i * Time.time);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
 

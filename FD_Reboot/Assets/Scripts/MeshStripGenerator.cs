@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class MeshStripGenerator : MonoBehaviour 
 {
@@ -192,7 +193,9 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Right[i] = frontRow_VertsArray_Right[i/2];
 			}
-			m_verticesArray_FrontRow_Right = frontRow_VertsArray_Right;
+			//m_verticesArray_FrontRow_Right = frontRow_VertsArray_Right;
+			Array.Copy(frontRow_VertsArray_Right, m_verticesArray_FrontRow_Right, frontRow_VertsArray_Right.Length);
+
 		}
 
 		if(backRowVerts_Array_Right != null && backRowVerts_Array_Right.Length != 0)
@@ -201,7 +204,8 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Right[i+1] = backRowVerts_Array_Right[i/2];
 			}
-			m_verticesArray_BackRow_Right = backRowVerts_Array_Right;
+			//m_verticesArray_BackRow_Right = backRowVerts_Array_Right;
+			Array.Copy(backRowVerts_Array_Right, m_verticesArray_BackRow_Right, backRowVerts_Array_Right.Length);
 		}
 
 		m_mesh_Up_Right.MarkDynamic();
@@ -220,7 +224,8 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Left[i] = frontRow_VertsArray_Left[i/2];
 			}
-			m_verticesArray_FrontRow_Left = frontRow_VertsArray_Left;
+			//m_verticesArray_FrontRow_Left = frontRow_VertsArray_Left;
+			Array.Copy(frontRow_VertsArray_Left, m_verticesArray_FrontRow_Left, frontRow_VertsArray_Left.Length);
 		}
 		
 		if(backRowVerts_Array_Left != null && backRowVerts_Array_Left.Length != 0)
@@ -229,7 +234,8 @@ public class MeshStripGenerator : MonoBehaviour
 			{
 				m_verticesArray_Left[i+1] = backRowVerts_Array_Left[i/2];
 			}
-			m_verticesArray_BackRow_Left = backRowVerts_Array_Left;
+			//m_verticesArray_BackRow_Left = backRowVerts_Array_Left;
+			Array.Copy(backRowVerts_Array_Left, m_verticesArray_BackRow_Left, backRowVerts_Array_Left.Length);
 		}
 		
 		m_mesh_Up_Left.MarkDynamic();
