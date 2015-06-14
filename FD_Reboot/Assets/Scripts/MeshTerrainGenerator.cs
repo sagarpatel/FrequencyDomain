@@ -25,7 +25,12 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3[] t_calcBackRowVertsArray_Left;
 	Quaternion t_diffQuaternion;
 
-	public Material meshStripsMaterial;
+	public Material m_meshStripsMaterial;
+
+	float[] m_freshHeighValues_Right;
+	float[] m_freshHeighValues_Left;
+
+	float[] testHeightValues;
 
 	void Start()
 	{
@@ -45,7 +50,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
-			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, meshStripsMaterial);
+			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshStripsMaterial);
 			//m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
 
@@ -71,6 +76,25 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 		meshStripsHolder.SetActive(false);
 		meshStripsHolder.SetActive(true);
+
+		m_freshHeighValues_Right = new float[m_stripsWidthVerticesCount];
+		m_freshHeighValues_Left = new float[m_stripsWidthVerticesCount];
+		testHeightValues = new float[m_stripsWidthVerticesCount];
+		for(int i = 0; i < m_freshHeighValues_Right.Length; i++)
+		{
+			m_freshHeighValues_Right[i] = 0;
+			m_freshHeighValues_Left[i] = 0;
+			testHeightValues[i] = 0;
+		}
+	}
+
+	public void UpdateHeighValues(float[] heightsArray_Right, float[] heightsArray_Left)
+	{
+		for(int i = 0; i < m_freshHeighValues_Right.Length; i++)
+		{
+			m_freshHeighValues_Right[i] = heightsArray_Right[i];
+			m_freshHeighValues_Left[i] = heightsArray_Left[i];
+		}
 	}
 
 	void SpawnMeshStrip(int stripIndex)//, float stripDistanceFromPrevious)
@@ -87,17 +111,16 @@ public class MeshTerrainGenerator : MonoBehaviour
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
-			t_calcFrontRowVertsArray_Right[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i];// + transform.forward * stripDistanceFromPrevious;
+			t_calcFrontRowVertsArray_Right[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i] + transform.up * m_freshHeighValues_Right[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Right = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i]);
 			t_calcBackRowVertsArray_Right[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Right) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i];
 
-			t_calcFrontRowVertsArray_Left[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];// + transform.forward * stripDistanceFromPrevious;
+			t_calcFrontRowVertsArray_Left[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Left = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i]);
 			t_calcBackRowVertsArray_Left[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Left) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];
 		}
 		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right);
 		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left);
-
 
 		m_lastActivatedStripIndex = stripIndex;
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Right();
@@ -109,16 +132,18 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void Update()
 	{
+		for(int i = 0; i < testHeightValues.Length; i++)
+		{
+			testHeightValues[i] = 1.0f * Mathf.Sin( (float)i * Time.time);
+		}
+		UpdateHeighValues(testHeightValues, testHeightValues);
+
 		t_previousPosition = transform.position;
 		transform.Translate( transform.forward * m_moveSpeed * Time.deltaTime );
-
-
 
 		float travelledDistance = Vector3.Distance(transform.position, t_previousPosition);
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
-
-
 	}
 
 }
