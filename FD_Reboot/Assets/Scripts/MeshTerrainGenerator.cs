@@ -32,6 +32,10 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	float[] testHeightValues;
 
+	public float d_rotVel_x = 0;
+	public float d_rotVel_y = 0;
+	public float d_rotVel_z = 0;
+
 	void Start()
 	{
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
@@ -134,16 +138,20 @@ public class MeshTerrainGenerator : MonoBehaviour
 	{
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			testHeightValues[i] = 0.00250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			//testHeightValues[i] = 0.00250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			testHeightValues[i] = Mathf.Sin(Time.time + 2.0f*(float)i/(float)testHeightValues.Length);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
 
 		t_previousPosition = transform.position;
-		transform.Translate( transform.forward * m_moveSpeed * Time.deltaTime );
+		transform.position += transform.forward * m_moveSpeed * Time.deltaTime;
 
 		float travelledDistance = Vector3.Distance(transform.position, t_previousPosition);
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
+
+		transform.Rotate(new Vector3(d_rotVel_x, d_rotVel_y , d_rotVel_z) * Time.deltaTime);
+
 	}
 
 }
