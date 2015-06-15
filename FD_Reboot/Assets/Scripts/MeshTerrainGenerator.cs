@@ -9,7 +9,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	int m_meshStripsPoolCount = 300;
 	int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
-	float m_moveSpeed = 40.0f;
+	float m_moveSpeed = 60.0f;
 	Vector3 t_previousPosition;
 
 	int m_stripsWidthVerticesCount = 512;
@@ -134,12 +134,12 @@ public class MeshTerrainGenerator : MonoBehaviour
 	}
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			//testHeightValues[i] = 0.00250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
-			testHeightValues[i] = Mathf.Sin(Time.time + 2.0f*(float)i/(float)testHeightValues.Length);
+			testHeightValues[i] = 0.00250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			//testHeightValues[i] = Mathf.Sin(Time.time);// + 1.0f*(float)i/(float)testHeightValues.Length);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
 
