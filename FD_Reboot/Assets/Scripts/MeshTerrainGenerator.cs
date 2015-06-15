@@ -100,45 +100,56 @@ public class MeshTerrainGenerator : MonoBehaviour
 			m_freshHeighValues_Left[i] = heightsArray_Left[i];
 		}
 	}
-
+	
 	void SpawnMeshStrip(int stripIndex)//, float stripDistanceFromPrevious)
 	{
 		m_meshStripGeneratorsGOArray[stripIndex].SetActive(true);
-
+		
 		m_meshStripGeneratorsGOArray[stripIndex].transform.position = transform.position;
 		m_meshStripGeneratorsGOArray[stripIndex].transform.rotation = transform.rotation;
 		m_meshStripGeneratorsGOArray[stripIndex].transform.localScale = Vector3.one;
-
+		
 		t_diffQuaternion = transform.rotation * Quaternion.Inverse( m_lastGeneratedMeshStrip_Rotation); 
 		Vector3 vertexWorldPos_Right;
 		Vector3 vertexWorldPos_Left;
+		Vector3 generatedFrontRowVertex_Right;
+		Vector3 generatedFrontRowVertex_Left;
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
-			t_calcFrontRowVertsArray_Right[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i] + transform.up * m_freshHeighValues_Right[i];// + transform.forward * stripDistanceFromPrevious;
+			generatedFrontRowVertex_Right = GenerateFrontRowVertex(i);
+			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
+			generatedFrontRowVertex_Left.x = - generatedFrontRowVertex_Left.x;
+			
+			t_calcFrontRowVertsArray_Right[i] = generatedFrontRowVertex_Right + Vector3.up * m_freshHeighValues_Right[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i] + transform.up * m_freshHeighValues_Right[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Right = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i]);
 			t_calcBackRowVertsArray_Right[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Right) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i];
-
-			t_calcFrontRowVertsArray_Left[i] = m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
+			
+			t_calcFrontRowVertsArray_Left[i] = generatedFrontRowVertex_Left + Vector3.up * m_freshHeighValues_Left[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Left = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i]);
 			t_calcBackRowVertsArray_Left[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Left) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];
 		}
 		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right);
 		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left);
-
+		
 		m_lastActivatedStripIndex = stripIndex;
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Right();
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Left();
 		m_lastGeneratedMeshStrip_Rotation = m_meshStripGeneratorsGOArray[stripIndex].transform.rotation;
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[stripIndex].transform;
 	}
-
+	
+	Vector3 GenerateFrontRowVertex(int collumnIndex)
+	{
+		Vector3 basePos = new Vector3( (float)collumnIndex * m_stripsWidthVerticesScale, 0, 0);
+		return basePos;
+	}
 
 	void FixedUpdate()
 	{
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			testHeightValues[i] = 0.00250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			testHeightValues[i] = 0.250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
 			//testHeightValues[i] = Mathf.Sin(Time.time);// + 1.0f*(float)i/(float)testHeightValues.Length);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
