@@ -37,6 +37,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	public float d_rotVel_z = 0;
 	[Range(-1,1)]
 	public float d_bendFactor = 0;
+	public float d_bendOscilationFrequency = 0.0f;
+
 	float m_stripHalfWidth;
 	float m_circleFormRadius;
 	Vector3 m_circleCenterPos;
@@ -123,18 +125,25 @@ public class MeshTerrainGenerator : MonoBehaviour
 		Vector3 vertexWorldPos_Left;
 		Vector3 generatedFrontRowVertex_Right;
 		Vector3 generatedFrontRowVertex_Left;
+		Vector3 vertexUpVector_Right;
+		Vector3 vertexUpVector_Left;
+
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
 			generatedFrontRowVertex_Right = GenerateFrontRowBaselineVertex(i,d_bendFactor);
 			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
-			generatedFrontRowVertex_Left.x = - generatedFrontRowVertex_Left.x;
+			generatedFrontRowVertex_Left.x *= -1;
+
+			vertexUpVector_Right = (m_circleCenterPos - generatedFrontRowVertex_Right).normalized;
+			vertexUpVector_Left = vertexUpVector_Right;
+			vertexUpVector_Left.x *= -1;
 			
-			t_calcFrontRowVertsArray_Right[i] = generatedFrontRowVertex_Right + Vector3.up * m_freshHeighValues_Right[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i] + transform.up * m_freshHeighValues_Right[i];// + transform.forward * stripDistanceFromPrevious;
+			t_calcFrontRowVertsArray_Right[i] = generatedFrontRowVertex_Right + vertexUpVector_Right * m_freshHeighValues_Right[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i] + transform.up * m_freshHeighValues_Right[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Right = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i]);
 			t_calcBackRowVertsArray_Right[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Right) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right[i];
 			
-			t_calcFrontRowVertsArray_Left[i] = generatedFrontRowVertex_Left + Vector3.up * m_freshHeighValues_Left[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
+			t_calcFrontRowVertsArray_Left[i] = generatedFrontRowVertex_Left + vertexUpVector_Left * m_freshHeighValues_Left[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Left = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i]);
 			t_calcBackRowVertsArray_Left[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Left) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];
 		}
@@ -194,9 +203,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			//testHeightValues[i] = 0.250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			testHeightValues[i] = 0.050f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
 			//testHeightValues[i] = Mathf.Sin(Time.time);// + 1.0f*(float)i/(float)testHeightValues.Length);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
