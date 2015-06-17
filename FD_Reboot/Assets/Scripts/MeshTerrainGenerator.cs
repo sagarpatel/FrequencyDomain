@@ -37,7 +37,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 	public float d_rotVel_z = 0;
 	[Range(-1,1)]
 	public float d_bendFactor = 0;
-	float m_circleShapeDiameter;
+	float m_stripHalfWidth;
+	float m_circleFormRadius;
+	Vector3 m_circleCenterPos;
 
 	void Start()
 	{
@@ -94,7 +96,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 			testHeightValues[i] = 0;
 		}
 
-		m_circleShapeDiameter = (m_stripsWidthVerticesCount-1) * m_stripsWidthVerticesScale;
+		m_stripHalfWidth = (m_stripsWidthVerticesCount-1) * m_stripsWidthVerticesScale;
+		m_circleFormRadius = m_stripHalfWidth/Mathf.PI;
+		m_circleCenterPos = new Vector3(0, m_stripHalfWidth/2.0f, 0);
 	}
 
 	public void UpdateHeighValues(float[] heightsArray_Right, float[] heightsArray_Left)
@@ -149,21 +153,33 @@ public class MeshTerrainGenerator : MonoBehaviour
 		float centerToEdgeRatio = (float)collumnIndex /(m_stripsWidthVerticesCount - 1); // making sure that final index gets ratio of 1
 
 		Vector3 flatPos = Vector3.zero;
-		flatPos.x = m_circleShapeDiameter * centerToEdgeRatio; //(float)collumnIndex * m_stripsWidthVerticesScale;
+		flatPos.x = m_stripHalfWidth * centerToEdgeRatio; //(float)collumnIndex * m_stripsWidthVerticesScale;
 		flatPos.y = 0;
 
 		Vector2 unitCirclePos = CalculatePosOnUnitCircle(centerToEdgeRatio);
 		Vector3 circleFormPos = Vector3.zero;
-		circleFormPos.x = m_circleShapeDiameter * unitCirclePos.x;
-		circleFormPos.y = m_circleShapeDiameter * (unitCirclePos.y + 1.0f);
+		circleFormPos.x = m_circleFormRadius * unitCirclePos.x;
+		circleFormPos.y = m_circleFormRadius * (unitCirclePos.y + 1.0f);
 
 		Vector3 halfCircleTransitionPos = Vector3.zero;
-		halfCircleTransitionPos.x = m_circleShapeDiameter * Mathf.Cos( bendFactor * 0.5f * Mathf.PI);
-		halfCircleTransitionPos.y = m_circleShapeDiameter * Mathf.Sin( Mathf.Sqrt( bendFactor ) * 0.5f * Mathf.PI);
+		halfCircleTransitionPos.x = m_circleFormRadius * Mathf.Cos( bendFactor * 0.5f * Mathf.PI);
+		halfCircleTransitionPos.y = m_circleFormRadius * Mathf.Sin( bendFactor * 0.5f * Mathf.PI);
 
-		//Vector3 circleTransitionFormPos = Vector3.Lerp(circleFormPos, halfCircleTransitionPos, centerToEdgeRatio);
+		float distToCenter_halfCircleTransition = Vector3.Distance(halfCircleTransitionPos, m_circleCenterPos);
+		float distToCenter_circleForm = Vector3.Distance(circleFormPos, m_circleCenterPos);
 
-		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleFormPos, bendFactor);
+		Vector3 circleTransitionFormPos = Vector3.zero;
+
+		// not sure why this isn't working yet 
+		/*
+		if(distToCenter_circleForm > distToCenter_halfCircleTransition)
+			circleTransitionFormPos = circleFormPos;
+		else
+			circleTransitionFormPos = halfCircleTransitionPos;
+		*/
+		circleTransitionFormPos = circleFormPos;
+
+		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleTransitionFormPos, bendFactor);
 		return lerpedPos;
 	}
 
