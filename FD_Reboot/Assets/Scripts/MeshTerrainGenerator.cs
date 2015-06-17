@@ -12,7 +12,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_moveSpeed = 60.0f;
 	Vector3 t_previousPosition;
 
-	int m_stripsWidthVerticesCount = 3;
+	int m_stripsWidthVerticesCount = 9;
 	float m_stripsWidthVerticesScale = 0.5f;
 
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right;
@@ -37,6 +37,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	public float d_rotVel_z = 0;
 	[Range(-1,1)]
 	public float d_bendFactor = 0;
+	float m_circleShapeDiameter;
 
 	void Start()
 	{
@@ -92,6 +93,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 			m_freshHeighValues_Left[i] = 0;
 			testHeightValues[i] = 0;
 		}
+
+		m_circleShapeDiameter = (m_stripsWidthVerticesCount-1) * m_stripsWidthVerticesScale;
 	}
 
 	public void UpdateHeighValues(float[] heightsArray_Right, float[] heightsArray_Left)
@@ -144,13 +147,26 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3 GenerateFrontRowBaselineVertex(int collumnIndex, float bendFactor)
 	{
 		float centerToEdgeRatio = (float)collumnIndex /(m_stripsWidthVerticesCount - 1); // making sure that final index gets ratio of 1
-		float flatOffset_x = (float)collumnIndex * m_stripsWidthVerticesScale;
-		float bentPos_x = flatOffset_x * Mathf.Cos( centerToEdgeRatio * 0.5f * Mathf.PI);
-		float bentPos_y = (m_stripsWidthVerticesCount -1) * m_stripsWidthVerticesScale * Mathf.Sin( centerToEdgeRatio * 0.5f * Mathf.PI);
-		float lerpedPos_x = Mathf.Lerp(flatOffset_x, bentPos_x, bendFactor);
-		float lerpedPox_y = Mathf.Lerp(0, bentPos_y, bendFactor);
-		Vector3 basePos = new Vector3( lerpedPos_x , lerpedPox_y, 0);
-		return basePos;
+
+		Vector3 flatPos = Vector3.zero;
+		flatPos.x = m_circleShapeDiameter * centerToEdgeRatio; //(float)collumnIndex * m_stripsWidthVerticesScale;
+		flatPos.y = 0;
+
+		Vector2 unitCirclePos = CalculatePosOnUnitCircle(centerToEdgeRatio);
+		Vector3 circleFormPos = Vector3.zero;
+		circleFormPos.x = m_circleShapeDiameter * unitCirclePos.x;
+		circleFormPos.y = m_circleShapeDiameter * (unitCirclePos.y + 1.0f)/2.0f;
+
+		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleFormPos, bendFactor);
+		return lerpedPos;
+	}
+
+	Vector2 CalculatePosOnUnitCircle(float startToEndRatio)
+	{
+		float angle = Mathf.Lerp( -0.5f * Mathf.PI, 0.5f * Mathf.PI, startToEndRatio);
+		float pos_x = Mathf.Cos(angle);
+		float pos_y = Mathf.Sin(angle);
+		return new Vector2(pos_x, pos_y);
 	}
 
 	void FixedUpdate()
