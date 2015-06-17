@@ -5,9 +5,11 @@ using System;
 
 public class MeshStripGenerator : MonoBehaviour 
 {
-	List<int> m_trianglesList_Up;
-	List<int> m_trianglesList_Down;
-	
+	List<int> m_trianglesList_Up_Right;
+	List<int> m_trianglesList_Up_Left;
+	List<int> m_trianglesList_Down_Right;
+	List<int> m_trianglesList_Down_Left;
+
 	Vector3[] m_verticesArray_Right;
 	Vector3[] m_verticesArray_BackRow_Right;
 	Vector3[] m_verticesArray_FrontRow_Right;
@@ -80,7 +82,7 @@ public class MeshStripGenerator : MonoBehaviour
 		List<Vector3> verticesList_Right = new List<Vector3>();
 		List<Vector3> verticesList_Left = new List<Vector3>();
 		// generate vertices , in collumns pairs
-		for(int i = 0; i < collumnsCount; i++)
+		for(int i = 0; i < m_widthVerticesCount; i++)
 		{
 			verticesList_Right.Add( new Vector3(i * collumnWidth, 0, 0));
 			verticesList_Right.Add( new Vector3(i * collumnWidth, 0, rowDepth));
@@ -109,30 +111,59 @@ public class MeshStripGenerator : MonoBehaviour
 		m_verticesArray_FrontRow_Left = frontRowVertsList_Left.ToArray();
 
 		// generate triangles list, will be the same indicies for Right and Left, so no need to have their own set
-		m_trianglesList_Up = new List<int>();
-		m_trianglesList_Down = new List<int>();
+		m_trianglesList_Up_Right = new List<int>();
+		m_trianglesList_Up_Left = new List<int>();
+		m_trianglesList_Down_Right = new List<int>();
+		m_trianglesList_Down_Left = new List<int>();
 		// generate triangles
-		for(int i = 0; i < collumnsCount - 1; i += 2)
+		for(int i = 2; i < m_verticesArray_Right.Length; i += 2)
 		{
+			// RIGHT SIDE MESH TRIANGLES
+
 			// bottom left triangle top side
-			m_trianglesList_Up.Add(i);
-			m_trianglesList_Up.Add(i+1);
-			m_trianglesList_Up.Add(i+2);
+			m_trianglesList_Up_Right.Add(i-2); // top left vertice
+			m_trianglesList_Up_Right.Add(i+1);
+			m_trianglesList_Up_Right.Add(i-1);
+						
+			// top right triangle top side
+			m_trianglesList_Up_Right.Add(i-2);
+			m_trianglesList_Up_Right.Add(i);
+			m_trianglesList_Up_Right.Add(i+1);
 
 			// bottom left triangle bottom side
-			m_trianglesList_Down.Add(i);
-			m_trianglesList_Down.Add(i+2);
-			m_trianglesList_Down.Add(i+1);
-
-			// top right triangle top side
-			m_trianglesList_Up.Add(i+1);
-			m_trianglesList_Up.Add(i+3);
-			m_trianglesList_Up.Add(i+2);
+			m_trianglesList_Down_Right.Add(i-2);
+			m_trianglesList_Down_Right.Add(i-1);
+			m_trianglesList_Down_Right.Add(i+1);
 
 			// top right triangle bottom side
-			m_trianglesList_Down.Add(i+1);
-			m_trianglesList_Down.Add(i+2);
-			m_trianglesList_Down.Add(i+3);
+			m_trianglesList_Down_Right.Add(i-2);
+			m_trianglesList_Down_Right.Add(i+1);
+			m_trianglesList_Down_Right.Add(i);
+
+
+			// LEFT SIDE MESH TRIANGLES
+
+			// bottom left triangle top side
+			m_trianglesList_Up_Left.Add(i-2); // top left vertice
+			m_trianglesList_Up_Left.Add(i-1);
+			m_trianglesList_Up_Left.Add(i+1);
+			
+			// top right triangle top side
+			m_trianglesList_Up_Left.Add(i-2);
+			m_trianglesList_Up_Left.Add(i+1);
+			m_trianglesList_Up_Left.Add(i);
+
+			// bottom left triangle bottom side
+			m_trianglesList_Down_Left.Add(i-2);
+			m_trianglesList_Down_Left.Add(i+1);
+			m_trianglesList_Down_Left.Add(i-1);
+						
+			// top right triangle bottom side
+			m_trianglesList_Down_Left.Add(i-2);
+			m_trianglesList_Down_Left.Add(i);
+			m_trianglesList_Down_Left.Add(i+1);
+
+
 		}
 
 		//////////// Calculations End
@@ -143,13 +174,13 @@ public class MeshStripGenerator : MonoBehaviour
 		Mesh mesh_Up_Right = meshStripGO_Up_Right.GetComponent<MeshFilter>().mesh;
 		mesh_Up_Right.MarkDynamic();
 		mesh_Up_Right.vertices = m_verticesArray_Right;
-		mesh_Up_Right.triangles = m_trianglesList_Down.ToArray(); //m_trianglesList_Up.ToArray();
+		mesh_Up_Right.triangles = m_trianglesList_Up_Right.ToArray();
 		m_mesh_Up_Right = mesh_Up_Right;
 
 		Mesh mesh_Down_Right = meshStripGO_Down_Right.GetComponent<MeshFilter>().mesh;
 		mesh_Down_Right.MarkDynamic();
 		mesh_Down_Right.vertices = m_verticesArray_Right;
-		mesh_Down_Right.triangles = m_trianglesList_Up.ToArray(); //m_trianglesList_Down.ToArray();
+		mesh_Down_Right.triangles = m_trianglesList_Down_Right.ToArray();
 		m_mesh_Down_Right = mesh_Down_Right;
 
 		m_mesh_Up_Right.RecalculateNormals();
@@ -162,13 +193,13 @@ public class MeshStripGenerator : MonoBehaviour
 		Mesh mesh_Up_Left = meshStripGO_Up_Left.GetComponent<MeshFilter>().mesh;
 		mesh_Up_Left.MarkDynamic();
 		mesh_Up_Left.vertices = m_verticesArray_Left;
-		mesh_Up_Left.triangles = m_trianglesList_Up.ToArray();
+		mesh_Up_Left.triangles = m_trianglesList_Up_Left.ToArray();
 		m_mesh_Up_Left = mesh_Up_Left;
 
 		Mesh mesh_Down_Left = meshStripGO_Down_Left.GetComponent<MeshFilter>().mesh;
 		mesh_Down_Left.MarkDynamic();
 		mesh_Down_Left.vertices = m_verticesArray_Left;
-		mesh_Down_Left.triangles = m_trianglesList_Down.ToArray();
+		mesh_Down_Left.triangles = m_trianglesList_Down_Left.ToArray();
 		m_mesh_Down_Left = mesh_Down_Left;
 
 		m_mesh_Up_Left.RecalculateNormals();
