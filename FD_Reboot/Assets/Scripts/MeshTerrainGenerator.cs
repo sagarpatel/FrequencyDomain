@@ -12,7 +12,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_moveSpeed = 60.0f;
 	Vector3 t_previousPosition;
 
-	int m_stripsWidthVerticesCount = 512;
+	int m_stripsWidthVerticesCount = 3;
 	float m_stripsWidthVerticesScale = 0.5f;
 
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right;
@@ -35,6 +35,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	public float d_rotVel_x = 0;
 	public float d_rotVel_y = 0;
 	public float d_rotVel_z = 0;
+	[Range(-1,1)]
+	public float d_bendFactor = 0;
 
 	void Start()
 	{
@@ -117,7 +119,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
-			generatedFrontRowVertex_Right = GenerateFrontRowVertex(i);
+			generatedFrontRowVertex_Right = GenerateFrontRowBaselineVertex(i,d_bendFactor);
 			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
 			generatedFrontRowVertex_Left.x = - generatedFrontRowVertex_Left.x;
 			
@@ -139,9 +141,15 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[stripIndex].transform;
 	}
 	
-	Vector3 GenerateFrontRowVertex(int collumnIndex)
+	Vector3 GenerateFrontRowBaselineVertex(int collumnIndex, float bendFactor)
 	{
-		Vector3 basePos = new Vector3( (float)collumnIndex * m_stripsWidthVerticesScale, 0, 0);
+		float centerToEdgeRatio = (float)collumnIndex /(m_stripsWidthVerticesCount - 1); // making sure that final index gets ratio of 1
+		float flatOffset_x = (float)collumnIndex * m_stripsWidthVerticesScale;
+		float bentPos_x = flatOffset_x * Mathf.Cos( centerToEdgeRatio * 0.5f * Mathf.PI);
+		float bentPos_y = (m_stripsWidthVerticesCount -1) * m_stripsWidthVerticesScale * Mathf.Sin( centerToEdgeRatio * 0.5f * Mathf.PI);
+		float lerpedPos_x = Mathf.Lerp(flatOffset_x, bentPos_x, bendFactor);
+		float lerpedPox_y = Mathf.Lerp(0, bentPos_y, bendFactor);
+		Vector3 basePos = new Vector3( lerpedPos_x , lerpedPox_y, 0);
 		return basePos;
 	}
 
@@ -149,7 +157,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	{
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			testHeightValues[i] = 0.250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			//testHeightValues[i] = 0.250f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
 			//testHeightValues[i] = Mathf.Sin(Time.time);// + 1.0f*(float)i/(float)testHeightValues.Length);
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
