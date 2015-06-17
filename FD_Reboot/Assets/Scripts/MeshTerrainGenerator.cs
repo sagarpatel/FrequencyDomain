@@ -179,7 +179,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		*/
 		circleTransitionFormPos = circleFormPos;
 
-		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleTransitionFormPos, bendFactor);
+		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleTransitionFormPos, Mathf.Abs(bendFactor));
+		lerpedPos.y = Mathf.Sign(bendFactor) * lerpedPos.y;
 		return lerpedPos;
 	}
 
