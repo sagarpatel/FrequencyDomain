@@ -157,6 +157,12 @@ public class MeshTerrainGenerator : MonoBehaviour
 		circleFormPos.x = m_circleShapeDiameter * unitCirclePos.x;
 		circleFormPos.y = m_circleShapeDiameter * (unitCirclePos.y + 1.0f);
 
+		Vector3 halfCircleTransitionPos = Vector3.zero;
+		halfCircleTransitionPos.x = m_circleShapeDiameter * Mathf.Cos( bendFactor * 0.5f * Mathf.PI);
+		halfCircleTransitionPos.y = m_circleShapeDiameter * Mathf.Sin( Mathf.Sqrt( bendFactor ) * 0.5f * Mathf.PI);
+
+		//Vector3 circleTransitionFormPos = Vector3.Lerp(circleFormPos, halfCircleTransitionPos, centerToEdgeRatio);
+
 		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleFormPos, bendFactor);
 		return lerpedPos;
 	}
