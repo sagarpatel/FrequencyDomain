@@ -12,7 +12,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_moveSpeed = 60.0f;
 	Vector3 t_previousPosition;
 
-	int m_stripsWidthVerticesCount = 9;
+	int m_stripsWidthVerticesCount = 256;
 	float m_stripsWidthVerticesScale = 0.5f;
 
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right;
@@ -155,7 +155,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		Vector2 unitCirclePos = CalculatePosOnUnitCircle(centerToEdgeRatio);
 		Vector3 circleFormPos = Vector3.zero;
 		circleFormPos.x = m_circleShapeDiameter * unitCirclePos.x;
-		circleFormPos.y = m_circleShapeDiameter * (unitCirclePos.y + 1.0f)/2.0f;
+		circleFormPos.y = m_circleShapeDiameter * (unitCirclePos.y + 1.0f);
 
 		Vector3 lerpedPos = Vector3.Lerp(flatPos, circleFormPos, bendFactor);
 		return lerpedPos;
