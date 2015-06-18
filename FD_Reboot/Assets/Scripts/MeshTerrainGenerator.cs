@@ -45,6 +45,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	FrequencyDataManager m_frequencyDataManager;
 
+	GameObject d_circleCenterObject;
+
 	void Start()
 	{
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
@@ -102,9 +104,14 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 		m_stripHalfWidth = (m_stripsWidthVerticesCount-1) * m_stripsWidthVerticesScale;
 		m_circleFormRadius = m_stripHalfWidth/Mathf.PI;
-		m_circleCenterPos = new Vector3(0, m_stripHalfWidth/2.0f, 0);
+		m_circleCenterPos = new Vector3(0, m_circleFormRadius, 0);
 
 		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
+
+		d_circleCenterObject = new GameObject("Circle Center");
+		d_circleCenterObject.transform.parent = transform;
+		d_circleCenterObject.transform.localPosition = m_circleCenterPos;
+
 	}
 
 	public void UpdateHeighValues(float[] heightsArray_Right, float[] heightsArray_Left)
@@ -131,6 +138,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		Vector3 generatedFrontRowVertex_Left;
 		Vector3 vertexUpVector_Right;
 		Vector3 vertexUpVector_Left;
+		Vector3 circleFormUp;
 
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
@@ -139,7 +147,14 @@ public class MeshTerrainGenerator : MonoBehaviour
 			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
 			generatedFrontRowVertex_Left.x *= -1;
 
-			vertexUpVector_Right = (m_circleCenterPos - generatedFrontRowVertex_Right).normalized;
+			m_circleCenterPos.y *= Mathf.Sign(d_bendFactor);
+			if(m_circleCenterPos.y > 0)
+				circleFormUp = (m_circleCenterPos - generatedFrontRowVertex_Right).normalized;
+			else
+				circleFormUp = (generatedFrontRowVertex_Right - m_circleCenterPos).normalized;
+
+			vertexUpVector_Right = Vector3.Lerp(Vector3.up, circleFormUp, Mathf.Abs( d_bendFactor ));
+
 			vertexUpVector_Left = vertexUpVector_Right;
 			vertexUpVector_Left.x *= -1;
 			
@@ -207,7 +222,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+		//d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
 		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
 		int dataLength = dataArray.Length;
 		int meshToDataRatio = testHeightValues.Length/ dataLength;
