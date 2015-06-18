@@ -43,6 +43,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_circleFormRadius;
 	Vector3 m_circleCenterPos;
 
+	FrequencyDataManager m_frequencyDataManager;
+
 	void Start()
 	{
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
@@ -101,6 +103,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_stripHalfWidth = (m_stripsWidthVerticesCount-1) * m_stripsWidthVerticesScale;
 		m_circleFormRadius = m_stripHalfWidth/Mathf.PI;
 		m_circleCenterPos = new Vector3(0, m_stripHalfWidth/2.0f, 0);
+
+		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
 	}
 
 	public void UpdateHeighValues(float[] heightsArray_Right, float[] heightsArray_Left)
@@ -204,11 +208,14 @@ public class MeshTerrainGenerator : MonoBehaviour
 	void FixedUpdate()
 	{
 		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
-
+		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
+		int dataLength = dataArray.Length;
+		int meshToDataRatio = testHeightValues.Length/ dataLength;
 		for(int i = 0; i < testHeightValues.Length; i++)
 		{
-			testHeightValues[i] = 0.050f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
+			//testHeightValues[i] = 0.050f * (float)i * Mathf.Sin( Mathf.Sin(0.009f * (float)i) *  Time.time);
 			//testHeightValues[i] = Mathf.Sin(Time.time);// + 1.0f*(float)i/(float)testHeightValues.Length);
+			testHeightValues[i] = 100.0f * dataArray[i/meshToDataRatio];
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
 
