@@ -147,7 +147,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
 			generatedFrontRowVertex_Left.x *= -1;
 
-			m_circleCenterPos.y *= Mathf.Sign(d_bendFactor);
+			m_circleCenterPos.y = Mathf.Sign(d_bendFactor) * Mathf.Abs(m_circleCenterPos.y);
 			if(m_circleCenterPos.y > 0)
 				circleFormUp = (m_circleCenterPos - generatedFrontRowVertex_Right).normalized;
 			else
