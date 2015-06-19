@@ -25,6 +25,16 @@ public class FrequencyDataManager : MonoBehaviour
 	public AnimationCurve m_gValueCurve;
 	public AnimationCurve m_bValueCurve;
 
+	public float d_r;
+	public float d_g;
+	public float d_b;
+	public Color d_color;
+
+	float m_rScaler = 1.0f;
+	float m_gScaler = 1.0f;
+	float m_bScaler = 1.0f;
+	float m_colorScaler = 100.0f;
+
 	void Start()
 	{
 		m_currentRawFFTDataArray = new float[m_rawFFTDataSize];
@@ -94,35 +104,39 @@ public class FrequencyDataManager : MonoBehaviour
 		float b = 0;
 		int b_SubdivisionStart = 4;
 		int b_SubdivisionEnd = 7;
-		float b_weight = 1.0f/((b_SubdivisionEnd = b_SubdivisionStart + 1) * (float)subdivisionInterval);
+		float b_weight = 1.0f/((b_SubdivisionEnd - b_SubdivisionStart + 1) * (float)subdivisionInterval);
 
 		float progressOnCurve = 0;
 		for(int i = 0; i< m_processedFFTDataArray.Length; i++)
 		{
-			if(i % subdivisionIndex == 0 && i != 0)
+			if(i % subdivisionInterval == 0 && i != 0)
 				subdivisionIndex += 1;
 
 			if(subdivisionIndex <= r_SubdivisionEnd)
 			{
-				progressOnCurve = Mathf.InverseLerp( i * r_SubdivisionStart, i * r_SubdivisionEnd , i );
+				progressOnCurve = Mathf.InverseLerp( subdivisionInterval * r_SubdivisionStart, subdivisionInterval * r_SubdivisionEnd , i );
 				r += m_rValueCurve.Evaluate(progressOnCurve) * m_processedFFTDataArray[i] * r_weight;
 			}
 
-			if(subdivisionIndex >= g_SubdivisionStart || subdivisionIndex <= g_SubdivisionEnd)
+			if(subdivisionIndex >= g_SubdivisionStart && subdivisionIndex <= g_SubdivisionEnd)
 			{
-				progressOnCurve = Mathf.InverseLerp( i * g_SubdivisionStart, i * g_SubdivisionEnd, i);
+				progressOnCurve = Mathf.InverseLerp( subdivisionInterval * g_SubdivisionStart, subdivisionInterval * g_SubdivisionEnd, i);
 				g += m_gValueCurve.Evaluate(progressOnCurve) * m_processedFFTDataArray[i] * g_weight;
 			}
 
 			if(subdivisionIndex >= b_SubdivisionStart)
 			{
-				progressOnCurve = Mathf.InverseLerp( i * b_SubdivisionStart, i * b_SubdivisionEnd, i);
-				b += m_bValueCurve.Evaluate(progressOnCurve) m_processedFFTDataArray[i] * b_weight;
+				progressOnCurve = Mathf.InverseLerp( subdivisionInterval * b_SubdivisionStart, subdivisionInterval * b_SubdivisionEnd, i);
+				b += m_bValueCurve.Evaluate(progressOnCurve) * m_processedFFTDataArray[i] * b_weight;
 			}
 		}
 
-		Color calulatedColor = new Color(r,g,b);
-		return calulatedColor;
+		Color calculatedColor = m_colorScaler * new Color(r * m_rScaler, g * m_gScaler, b * m_bScaler);
+		d_color = calculatedColor;
+		d_r = calculatedColor.r;
+		d_g = calculatedColor.g;
+		d_b = calculatedColor.b;
+		return calculatedColor;
 	}
 
 	public float[] GetFreshFFTData()

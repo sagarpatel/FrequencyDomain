@@ -241,6 +241,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
 
+		m_meshStripsMaterial.color = m_frequencyDataManager.GetFreshRGB();
+
 		transform.Rotate(new Vector3(d_rotVel_x, d_rotVel_y , d_rotVel_z) * Time.deltaTime);
 
 	}
