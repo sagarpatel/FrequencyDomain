@@ -222,7 +222,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		//d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
 		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
 		int dataLength = dataArray.Length;
 		int meshToDataRatio = testHeightValues.Length/ dataLength;
