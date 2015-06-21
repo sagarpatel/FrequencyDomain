@@ -253,6 +253,7 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Up_Right.RecalculateBounds();
 		m_mesh_Down_Right.RecalculateBounds();
 
+		// TODO: Might be able to optimize this
 		m_meshCollider_Up_Right.sharedMesh = null;
 		m_meshCollider_Up_Right.sharedMesh = m_mesh_Up_Right;
 	}

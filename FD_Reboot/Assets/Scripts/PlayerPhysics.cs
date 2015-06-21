@@ -10,7 +10,6 @@ public class PlayerPhysics : MonoBehaviour
 		if(Physics.Raycast(transform.position, -transform.up, out hitInfo))
 		{
 			Debug.Log("RAYCAST HIT! " + hitInfo.transform.name + " : " + hitInfo.distance);
-
 		}
 
 	}
