@@ -42,6 +42,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float m_stripHalfWidth;
 	float m_circleFormRadius;
 	Vector3 m_circleCenterPos;
+	Color m_currentMaterialColor;
 
 	FrequencyDataManager m_frequencyDataManager;
 
@@ -222,7 +223,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+		//d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
 		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
 		int dataLength = dataArray.Length;
 		int meshToDataRatio = testHeightValues.Length/ dataLength;
@@ -241,7 +242,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
 
-		m_meshStripsMaterial.color = m_frequencyDataManager.GetFreshRGB();
+		m_currentMaterialColor = m_frequencyDataManager.GetFreshRGB();
+		m_meshStripsMaterial.color = m_currentMaterialColor;
+		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
 
 		transform.Rotate(new Vector3(d_rotVel_x, d_rotVel_y , d_rotVel_z) * Time.deltaTime);
 
