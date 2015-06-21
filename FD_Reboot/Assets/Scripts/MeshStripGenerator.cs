@@ -185,7 +185,6 @@ public class MeshStripGenerator : MonoBehaviour
 
 		m_mesh_Up_Right.RecalculateNormals();
 		m_mesh_Down_Right.RecalculateNormals();
-
 		m_mesh_Up_Right.RecalculateBounds();
 		m_mesh_Down_Right.RecalculateBounds();
 
@@ -204,7 +203,6 @@ public class MeshStripGenerator : MonoBehaviour
 
 		m_mesh_Up_Left.RecalculateNormals();
 		m_mesh_Down_Left.RecalculateNormals();
-
 		m_mesh_Up_Left.RecalculateBounds();
 		m_mesh_Down_Left.RecalculateBounds();
 
@@ -245,6 +243,8 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Down_Right.vertices = m_verticesArray_Right;
 		m_mesh_Up_Right.RecalculateNormals();
 		m_mesh_Down_Right.RecalculateNormals();
+		m_mesh_Up_Right.RecalculateBounds();
+		m_mesh_Down_Right.RecalculateBounds();
 	}
 
 	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left)
@@ -275,6 +275,8 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Down_Left.vertices = m_verticesArray_Left;
 		m_mesh_Up_Left.RecalculateNormals();
 		m_mesh_Down_Left.RecalculateNormals();
+		m_mesh_Up_Left.RecalculateBounds();
+		m_mesh_Down_Left.RecalculateBounds();
 	}
 
 	public Vector3[] GetBackRowVertices_Right()
