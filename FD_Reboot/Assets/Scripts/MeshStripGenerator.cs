@@ -25,7 +25,11 @@ public class MeshStripGenerator : MonoBehaviour
 	Mesh m_mesh_Down_Left;
 
 	int m_widthVerticesCount;
-	
+
+	MeshCollider m_meshCollider_Up_Left;
+	MeshCollider m_meshCollider_Up_Right;
+
+
 
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth, Material meshMaterial)
 	{
@@ -40,6 +44,7 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Up_Right.name = transform.name + "_MeshStrip_Up_Right";
 		meshStripGO_Up_Right.AddComponent<MeshRenderer>();
 		meshStripGO_Up_Right.AddComponent<MeshFilter>();
+		meshStripGO_Up_Right.AddComponent<MeshCollider>();
 
 
 		GameObject meshStripGO_Down_Right = new GameObject();
@@ -60,6 +65,7 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Up_Left.name = transform.name + "_MeshStrip_Up_Left";
 		meshStripGO_Up_Left.AddComponent<MeshRenderer>();
 		meshStripGO_Up_Left.AddComponent<MeshFilter>();
+		meshStripGO_Up_Left.AddComponent<MeshCollider>();
 		
 		
 		GameObject meshStripGO_Down_Left = new GameObject();
@@ -206,7 +212,8 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Up_Left.RecalculateBounds();
 		m_mesh_Down_Left.RecalculateBounds();
 
-
+		m_meshCollider_Up_Right = meshStripGO_Up_Right.GetComponent<MeshCollider>();
+		m_meshCollider_Up_Left = meshStripGO_Up_Left.GetComponent<MeshCollider>();
 
 		//float xOffset = m_mesh_Up_Right.bounds.extents.x / 2.0f;
 		//meshStripGO_Up_Right.transform.localPosition = new Vector3(-xOffset, 0, 0);
@@ -245,6 +252,9 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Down_Right.RecalculateNormals();
 		m_mesh_Up_Right.RecalculateBounds();
 		m_mesh_Down_Right.RecalculateBounds();
+
+		m_meshCollider_Up_Right.sharedMesh = null;
+		m_meshCollider_Up_Right.sharedMesh = m_mesh_Up_Right;
 	}
 
 	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left)
@@ -277,6 +287,9 @@ public class MeshStripGenerator : MonoBehaviour
 		m_mesh_Down_Left.RecalculateNormals();
 		m_mesh_Up_Left.RecalculateBounds();
 		m_mesh_Down_Left.RecalculateBounds();
+
+		m_meshCollider_Up_Left.sharedMesh = null;
+		m_meshCollider_Up_Left.sharedMesh = m_mesh_Up_Left;
 	}
 
 	public Vector3[] GetBackRowVertices_Right()

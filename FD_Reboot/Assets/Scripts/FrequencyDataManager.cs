@@ -78,7 +78,7 @@ public class FrequencyDataManager : MonoBehaviour
 				tempSum += m_currentRawFFTDataArray[rawFFTIndex + samplesAccumulationStartIndexOffset];
 				rawFFTIndex += 1;
 			}
-			m_processedFFTDataArray[i] = Mathf.Clamp(tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
+			m_processedFFTDataArray[i] = Mathf.Clamp( 1.0f * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
 			//Debug.Log("Sum for acuumuator: " + currentRawSamplesPerProcessedPoint + " , " + tempSum);
 		}
 	}
