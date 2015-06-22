@@ -225,6 +225,9 @@ public class MeshStripGenerator : MonoBehaviour
 		//meshStripGO_Up_Right.transform.localPosition = new Vector3(-xOffset, 0, 0);
 		//meshStripGO_Down_Right.transform.localPosition = new Vector3(-xOffset, 0, 0);
 
+		meshStripGO_Down_Left.SetActive(false);
+		meshStripGO_Down_Right.SetActive(false);
+
 	}
 
 	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray)
