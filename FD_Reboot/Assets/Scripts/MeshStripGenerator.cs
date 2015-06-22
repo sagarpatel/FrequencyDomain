@@ -13,6 +13,10 @@ public class MeshStripGenerator : MonoBehaviour
 	Vector3[] m_verticesArray_Right;
 	Vector3[] m_verticesArray_BackRow_Right;
 	Vector3[] m_verticesArray_FrontRow_Right;
+	Vector3[] m_upVectorsArray_Right;
+	Vector3[] m_upVectorsArray_Left;
+	float[] m_heightValues_Right;
+	float[] m_heightValues_Left;
 
 	Mesh m_mesh_Up_Right;
 	Mesh m_mesh_Down_Right;
@@ -115,6 +119,10 @@ public class MeshStripGenerator : MonoBehaviour
 		m_verticesArray_FrontRow_Right = frontRowVertsList_Right.ToArray();
 		m_verticesArray_BackRow_Left = backRowVertsList_Left.ToArray();
 		m_verticesArray_FrontRow_Left = frontRowVertsList_Left.ToArray();
+		m_upVectorsArray_Right = new Vector3[m_verticesArray_FrontRow_Left.Length];
+		m_upVectorsArray_Left = new Vector3[m_verticesArray_FrontRow_Left.Length];
+		m_heightValues_Right = new float[m_upVectorsArray_Left.Length];
+		m_heightValues_Left = new float[m_upVectorsArray_Left.Length];
 
 		// generate triangles list, will be the same indicies for Right and Left, so no need to have their own set
 		m_trianglesList_Up_Right = new List<int>();
@@ -168,8 +176,6 @@ public class MeshStripGenerator : MonoBehaviour
 			m_trianglesList_Down_Left.Add(i-2);
 			m_trianglesList_Down_Left.Add(i);
 			m_trianglesList_Down_Left.Add(i+1);
-
-
 		}
 
 		//////////// Calculations End
@@ -221,7 +227,7 @@ public class MeshStripGenerator : MonoBehaviour
 
 	}
 
-	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right)
+	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray)
 	{
 		if(frontRow_VertsArray_Right != null && frontRow_VertsArray_Right.Length != 0)
 		{
@@ -256,9 +262,12 @@ public class MeshStripGenerator : MonoBehaviour
 		// TODO: Might be able to optimize this
 		//m_meshCollider_Up_Right.sharedMesh = null;
 		//m_meshCollider_Up_Right.sharedMesh = m_mesh_Up_Right;
+
+		Array.Copy(frontRow_UpVectorsArray, m_upVectorsArray_Right, frontRow_UpVectorsArray.Length);
+		Array.Copy(heightValuesArray, m_heightValues_Right, heightValuesArray.Length);
 	}
 
-	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left)
+	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray)
 	{
 		if(frontRow_VertsArray_Left != null && frontRow_VertsArray_Left.Length != 0)
 		{
@@ -291,6 +300,9 @@ public class MeshStripGenerator : MonoBehaviour
 
 		//m_meshCollider_Up_Left.sharedMesh = null;
 		//m_meshCollider_Up_Left.sharedMesh = m_mesh_Up_Left;
+
+		Array.Copy(frontRow_UpVectorsArray, m_upVectorsArray_Left, frontRow_UpVectorsArray.Length);
+		Array.Copy(heightValuesArray, m_heightValues_Left, heightValuesArray.Length);
 	}
 
 	public Vector3[] GetBackRowVertices_Right()

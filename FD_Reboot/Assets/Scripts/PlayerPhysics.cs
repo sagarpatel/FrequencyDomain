@@ -22,6 +22,19 @@ public class PlayerPhysics : MonoBehaviour
 
 	}
 
+	Vector3 CalculateMinHeight(float terrainRatio_Depth, float terrainRatio_Width)
+	{
+		int meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
+		int frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;
+
+		int targetMeshStripIndexOffset = (int)(terrainRatio_Depth * (float)meshStripsCount);
+		int targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
+		MeshStripGenerator targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
+
+		return Vector3.zero;
+
+	}
+
 
 
 }

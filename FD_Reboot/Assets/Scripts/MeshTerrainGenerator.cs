@@ -6,8 +6,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 {
 	GameObject[] m_meshStripGeneratorsGOArray;
 	public MeshStripGenerator[] m_meshStripGeneratorsArray;
-	int m_meshStripsPoolCount = 300;
-	int m_lastActivatedStripIndex = 0;
+	public int m_meshStripsPoolCount = 300;
+	public int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
 	float m_moveSpeed = 250.0f;
 	Vector3 t_previousPosition;
@@ -23,6 +23,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3[] t_calcFrontRowVertsArray_Left;
 	Vector3[] t_calcBackRowVertsArray_Right;
 	Vector3[] t_calcBackRowVertsArray_Left;
+	Vector3[] t_stripUpVectorsArray_Right;
+	Vector3[] t_stripUpVectorsArray_Left;
 	Quaternion t_diffQuaternion;
 
 	public Material m_meshStripsMaterial;
@@ -78,6 +80,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		t_calcFrontRowVertsArray_Left = new Vector3[m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left.Length];
 		t_calcBackRowVertsArray_Right = new Vector3[t_calcFrontRowVertsArray_Right.Length];
 		t_calcBackRowVertsArray_Left = new Vector3[t_calcFrontRowVertsArray_Left.Length];
+		t_stripUpVectorsArray_Right = new Vector3[t_calcFrontRowVertsArray_Left.Length];
+		t_stripUpVectorsArray_Left = new Vector3[t_calcFrontRowVertsArray_Left.Length];
 		//t_calcFrontRowVertsArray = m_meshStripGeneratorsArray[0].GetFrontRowVertices(); // this just made a refernece, need pure local copy
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
@@ -85,6 +89,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 			t_calcBackRowVertsArray_Right[i] = new Vector3();
 			t_calcFrontRowVertsArray_Left[i] = new Vector3();
 			t_calcBackRowVertsArray_Left[i] = new Vector3();
+			t_stripUpVectorsArray_Left[i] = new Vector3();
+			t_stripUpVectorsArray_Right[i] = new Vector3();
 		}
 		m_lastGeneratedMeshStrip_Rotation = m_meshStripGeneratorsGOArray[0].transform.rotation;
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[0].transform;
@@ -166,9 +172,12 @@ public class MeshTerrainGenerator : MonoBehaviour
 			t_calcFrontRowVertsArray_Left[i] = generatedFrontRowVertex_Left + vertexUpVector_Left * m_freshHeighValues_Left[i]; //m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i] + transform.up * m_freshHeighValues_Left[i];// + transform.forward * stripDistanceFromPrevious;
 			vertexWorldPos_Left = m_lastGeneratedMeshStrip_Transform.TransformPoint(m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i]);
 			t_calcBackRowVertsArray_Left[i] = m_meshStripGeneratorsGOArray[stripIndex].transform.InverseTransformPoint(vertexWorldPos_Left) ; //t_diffQuaternion * m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];
+		
+			t_stripUpVectorsArray_Right[i] = vertexUpVector_Right;
+			t_stripUpVectorsArray_Left[i] = vertexUpVector_Left;
 		}
-		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right);
-		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left);
+		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right, t_stripUpVectorsArray_Right, m_freshHeighValues_Right);
+		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left, t_stripUpVectorsArray_Left, m_freshHeighValues_Left);
 		
 		m_lastActivatedStripIndex = stripIndex;
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Right();
