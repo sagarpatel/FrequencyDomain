@@ -5,7 +5,7 @@ using System.Linq;
 public class MeshTerrainGenerator : MonoBehaviour 
 {
 	GameObject[] m_meshStripGeneratorsGOArray;
-	MeshStripGenerator[] m_meshStripGeneratorsArray;
+	public MeshStripGenerator[] m_meshStripGeneratorsArray;
 	int m_meshStripsPoolCount = 300;
 	int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
@@ -224,7 +224,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 	void FixedUpdate()
 	{
 		//d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+		Profiler.BeginSample("Get FFT Data");
 		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
+		Profiler.EndSample();
+
+		Profiler.BeginSample("Update Height values array");
 		int dataLength = dataArray.Length;
 		int meshToDataRatio = testHeightValues.Length/ dataLength;
 		for(int i = 0; i < testHeightValues.Length; i++)
@@ -234,16 +238,22 @@ public class MeshTerrainGenerator : MonoBehaviour
 			testHeightValues[i] = 400.0f * dataArray[i/meshToDataRatio];
 		}
 		UpdateHeighValues(testHeightValues, testHeightValues);
+		Profiler.EndSample();
 
 		t_previousPosition = transform.position;
 		transform.position += transform.forward * m_moveSpeed * Time.deltaTime;
 
 		float travelledDistance = Vector3.Distance(transform.position, t_previousPosition);
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
-		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
 
+		Profiler.BeginSample("Spawn new mesh strip");
+		SpawnMeshStrip(nextStripSpawnIndex);//, travelledDistance);
+		Profiler.EndSample();
+
+		Profiler.BeginSample("Get and set new RGB");
 		m_currentMaterialColor = m_frequencyDataManager.GetFreshRGB();
 		m_meshStripsMaterial.color = m_currentMaterialColor;
+		Profiler.EndSample();
 		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
 
 		transform.Rotate(new Vector3(d_rotVel_x, d_rotVel_y , d_rotVel_z) * Time.deltaTime);
