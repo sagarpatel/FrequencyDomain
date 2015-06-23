@@ -326,7 +326,7 @@ public class MeshStripGenerator : MonoBehaviour
 		return m_verticesArray_FrontRow_Left;
 	}
 
-	public Vector3 CalculatePositionOnStrip(float widthPosRatio, float heightOffset)
+	public void CalculatePositionOnStrip(float widthPosRatio, float heightOffset, out Vector3 calculatedPosition, out Quaternion calculatedRotation)
 	{
 		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
 		int widthVertexIndex_Ceil = Mathf.CeilToInt(widthVertexIndexLocation);
@@ -362,7 +362,12 @@ public class MeshStripGenerator : MonoBehaviour
 		Vector3 finalLocalPos = lerpedWidthPos + (heightOffset * lerpedUpVector);
 
 		Vector3 finalWorldPos = transform.TransformPoint(finalLocalPos);
-		return finalWorldPos;
+
+		Quaternion finalLocalRot = Quaternion.FromToRotation(Vector3.up, lerpedUpVector);
+		Quaternion finalWorldRot = transform.rotation * finalLocalRot;
+
+		calculatedPosition = finalWorldPos;
+		calculatedRotation = finalWorldRot;
 	}
 
 	// Just used for testing
