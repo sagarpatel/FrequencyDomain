@@ -18,7 +18,7 @@ public class PlayerPhysics : MonoBehaviour
 	void Update()
 	{
 
-
+		transform.position = CalculateMinHeight(0,0);
 
 	}
 
@@ -31,7 +31,9 @@ public class PlayerPhysics : MonoBehaviour
 		int targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
 		MeshStripGenerator targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
 
-		return Vector3.zero;
+		Vector3 pos = targetMeshStripGenerator.CalculatePositionOnStrip(0.15f,0);
+
+		return pos;
 
 	}
 
