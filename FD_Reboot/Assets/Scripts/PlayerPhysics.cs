@@ -12,6 +12,9 @@ public class PlayerPhysics : MonoBehaviour
 	[Range(-1,1)]
 	public float d_widthTEst = 0.0f;
 
+	[Range(0,1)]
+	public float d_DepthTest = 0.0f;
+
 	void Start()
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
@@ -21,7 +24,7 @@ public class PlayerPhysics : MonoBehaviour
 	void Update()
 	{
 
-		CalculateMinHeight(0,0);
+		CalculateMinHeight(d_DepthTest,0);
 
 	}
 
