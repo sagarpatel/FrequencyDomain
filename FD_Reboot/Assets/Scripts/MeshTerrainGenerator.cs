@@ -232,7 +232,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
+		//d_bendFactor = Mathf.Sin( d_bendOscilationFrequency * Time.time);
 		Profiler.BeginSample("Get FFT Data");
 		float[] dataArray = m_frequencyDataManager.GetFreshFFTData();
 		Profiler.EndSample();

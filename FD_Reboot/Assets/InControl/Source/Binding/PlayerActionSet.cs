@@ -134,7 +134,7 @@ namespace InControl
 		void Update( ulong updateTick, float deltaTime)
 		{
 			var device = Device ?? InputManager.ActiveDevice;
-			if( DeviceIndex <= (InputManager.Devices.Count - 1) )
+			if( DeviceIndex >= 0 && DeviceIndex <= (InputManager.Devices.Count - 1) )
 				device = InputManager.Devices[DeviceIndex];
 
 			var actionsCount = actions.Count;

@@ -47,7 +47,10 @@ public class RiderActions : PlayerActionSet
 public class RiderController : MonoBehaviour 
 {
 	RiderActions m_riderInput;
+	RiderPhysics m_riderPhysics;
 
+	float m_widthMoveScale = 0.50f;
+	float m_depthMoveScale = 0.50f;
 
 	void OnEnable()
 	{
@@ -61,6 +64,21 @@ public class RiderController : MonoBehaviour
 
 	}
 
+	void Start()
+	{
+		m_riderPhysics = GetComponent<RiderPhysics>();
+	}
 
+	void Update()
+	{
+
+		float widthMove = m_riderInput.Move.X * m_widthMoveScale * Time.deltaTime;
+		float depthMove = m_riderInput.Move.Y * m_depthMoveScale * Time.deltaTime;
+
+		//Debug.Log("Width move: " + widthMove);
+		//Debug.Log("Depth move: " + depthMove);
+
+		m_riderPhysics.IncrementWidthDepthVelocities(widthMove, depthMove);
+	}
 
 }

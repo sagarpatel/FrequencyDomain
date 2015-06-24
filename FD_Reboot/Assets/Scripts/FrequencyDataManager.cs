@@ -9,7 +9,7 @@ public class FrequencyDataManager : MonoBehaviour
 	const int m_processedFFTDataSize = 128; // separated into 8 sections
 	float[] m_processedFFTDataArray;
 
-	int[] samplesAccumulationArray = {2,3,8,9,12,25,55,175};
+	int[] samplesAccumulationArray = {1,2,5,9,12,25,55,175};
 	int samplesAccumulationStartIndexOffset = 10;
 
 	enum DataSources
