@@ -8,6 +8,7 @@ public class FrequencyDataManager : MonoBehaviour
 
 	const int m_processedFFTDataSize = 128; // separated into 8 sections
 	float[] m_processedFFTDataArray;
+	float[] m_previousProcessedFFTDataArray;
 
 	int[] samplesAccumulationArray = {1,2,5,9,12,25,55,175};
 	int samplesAccumulationStartIndexOffset = 10;
@@ -33,7 +34,7 @@ public class FrequencyDataManager : MonoBehaviour
 	float m_rScaler = 1.0f;
 	float m_gScaler = 1.0f;
 	float m_bScaler = 1.0f;
-	float m_colorScaler = 75.0f;
+	float m_colorScaler = 25.0f;
 
 	void Start()
 	{
@@ -42,6 +43,7 @@ public class FrequencyDataManager : MonoBehaviour
 		m_liveAudioDataManager = FindObjectOfType<LiveAudioDataManager>();
 
 		m_processedFFTDataArray = new float[m_processedFFTDataSize];
+		m_previousProcessedFFTDataArray = new float[m_processedFFTDataSize];
 	}
 
 	void ProcessRawFFTData()
@@ -80,6 +82,11 @@ public class FrequencyDataManager : MonoBehaviour
 			}
 			m_processedFFTDataArray[i] = Mathf.Clamp( 1.0f * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
 			//Debug.Log("Sum for acuumuator: " + currentRawSamplesPerProcessedPoint + " , " + tempSum);
+
+			// averageing with previous to smooth out depth axis and hide repeat data
+			m_processedFFTDataArray[i] = ( 0.75f *  m_processedFFTDataArray[i] + 0.25f * m_previousProcessedFFTDataArray[i]);
+			m_previousProcessedFFTDataArray[i] = m_processedFFTDataArray[i];
+
 		}
 	}
 
