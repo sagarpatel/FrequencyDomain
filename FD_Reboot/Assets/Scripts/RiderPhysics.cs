@@ -3,7 +3,7 @@ using System.Collections;
 
 public class RiderPhysics : MonoBehaviour 
 {
-	float currentHeight;
+	float m_currentHeightOffset = 0;
 	float m_currentProgressOnTerrain_Depth = 0; // 0 is front of terrain, 1 is the furthest back
 	float m_currentProgressOnTerrain_Widrg = 0; // -1 is full left, +1 is full right
 	
@@ -24,11 +24,11 @@ public class RiderPhysics : MonoBehaviour
 	void Update()
 	{
 		
-		CalculateMinHeight(d_DepthTest,0);
+		UpdateRiderWolrdPosRot(d_DepthTest, d_widthTEst);
 		
 	}
 	
-	void CalculateMinHeight(float terrainRatio_Depth, float terrainRatio_Width)
+	void UpdateRiderWolrdPosRot(float terrainRatio_Depth, float terrainRatio_Width)
 	{
 		int meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
 		int frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;
@@ -39,7 +39,7 @@ public class RiderPhysics : MonoBehaviour
 		
 		Vector3 pos = Vector3.zero;
 		Quaternion rot = Quaternion.identity;
-		targetMeshStripGenerator.CalculatePositionOnStrip( d_widthTEst,0, out pos, out rot);
+		targetMeshStripGenerator.CalculatePositionOnStrip( terrainRatio_Width, m_currentHeightOffset, out pos, out rot);
 		
 		transform.position = pos;
 		transform.rotation = rot;
