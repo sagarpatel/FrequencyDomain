@@ -29,6 +29,24 @@ namespace BindingsExample
 			Down = CreatePlayerAction( "Move Down" );
 			Move = CreateTwoAxisPlayerAction( Left, Right, Down, Up );
 		}
+
+		public PlayerActions(int deviceIndex)
+		{
+			Fire = CreatePlayerAction( "Fire" );
+			Jump = CreatePlayerAction( "Jump" );
+			Left = CreatePlayerAction( "Move Left" );
+			Right = CreatePlayerAction( "Move Right" );
+			Up = CreatePlayerAction( "Move Up" );
+			Down = CreatePlayerAction( "Move Down" );
+			Move = CreateTwoAxisPlayerAction( Left, Right, Down, Up );
+
+
+			if(deviceIndex >= 0)
+			{
+				DeviceIndex = deviceIndex;
+			}
+
+		}
 	}
 
 
@@ -41,7 +59,7 @@ namespace BindingsExample
 
 		void OnEnable()
 		{
-			playerInput = new PlayerActions();
+			playerInput = new PlayerActions(0);
 
 			playerInput.Fire.AddDefaultBinding( Key.Shift, Key.A );
 			playerInput.Fire.AddDefaultBinding( InputControlType.Action1 );
@@ -105,8 +123,8 @@ namespace BindingsExample
 
 		void Update()
 		{
-			transform.Rotate( Vector3.down, 500.0f * Time.deltaTime * playerInput.Move.X, Space.World );
-			transform.Rotate( Vector3.right, 500.0f * Time.deltaTime * playerInput.Move.Y, Space.World );
+			transform.Rotate( Vector3.down, 100.0f * Time.deltaTime * playerInput.Move.X, Space.World );
+			transform.Rotate( Vector3.right, 100.0f * Time.deltaTime * playerInput.Move.Y, Space.World );
 
 			var fireColor = playerInput.Fire.IsPressed ? Color.red : Color.white;
 			var jumpColor = playerInput.Jump.IsPressed ? Color.green : Color.white;

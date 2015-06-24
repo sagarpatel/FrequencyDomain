@@ -21,6 +21,7 @@ namespace InControl
 		/// When set to <c>null</c> this set will query <see cref="InputManager.ActiveDevice" /> when required.
 		/// </summary>
 		public InputDevice Device { get; set; }
+		public int DeviceIndex { get; set; }
 
 		/// <summary>
 		/// Gets the actions in this set as a readonly collection.
@@ -61,14 +62,13 @@ namespace InControl
 			Enabled = true;
 			InputManager.OnUpdate -= Update;
 			InputManager.OnUpdate += Update;
+			DeviceIndex = -1;
 		}
-
 
 		public void Destroy()
 		{
 			InputManager.OnUpdate -= Update;
 		}
-
 
 		/// <summary>
 		/// Create an action on this set. This should be performed in the constructor of your PlayerActionSet subclass.
@@ -131,9 +131,11 @@ namespace InControl
 		}
 
 
-		void Update( ulong updateTick, float deltaTime )
+		void Update( ulong updateTick, float deltaTime)
 		{
 			var device = Device ?? InputManager.ActiveDevice;
+			if( DeviceIndex <= (InputManager.Devices.Count - 1) )
+				device = InputManager.Devices[DeviceIndex];
 
 			var actionsCount = actions.Count;
 			for (int i = 0; i < actionsCount; i++)
