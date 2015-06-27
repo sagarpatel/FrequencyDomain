@@ -23,6 +23,8 @@ public class RiderPhysics : MonoBehaviour
 
 	float m_widthVelocityDecay = 1.0f;
 	float m_depthVelocityDecay = 1.0f;
+	bool m_widthDecayFlag = false;
+	bool m_depthDecayFlag = false;
 
 	float m_widthVelocity_Min = -1.0f;
 	float m_widthVelocity_Max = 1.0f;
@@ -45,8 +47,11 @@ public class RiderPhysics : MonoBehaviour
 		m_heightOffset = Mathf.Clamp( m_heightOffset + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
 
 		// update velocity decays/gravity
-		m_widthVelocity -= m_widthVelocity * m_widthVelocityDecay * Time.deltaTime;
-		m_depthVelocity -= m_depthVelocity * m_depthVelocityDecay * Time.deltaTime;
+		if(m_widthDecayFlag == true)
+			m_widthVelocity -= m_widthVelocity * m_widthVelocityDecay * Time.deltaTime;
+		if(m_depthDecayFlag == true)
+			m_depthVelocity -= m_depthVelocity * m_depthVelocityDecay * Time.deltaTime;
+
 		m_heightVelocity -= m_gravity * Time.deltaTime; // could do a check to see if touching groung to kill vel, but no real need for it now
 
 		UpdateRiderWolrdPosRot();
@@ -74,5 +79,15 @@ public class RiderPhysics : MonoBehaviour
 	{
 		m_widthVelocity = Mathf.Clamp( m_widthVelocity + extraWdith, m_widthVelocity_Min, m_widthVelocity_Max);
 		m_depthVelocity = Mathf.Clamp( m_depthVelocity + extraDepth, m_depthVelocity_Min, m_depthVelocity_Max);
+
+		if(extraWdith == 0)
+			m_widthDecayFlag = true;
+		else
+			m_widthDecayFlag = false;
+
+		if(extraDepth == 0)
+			m_depthDecayFlag = true;
+		else
+			m_depthDecayFlag = false;
 	}
 }
