@@ -37,8 +37,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 	public float d_rotVel_x = 0;
 	public float d_rotVel_y = 0;
 	public float d_rotVel_z = 0;
+
 	[Range(-1,1)]
-	public float d_bendFactor = 0;
+	float m_bendFactor = 0;
+	float m_bendRange = 1.0f;
+
 	public float d_bendOscilationFrequency = 0.0f;
 
 	float m_stripHalfWidth;
@@ -150,17 +153,17 @@ public class MeshTerrainGenerator : MonoBehaviour
 		// set vertices here
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
-			generatedFrontRowVertex_Right = GenerateFrontRowBaselineVertex(i,d_bendFactor);
+			generatedFrontRowVertex_Right = GenerateFrontRowBaselineVertex(i,m_bendFactor);
 			generatedFrontRowVertex_Left = generatedFrontRowVertex_Right;
 			generatedFrontRowVertex_Left.x *= -1;
 
-			m_circleCenterPos.y = Mathf.Sign(d_bendFactor) * Mathf.Abs(m_circleCenterPos.y);
+			m_circleCenterPos.y = Mathf.Sign(m_bendFactor) * Mathf.Abs(m_circleCenterPos.y);
 			if(m_circleCenterPos.y > 0)
 				circleFormUp = (m_circleCenterPos - generatedFrontRowVertex_Right).normalized;
 			else
 				circleFormUp = (generatedFrontRowVertex_Right - m_circleCenterPos).normalized;
 
-			vertexUpVector_Right = Vector3.Lerp(Vector3.up, circleFormUp, Mathf.Abs( d_bendFactor ));
+			vertexUpVector_Right = Vector3.Lerp(Vector3.up, circleFormUp, Mathf.Abs( m_bendFactor ));
 
 			vertexUpVector_Left = vertexUpVector_Right;
 			vertexUpVector_Left.x *= -1;
@@ -266,7 +269,10 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	}
 
-
+	public void IncrementMeshBend(float bendIncrement)
+	{
+		m_bendFactor = Mathf.Clamp(m_bendFactor + bendIncrement, -m_bendRange, m_bendRange);
+	}
 	
 	
 }
