@@ -13,9 +13,8 @@ public class RiderPhysics : MonoBehaviour
 	float m_widthVelocity = 0;
 	float m_depthVelocity = 0;
 	float m_heightVelocity = 0;
-
-	float m_widthRange_Min = -1.0f;
-	float m_widthRange_Max = 1.0f;
+	
+	float m_widthRange = 0.990f;
 	float m_depthRange_Min = 0.10f;
 	float m_depthRange_Max = 0.90f;
 	float m_heightOffsetRange_Min = 0;
@@ -42,7 +41,22 @@ public class RiderPhysics : MonoBehaviour
 	void Update()
 	{
 		// apply velocites
-		m_widthRatio = Mathf.Clamp( m_widthRatio + m_widthVelocity * Time.deltaTime, m_widthRange_Min, m_widthRange_Max );
+
+		
+		// check for looping around mesh
+		float nextWidthAbs = Mathf.Abs(m_widthRatio) + Mathf.Abs(m_widthVelocity * Time.deltaTime);
+		if( m_meshTerrainGenerator.IsLoopClosed() == true && nextWidthAbs >= m_widthRange)
+		{
+			// loop around to the other side
+			float widthLoopDiff = nextWidthAbs - m_widthRange;
+			m_widthRatio = -Mathf.Sign(m_widthRatio) * (m_widthRange - widthLoopDiff);
+		}
+		else
+		{
+			// ordinary move
+			m_widthRatio = Mathf.Clamp( m_widthRatio + m_widthVelocity * Time.deltaTime, -m_widthRange, m_widthRange );
+		}
+
 		m_depthRatio = Mathf.Clamp( m_depthRatio + m_depthVelocity * Time.deltaTime, m_depthRange_Min, m_depthRange_Max);
 		m_heightOffset = Mathf.Clamp( m_heightOffset + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
 

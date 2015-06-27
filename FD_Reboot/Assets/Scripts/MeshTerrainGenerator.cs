@@ -267,5 +267,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_bendFactor = Mathf.Clamp(m_bendFactor + bendIncrement, -m_bendRange, m_bendRange);
 	}
 	
-	
+	public bool IsLoopClosed()
+	{
+		if(Mathf.Abs(m_bendFactor) == 1)
+			return true;
+		else
+			return false;
+	}
 }
