@@ -249,9 +249,6 @@ public class MeshTerrainGenerator : MonoBehaviour
 		UpdateHeighValues(testHeightValues, testHeightValues);
 		Profiler.EndSample();
 
-		t_previousPosition = transform.position;
-		transform.position += transform.forward * m_moveSpeed * Time.deltaTime;
-
 		float travelledDistance = Vector3.Distance(transform.position, t_previousPosition);
 		int nextStripSpawnIndex = (m_lastActivatedStripIndex + 1) % m_meshStripsPoolCount;
 
