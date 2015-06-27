@@ -34,10 +34,6 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	float[] testHeightValues;
 
-	public float d_rotVel_x = 0;
-	public float d_rotVel_y = 0;
-	public float d_rotVel_z = 0;
-
 	[Range(-1,1)]
 	float m_bendFactor = 0;
 	float m_bendRange = 1.0f;
@@ -264,9 +260,6 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_meshStripsMaterial.color = m_currentMaterialColor;
 		Profiler.EndSample();
 		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
-
-		transform.Rotate(new Vector3(d_rotVel_x, d_rotVel_y , d_rotVel_z) * Time.deltaTime);
-
 	}
 
 	public void IncrementMeshBend(float bendIncrement)
