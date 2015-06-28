@@ -175,8 +175,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 			t_stripUpVectorsArray_Right[i] = vertexUpVector_Right;
 			t_stripUpVectorsArray_Left[i] = vertexUpVector_Left;
 		}
-		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right, t_stripUpVectorsArray_Right, m_freshHeighValues_Right);
-		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left, t_stripUpVectorsArray_Left, m_freshHeighValues_Left);
+		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Right(t_calcFrontRowVertsArray_Right, t_calcBackRowVertsArray_Right, t_stripUpVectorsArray_Right, m_freshHeighValues_Right, m_bendFactor);
+		m_meshStripGeneratorsArray[stripIndex].SetRowsVertices_Left(t_calcFrontRowVertsArray_Left, t_calcBackRowVertsArray_Left, t_stripUpVectorsArray_Left, m_freshHeighValues_Left, m_bendFactor);
 		
 		m_lastActivatedStripIndex = stripIndex;
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Right();
@@ -267,11 +267,5 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_bendFactor = Mathf.Clamp(m_bendFactor + bendIncrement, -m_bendRange, m_bendRange);
 	}
 	
-	public bool IsLoopClosed()
-	{
-		if(Mathf.Abs(m_bendFactor) == 1)
-			return true;
-		else
-			return false;
-	}
+
 }

@@ -30,6 +30,8 @@ public class MeshStripGenerator : MonoBehaviour
 
 	int m_widthVerticesCount;
 
+	float m_meshBendFactor = 0;
+
 	//MeshCollider m_meshCollider_Up_Left;
 	//MeshCollider m_meshCollider_Up_Right;
 
@@ -230,7 +232,7 @@ public class MeshStripGenerator : MonoBehaviour
 
 	}
 
-	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray)
+	public void SetRowsVertices_Right(Vector3[] frontRow_VertsArray_Right, Vector3[] backRowVerts_Array_Right, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray, float bendFactor)
 	{
 		if(frontRow_VertsArray_Right != null && frontRow_VertsArray_Right.Length != 0)
 		{
@@ -268,9 +270,10 @@ public class MeshStripGenerator : MonoBehaviour
 
 		Array.Copy(frontRow_UpVectorsArray, m_upVectorsArray_Right, frontRow_UpVectorsArray.Length);
 		Array.Copy(heightValuesArray, m_heightValues_Right, heightValuesArray.Length);
+		m_meshBendFactor = bendFactor;
 	}
 
-	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray)
+	public void SetRowsVertices_Left(Vector3[] frontRow_VertsArray_Left, Vector3[] backRowVerts_Array_Left, Vector3[] frontRow_UpVectorsArray, float[] heightValuesArray, float bendFactor)
 	{
 		if(frontRow_VertsArray_Left != null && frontRow_VertsArray_Left.Length != 0)
 		{
@@ -306,6 +309,7 @@ public class MeshStripGenerator : MonoBehaviour
 
 		Array.Copy(frontRow_UpVectorsArray, m_upVectorsArray_Left, frontRow_UpVectorsArray.Length);
 		Array.Copy(heightValuesArray, m_heightValues_Left, heightValuesArray.Length);
+		m_meshBendFactor = bendFactor;
 	}
 
 	public Vector3[] GetBackRowVertices_Right()
@@ -368,6 +372,14 @@ public class MeshStripGenerator : MonoBehaviour
 
 		calculatedPosition = finalWorldPos;
 		calculatedRotation = finalWorldRot;
+	}
+
+	public bool IsLoopClosed()
+	{
+		if(Mathf.Abs(m_meshBendFactor) == 1)
+			return true;
+		else
+			return false;
 	}
 
 	// Just used for testing

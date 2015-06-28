@@ -41,11 +41,19 @@ public class RiderPhysics : MonoBehaviour
 	void Update()
 	{
 		// apply velocites
+		// do depth first to figure out the target mesh
+		m_depthRatio = Mathf.Clamp( m_depthRatio + m_depthVelocity * Time.deltaTime, m_depthRange_Min, m_depthRange_Max);
+		// get target mesh
+		int meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
+		int frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;		
+		int targetMeshStripIndexOffset = (int)(m_depthRatio * (float)meshStripsCount);
+		int targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
+		MeshStripGenerator targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
 
-		
+		// now that we know target meshstrip, we can check if its looping
 		// check for looping around mesh
 		float nextWidthAbs = Mathf.Abs(m_widthRatio) + Mathf.Abs(m_widthVelocity * Time.deltaTime);
-		if( m_meshTerrainGenerator.IsLoopClosed() == true && nextWidthAbs >= m_widthRange)
+		if( targetMeshStripGenerator.IsLoopClosed() == true && nextWidthAbs >= m_widthRange)
 		{
 			// loop around to the other side
 			float widthLoopDiff = nextWidthAbs - m_widthRange;
@@ -57,7 +65,7 @@ public class RiderPhysics : MonoBehaviour
 			m_widthRatio = Mathf.Clamp( m_widthRatio + m_widthVelocity * Time.deltaTime, -m_widthRange, m_widthRange );
 		}
 
-		m_depthRatio = Mathf.Clamp( m_depthRatio + m_depthVelocity * Time.deltaTime, m_depthRange_Min, m_depthRange_Max);
+		// calcluations for how high off the the mesh rider should be 
 		m_heightOffset = Mathf.Clamp( m_heightOffset + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
 
 		// update velocity decays/gravity
@@ -68,26 +76,16 @@ public class RiderPhysics : MonoBehaviour
 
 		m_heightVelocity -= m_gravity * Time.deltaTime; // could do a check to see if touching groung to kill vel, but no real need for it now
 
-		UpdateRiderWolrdPosRot();
-		
-	}
-	
-	void UpdateRiderWolrdPosRot()
-	{
-		int meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
-		int frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;
-		
-		int targetMeshStripIndexOffset = (int)(m_depthRatio * (float)meshStripsCount);
-		int targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
-		MeshStripGenerator targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
-		
+		// final position calcluations and set
 		Vector3 pos = Vector3.zero;
 		Quaternion rot = Quaternion.identity;
-		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, m_heightOffset, out pos, out rot);
-		
+		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, m_heightOffset, out pos, out rot);		
 		transform.position = pos;
 		transform.rotation = rot;
 	}
+
+
+		
 
 	public void IncrementWidthDepthVelocities(float extraWdith, float extraDepth)
 	{
