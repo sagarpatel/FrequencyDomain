@@ -80,7 +80,7 @@ public class FrequencyDataManager : MonoBehaviour
 				tempSum += m_currentRawFFTDataArray[rawFFTIndex + samplesAccumulationStartIndexOffset];
 				rawFFTIndex += 1;
 			}
-			m_processedFFTDataArray[i] = Mathf.Clamp( 10.0f * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
+			m_processedFFTDataArray[i] = Mathf.Clamp( 1.0f * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
 			//Debug.Log("Sum for acuumuator: " + currentRawSamplesPerProcessedPoint + " , " + tempSum);
 
 			// averageing with previous to smooth out depth axis and hide repeat data

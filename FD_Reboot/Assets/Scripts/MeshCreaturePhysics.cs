@@ -21,7 +21,7 @@ public class MeshCreaturePhysics : MonoBehaviour
 	bool m_decayFlag_z = false;
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		if(m_decayFlag_x == true)
 			m_rotVel.x -= m_rotVelDecay_x * m_rotVel.x * Time.deltaTime;

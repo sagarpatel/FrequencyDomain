@@ -22,7 +22,7 @@ public class LiveAudioDataManager : MonoBehaviour
 		m_liveAudioSource.playOnAwake = false;
 
 		m_audioDevicesArray = Microphone.devices;
-		m_currentAudioDeviceIndex = 0;
+		m_currentAudioDeviceIndex = 1;
 		m_currentAudioDeviceName = m_audioDevicesArray[m_currentAudioDeviceIndex];
 
 		// debug launch here
