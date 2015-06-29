@@ -256,13 +256,13 @@ public class MeshStripGenerator : MonoBehaviour
 		}
 
 		m_mesh_Up_Right.MarkDynamic();
-		m_mesh_Down_Right.MarkDynamic();
+		//m_mesh_Down_Right.MarkDynamic();
 		m_mesh_Up_Right.vertices = m_verticesArray_Right;
-		m_mesh_Down_Right.vertices = m_verticesArray_Right;
+		//m_mesh_Down_Right.vertices = m_verticesArray_Right;
 		m_mesh_Up_Right.RecalculateNormals();
-		m_mesh_Down_Right.RecalculateNormals();
+		//m_mesh_Down_Right.RecalculateNormals();
 		m_mesh_Up_Right.RecalculateBounds();
-		m_mesh_Down_Right.RecalculateBounds();
+		//m_mesh_Down_Right.RecalculateBounds();
 
 		// TODO: Might be able to optimize this
 		//m_meshCollider_Up_Right.sharedMesh = null;
@@ -296,13 +296,13 @@ public class MeshStripGenerator : MonoBehaviour
 		}
 		
 		m_mesh_Up_Left.MarkDynamic();
-		m_mesh_Down_Left.MarkDynamic();
+		//m_mesh_Down_Left.MarkDynamic();
 		m_mesh_Up_Left.vertices = m_verticesArray_Left;
-		m_mesh_Down_Left.vertices = m_verticesArray_Left;
+		//m_mesh_Down_Left.vertices = m_verticesArray_Left;
 		m_mesh_Up_Left.RecalculateNormals();
-		m_mesh_Down_Left.RecalculateNormals();
+		//m_mesh_Down_Left.RecalculateNormals();
 		m_mesh_Up_Left.RecalculateBounds();
-		m_mesh_Down_Left.RecalculateBounds();
+		//m_mesh_Down_Left.RecalculateBounds();
 
 		//m_meshCollider_Up_Left.sharedMesh = null;
 		//m_meshCollider_Up_Left.sharedMesh = m_mesh_Up_Left;
