@@ -18,14 +18,14 @@ public class MeshStripGenerator : MonoBehaviour
 	float[] m_heightValues_Right;
 	float[] m_heightValues_Left;
 
-	Mesh m_mesh_Up_Right;
+	public Mesh m_mesh_Up_Right;
 	Mesh m_mesh_Down_Right;
 
 	Vector3[] m_verticesArray_Left;
 	Vector3[] m_verticesArray_BackRow_Left;
 	Vector3[] m_verticesArray_FrontRow_Left;
 
-	Mesh m_mesh_Up_Left;
+	public Mesh m_mesh_Up_Left;
 	Mesh m_mesh_Down_Left;
 
 	int m_widthVerticesCount;
@@ -312,6 +312,38 @@ public class MeshStripGenerator : MonoBehaviour
 		m_meshBendFactor = bendFactor;
 	}
 
+	
+	public void AverageNormalsForCommonVertices(Mesh oldMesh_Up_Right, Mesh oldMesh_Up_Left)
+	{
+		Vector3[] newMeshNormals_Up_Right = m_mesh_Up_Right.normals;
+		Vector3[] newMeshNormals_Up_Left = m_mesh_Up_Left.normals;
+		
+		Vector3[] oldMeshNormals_Up_Right = oldMesh_Up_Right.normals;
+		Vector3[] oldMeshNormals_Up_Left = oldMesh_Up_Left.normals;
+		
+		Vector3 averageCalNormal_Right;
+		Vector3 averageCalcNormal_Left;
+		
+		for(int i = 0; i < newMeshNormals_Up_Left.Length; i += 2)
+		{
+			averageCalNormal_Right = (( newMeshNormals_Up_Right[i+1] + oldMeshNormals_Up_Right[i] )/2.0f).normalized;
+			averageCalcNormal_Left = (( newMeshNormals_Up_Left[i+1] + oldMeshNormals_Up_Left[i] )/2.0f).normalized;
+
+			oldMeshNormals_Up_Right[i] = averageCalNormal_Right;
+			oldMeshNormals_Up_Left[i] = averageCalcNormal_Left;
+
+			newMeshNormals_Up_Right[i+1] = averageCalNormal_Right;
+			newMeshNormals_Up_Left[i+1] = averageCalcNormal_Left;
+		}
+
+		oldMesh_Up_Right.normals = oldMeshNormals_Up_Right;
+		oldMesh_Up_Left.normals  = oldMeshNormals_Up_Left;
+
+		m_mesh_Up_Right.normals = newMeshNormals_Up_Right;
+		m_mesh_Up_Left.normals = newMeshNormals_Up_Left;
+	}
+
+
 	public Vector3[] GetBackRowVertices_Right()
 	{
 		return m_verticesArray_BackRow_Right;
@@ -381,6 +413,7 @@ public class MeshStripGenerator : MonoBehaviour
 		else
 			return false;
 	}
+
 
 	// Just used for testing
 	/*

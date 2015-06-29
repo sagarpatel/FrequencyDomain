@@ -26,6 +26,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3[] t_stripUpVectorsArray_Right;
 	Vector3[] t_stripUpVectorsArray_Left;
 	Quaternion t_diffQuaternion;
+	MeshStripGenerator m_lastGeneratedMeshStrip;
 
 	public Material m_meshStripsMaterial;
 
@@ -183,6 +184,13 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left = m_meshStripGeneratorsArray[stripIndex].GetFrontRowVertices_Left();
 		m_lastGeneratedMeshStrip_Rotation = m_meshStripGeneratorsGOArray[stripIndex].transform.rotation;
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[stripIndex].transform;
+
+		if(m_lastGeneratedMeshStrip != null)
+		{
+			m_meshStripGeneratorsArray[stripIndex].AverageNormalsForCommonVertices(m_lastGeneratedMeshStrip.m_mesh_Up_Right, m_lastGeneratedMeshStrip.m_mesh_Up_Left);
+		}
+
+		m_lastGeneratedMeshStrip = m_meshStripGeneratorsArray[stripIndex];
 	}
 	
 	Vector3 GenerateFrontRowBaselineVertex(int collumnIndex, float bendFactor)
