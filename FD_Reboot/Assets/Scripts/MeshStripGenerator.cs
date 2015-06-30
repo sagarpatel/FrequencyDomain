@@ -103,6 +103,18 @@ public class MeshStripGenerator : MonoBehaviour
 			verticesList_Left.Add( new Vector3(-i * collumnWidth, 0, rowDepth));
 		}
 
+		// set up barycentric coordiantes points per vertex, alternating between the 3 types every 3 vertices
+		List<Vector4> barrycenterPoints = new List<Vector4>();
+		for(int i = 0; i < verticesList_Right.Count; i++)
+		{
+			if(i % 3 == 0)
+				barrycenterPoints.Add(new Vector4(1,0,0,1));
+			else if (i % 3 == 1)
+				barrycenterPoints.Add(new Vector4(0,1,0,1));
+			else if(i % 3 == 2)
+				barrycenterPoints.Add(new Vector4(0,0,1,1));
+		}
+
 		// save vertices into arrays, setup the rows vertices arrays
 		m_verticesArray_Right = verticesList_Right.ToArray();
 		m_verticesArray_Left = verticesList_Left.ToArray();
@@ -189,12 +201,14 @@ public class MeshStripGenerator : MonoBehaviour
 		mesh_Up_Right.MarkDynamic();
 		mesh_Up_Right.vertices = m_verticesArray_Right;
 		mesh_Up_Right.triangles = m_trianglesList_Up_Right.ToArray();
+		mesh_Up_Right.tangents = barrycenterPoints.ToArray(); // hijakcing tangents array to use for barrycentric coordinates
 		m_mesh_Up_Right = mesh_Up_Right;
 
 		Mesh mesh_Down_Right = meshStripGO_Down_Right.GetComponent<MeshFilter>().mesh;
 		mesh_Down_Right.MarkDynamic();
 		mesh_Down_Right.vertices = m_verticesArray_Right;
 		mesh_Down_Right.triangles = m_trianglesList_Down_Right.ToArray();
+		mesh_Down_Right.tangents = barrycenterPoints.ToArray();
 		m_mesh_Down_Right = mesh_Down_Right;
 
 		m_mesh_Up_Right.RecalculateNormals();
@@ -207,12 +221,14 @@ public class MeshStripGenerator : MonoBehaviour
 		mesh_Up_Left.MarkDynamic();
 		mesh_Up_Left.vertices = m_verticesArray_Left;
 		mesh_Up_Left.triangles = m_trianglesList_Up_Left.ToArray();
+		mesh_Up_Left.tangents = barrycenterPoints.ToArray();
 		m_mesh_Up_Left = mesh_Up_Left;
 
 		Mesh mesh_Down_Left = meshStripGO_Down_Left.GetComponent<MeshFilter>().mesh;
 		mesh_Down_Left.MarkDynamic();
 		mesh_Down_Left.vertices = m_verticesArray_Left;
 		mesh_Down_Left.triangles = m_trianglesList_Down_Left.ToArray();
+		mesh_Down_Left.tangents = barrycenterPoints.ToArray();
 		m_mesh_Down_Left = mesh_Down_Left;
 
 		m_mesh_Up_Left.RecalculateNormals();
