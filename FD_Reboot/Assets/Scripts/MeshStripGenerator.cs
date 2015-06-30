@@ -103,16 +103,39 @@ public class MeshStripGenerator : MonoBehaviour
 			verticesList_Left.Add( new Vector3(-i * collumnWidth, 0, rowDepth));
 		}
 
-		// set up barycentric coordiantes points per vertex, alternating between the 3 types every 3 vertices
+		// set up barycentric coordiantes points per vertex, laid out so that each triangle has own set
 		List<Vector4> barrycenterPoints = new List<Vector4>();
+		Vector4 b_coord_1 = new Vector4(1,0,0,1);
+		Vector4 b_coord_2 = new Vector4(0,1,0,1);
+		Vector4 b_coord_3 = new Vector4(0,0,1,1);
+		int topRowCounter = 0;
+		int bottomRowCounter = 0;
 		for(int i = 0; i < verticesList_Right.Count; i++)
 		{
-			if(i % 3 == 0)
-				barrycenterPoints.Add(new Vector4(1,0,0,1));
-			else if (i % 3 == 1)
-				barrycenterPoints.Add(new Vector4(0,1,0,1));
-			else if(i % 3 == 2)
-				barrycenterPoints.Add(new Vector4(0,0,1,1));
+			// top row
+			if(i % 2 == 0)
+			{
+				if(topRowCounter % 3 == 0)
+					barrycenterPoints.Add(b_coord_1);
+				else if(topRowCounter % 3 == 1)
+					barrycenterPoints.Add(b_coord_2);
+				else if(topRowCounter % 3 == 2)
+					barrycenterPoints.Add(b_coord_3);
+
+				topRowCounter ++;
+			}
+			else
+			{
+				if(bottomRowCounter % 3 == 0)
+					barrycenterPoints.Add(b_coord_2);
+				else if(bottomRowCounter % 3 == 1)
+					barrycenterPoints.Add(b_coord_3);
+				else if(bottomRowCounter % 3 == 2)
+					barrycenterPoints.Add(b_coord_1);
+
+				bottomRowCounter ++;
+			}
+
 		}
 
 		// save vertices into arrays, setup the rows vertices arrays
