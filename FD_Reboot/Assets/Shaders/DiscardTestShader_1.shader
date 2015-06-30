@@ -24,14 +24,18 @@
 		struct Input 
 		{
 			float2 uv_MainTex;
+			float3 worldPos;
 		};
 
 		//half _Glossiness;
 		//half _Metallic;
 		fixed4 _Color;
+		
 
 		void surf (Input IN, inout SurfaceOutputStandard o) 
 		{
+			clip (frac((IN.worldPos.y+IN.worldPos.z*0.1) * 5) - _SinTime);
+		
 			// Albedo comes from a texture tinted by color
 			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = c.rgb;
