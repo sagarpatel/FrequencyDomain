@@ -49,7 +49,18 @@
 			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			//c.rgb = float3(IN.uv_MainTex.xy,0);
 			
-			c.rgb = float3( IN.barryCenterCoord.xyz);
+			//c.rgb = float3( IN.barryCenterCoord.xyz);
+			
+			//clip(-IN.barryCenterCoord.z + 0.5);
+			
+			//float avr = ( IN.barryCenterCoord.x + IN.barryCenterCoord.y + IN.barryCenterCoord.z )/3.0;
+			//clip(IN.barryCenterCoord.x - 0.2);
+			float cut = 0.6;
+			if(IN.barryCenterCoord.x < cut && IN.barryCenterCoord.y < cut && IN.barryCenterCoord.z < cut)
+			{
+				clip(-1);
+			}
+			
 			
 			o.Albedo = c.rgb;
 			// Metallic and smoothness come from slider variables
