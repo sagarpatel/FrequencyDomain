@@ -3,6 +3,7 @@
 	{
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_Cutoff ("Cutoff", float) = 0.0
 		//_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		//_Metallic ("Metallic", Range(0,1)) = 0.0
 	}
@@ -39,7 +40,7 @@
 		//half _Glossiness;
 		//half _Metallic;
 		fixed4 _Color;
-		
+		float _Cutoff;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) 
 		{
@@ -55,7 +56,8 @@
 			
 			//float avr = ( IN.barryCenterCoord.x + IN.barryCenterCoord.y + IN.barryCenterCoord.z )/3.0;
 			//clip(IN.barryCenterCoord.x - 0.2);
-			float cut = 0.09;
+			float cut = _Cutoff; //0.09;
+			
 			if(IN.barryCenterCoord.x < cut || IN.barryCenterCoord.y < cut || IN.barryCenterCoord.z < cut)
 			{
 				//clip(-1);
