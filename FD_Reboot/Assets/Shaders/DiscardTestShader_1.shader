@@ -55,11 +55,17 @@
 			
 			//float avr = ( IN.barryCenterCoord.x + IN.barryCenterCoord.y + IN.barryCenterCoord.z )/3.0;
 			//clip(IN.barryCenterCoord.x - 0.2);
-			float cut = 0.6;
-			if(IN.barryCenterCoord.x < cut && IN.barryCenterCoord.y < cut && IN.barryCenterCoord.z < cut)
+			float cut = 0.09;
+			if(IN.barryCenterCoord.x < cut || IN.barryCenterCoord.y < cut || IN.barryCenterCoord.z < cut)
+			{
+				//clip(-1);
+			}
+			else
 			{
 				clip(-1);
 			}
+		
+			
 			
 			
 			o.Albedo = c.rgb;
