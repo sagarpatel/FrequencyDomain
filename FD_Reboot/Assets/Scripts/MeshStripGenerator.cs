@@ -401,6 +401,32 @@ public class MeshStripGenerator : MonoBehaviour
 		return m_verticesArray_FrontRow_Left;
 	}
 
+	public float CalculateTerrainHeightValue(float widthPosRatio)
+	{
+		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
+		int widthVertexIndex_Ceil = Mathf.CeilToInt(widthVertexIndexLocation);
+		int widthVertexIndex_Floor = Mathf.FloorToInt(widthVertexIndexLocation);
+
+		float height_Ceil = 0;
+		float height_Floor = 0;
+
+		// right side
+		if(widthPosRatio > 0)
+		{
+			height_Ceil = m_heightValues_Right[widthVertexIndex_Ceil];
+			height_Floor = m_heightValues_Right[widthVertexIndex_Floor];
+		}
+		else
+		{
+			height_Ceil = m_heightValues_Left[widthVertexIndex_Ceil];
+			height_Floor = m_heightValues_Left[widthVertexIndex_Floor];
+		}
+
+		float lerpStep = widthVertexIndexLocation - (float)widthVertexIndex_Floor;
+		float lerpedHeight = Mathf.Lerp (height_Floor, height_Ceil, lerpStep);
+		return lerpedHeight;
+	}
+
 	public void CalculatePositionOnStrip(float widthPosRatio, float heightOffset, out Vector3 calculatedPosition, out Quaternion calculatedRotation)
 	{
 		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
