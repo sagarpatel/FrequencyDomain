@@ -146,12 +146,8 @@ public class RiderPhysics : MonoBehaviour
 		// final position calcluations and set
 		transform.position = pos;
 		transform.rotation = rot;
-
-
 	}
 
-
-		
 
 	public void IncrementWidthDepthVelocities(float extraWdith, float extraDepth)
 	{
@@ -168,4 +164,10 @@ public class RiderPhysics : MonoBehaviour
 		else
 			m_depthDecayFlag = false;
 	}
+
+	public float CalculateVelocityRatio_Width()
+	{
+		return Mathf.Sign(m_widthVelocity) * Mathf.InverseLerp( 0, m_widthVelocity_Max, Mathf.Abs(m_widthVelocity));
+	}
+
 }
