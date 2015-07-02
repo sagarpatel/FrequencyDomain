@@ -17,8 +17,8 @@ public class RiderPhysics : MonoBehaviour
 	float m_widthRange = 0.990f;
 	float m_depthRange_Min = 0.10f;
 	float m_depthRange_Max = 0.90f;
-	float m_heightOffsetRange_Min = 0;
-	float m_heightOffsetRange_Max = 200.0f; // TODO need to convert this to ratio
+	float m_heightOffsetBaseCurveRange_Min = 0;
+	float m_heightOffsetBaseCurveRange_Max = 200.0f; // TODO need to convert this to ratio
 
 	float m_widthVelocityDecay = 1.0f;
 	float m_depthVelocityDecay = 1.0f;
@@ -30,9 +30,11 @@ public class RiderPhysics : MonoBehaviour
 	float m_depthVelocity_Min = -1.0f;
 	float m_depthVelocity_Max = 1.0f;
 
-	float m_gravity = 10.0f;
+	float m_gravity = 200.0f;
+	float m_newTerrainHeight = 0;
 	float m_oldTerrainHeight = 0;
 	float m_heightAccumulator = 0;
+	float m_heightDeltaEpsilon = 0.1f;
 
 	enum RiderHeightState
 	{
@@ -52,6 +54,9 @@ public class RiderPhysics : MonoBehaviour
 	
 	void Update()
 	{
+		m_oldTerrainHeight = m_newTerrainHeight;
+		m_oldRiderHeightState = m_newRiderHeightState;
+
 		// apply velocites
 		// do depth first to figure out the target mesh
 		m_depthRatio = Mathf.Clamp( m_depthRatio + m_depthVelocity * Time.deltaTime, m_depthRange_Min, m_depthRange_Max);
@@ -91,12 +96,12 @@ public class RiderPhysics : MonoBehaviour
 		// handle terrain height
 		Vector3 pos = Vector3.zero;
 		Quaternion rot = Quaternion.identity;
-		float newTerrainHeight = targetMeshStripGenerator.CalculateTerrainHeightValue(m_widthRatio);
-		float terrainHeightDiff = newTerrainHeight - m_oldTerrainHeight;
+		m_newTerrainHeight = targetMeshStripGenerator.CalculateTerrainHeightValue(m_widthRatio);
+		float terrainHeightDiff = m_newTerrainHeight - m_oldTerrainHeight;
 
-		if(m_heightOffsetBaseCurve <= newTerrainHeight) // toucing ground
+		if(m_heightOffsetBaseCurve <= m_newTerrainHeight) // touching ground
 		{
-			if(terrainHeightDiff > 0) // rising while hugging the terrain
+			if(terrainHeightDiff > m_heightDeltaEpsilon) // rising while hugging the terrain
 			{
 				m_newRiderHeightState = RiderHeightState.RisingGround;
 				m_heightAccumulator += terrainHeightDiff;
@@ -124,27 +129,25 @@ public class RiderPhysics : MonoBehaviour
 		}
 
 		// first frame of jump
-		if( m_newRiderHeightState == RiderHeightState.RisingAir && m_oldRiderHeightState == RiderHeightState.RisingGround)
+		if( m_oldRiderHeightState == RiderHeightState.RisingGround && terrainHeightDiff < -m_heightDeltaEpsilon )
 		{
-			m_heightOffsetBaseCurve = m_heightAccumulator;
+			Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
+			m_heightVelocity = m_heightAccumulator;
 			m_heightAccumulator = 0;
 		}
 
-
 		// calcluations for how high off the the mesh rider should be 
-		m_heightOffsetBaseCurve = Mathf.Clamp( m_heightOffsetBaseCurve + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
-		float heighOffsetOffTerrain = newTerrainHeight + m_heightOffsetBaseCurve;
+		m_heightOffsetBaseCurve = Mathf.Clamp( m_heightOffsetBaseCurve + m_heightVelocity * Time.deltaTime, m_newTerrainHeight, m_heightOffsetBaseCurveRange_Max);
+		float heighOffsetOffTerrain = Mathf.Clamp( m_heightOffsetBaseCurve - m_newTerrainHeight, m_heightOffsetBaseCurveRange_Min, m_heightOffsetBaseCurveRange_Max);
 
 		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, heighOffsetOffTerrain, out pos, out rot);		
-
 
 
 		// final position calcluations and set
 		transform.position = pos;
 		transform.rotation = rot;
 
-		m_oldTerrainHeight = newTerrainHeight;
-		m_oldRiderHeightState = m_newRiderHeightState;
+
 	}
 
 
