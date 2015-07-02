@@ -8,7 +8,7 @@ public class RiderPhysics : MonoBehaviour
 	
 	float m_widthRatio = 0; // 0 is front of terrain, 1 is the furthest back
 	float m_depthRatio = 0; // -1 is full left, +1 is full right
-	float m_heightOffset = 0;
+	float m_heightOffsetBaseCurve = 0;
 
 	float m_widthVelocity = 0;
 	float m_depthVelocity = 0;
@@ -31,6 +31,18 @@ public class RiderPhysics : MonoBehaviour
 	float m_depthVelocity_Max = 1.0f;
 
 	float m_gravity = 10.0f;
+	float m_oldTerrainHeight = 0;
+	float m_heightAccumulator = 0;
+
+	enum RiderHeightState
+	{
+		RisingGround,
+		RisingAir,
+		FallingAir,
+		FallingGround
+	};
+	RiderHeightState m_newRiderHeightState = RiderHeightState.FallingGround;
+	RiderHeightState m_oldRiderHeightState = RiderHeightState.FallingGround;
 	
 	void Start()
 	{
@@ -65,8 +77,7 @@ public class RiderPhysics : MonoBehaviour
 			m_widthRatio = Mathf.Clamp( m_widthRatio + m_widthVelocity * Time.deltaTime, -m_widthRange, m_widthRange );
 		}
 
-		// calcluations for how high off the the mesh rider should be 
-		m_heightOffset = Mathf.Clamp( m_heightOffset + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
+
 
 		// update velocity decays/gravity
 		if(m_widthDecayFlag == true)
@@ -74,14 +85,66 @@ public class RiderPhysics : MonoBehaviour
 		if(m_depthDecayFlag == true)
 			m_depthVelocity -= m_depthVelocity * m_depthVelocityDecay * Time.deltaTime;
 
-		m_heightVelocity -= m_gravity * Time.deltaTime; // could do a check to see if touching groung to kill vel, but no real need for it now
 
-		// final position calcluations and set
+
+
+		// handle terrain height
 		Vector3 pos = Vector3.zero;
 		Quaternion rot = Quaternion.identity;
-		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, m_heightOffset, out pos, out rot);		
+		float newTerrainHeight = targetMeshStripGenerator.CalculateTerrainHeightValue(m_widthRatio);
+		float terrainHeightDiff = newTerrainHeight - m_oldTerrainHeight;
+
+		if(m_heightOffsetBaseCurve <= newTerrainHeight) // toucing ground
+		{
+			if(terrainHeightDiff > 0) // rising while hugging the terrain
+			{
+				m_newRiderHeightState = RiderHeightState.RisingGround;
+				m_heightAccumulator += terrainHeightDiff;
+				m_heightVelocity = 0; // kill gravity pull since rider is grinding up
+			}
+			else // riding terrain down
+			{
+				m_newRiderHeightState = RiderHeightState.FallingGround;
+				m_heightOffsetBaseCurve = 0;
+			}
+
+		}
+		else // rider in the air
+		{
+			m_heightVelocity -= m_gravity * Time.deltaTime;
+
+			if(m_heightVelocity > 0) // in the air rising
+			{
+				m_newRiderHeightState = RiderHeightState.RisingAir;
+			}
+			else // in the air falling
+			{
+				m_newRiderHeightState = RiderHeightState.FallingAir;
+			}
+		}
+
+		// first frame of jump
+		if( m_newRiderHeightState == RiderHeightState.RisingAir && m_oldRiderHeightState == RiderHeightState.RisingGround)
+		{
+			m_heightOffsetBaseCurve = m_heightAccumulator;
+			m_heightAccumulator = 0;
+		}
+
+
+		// calcluations for how high off the the mesh rider should be 
+		m_heightOffsetBaseCurve = Mathf.Clamp( m_heightOffsetBaseCurve + m_heightVelocity * Time.deltaTime, m_heightOffsetRange_Min, m_heightOffsetRange_Max);
+		float heighOffsetOffTerrain = newTerrainHeight + m_heightOffsetBaseCurve;
+
+		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, heighOffsetOffTerrain, out pos, out rot);		
+
+
+
+		// final position calcluations and set
 		transform.position = pos;
 		transform.rotation = rot;
+
+		m_oldTerrainHeight = newTerrainHeight;
+		m_oldRiderHeightState = m_newRiderHeightState;
 	}
 
 
