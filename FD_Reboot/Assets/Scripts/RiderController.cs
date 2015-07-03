@@ -60,8 +60,8 @@ public class RiderController : MonoBehaviour
 	RiderCamera_BarrelRollPhysics m_riderCameraBarrelRollPhysics;
 	RiderCamera_FOVController m_riderCameraFOVController;
 
-	float m_widthMoveScale = 0.50f;
-	float m_depthMoveScale = 0.50f;
+	float m_widthMoveScale = 0.250f;
+	float m_depthMoveScale = 0.150f;
 	float m_barrelRollInputScaler = 900.0f;
 	float m_barrelRollInputTimeCounter = 0;
 
