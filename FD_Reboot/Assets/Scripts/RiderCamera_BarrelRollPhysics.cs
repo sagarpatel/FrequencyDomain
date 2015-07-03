@@ -4,7 +4,7 @@ using System.Collections;
 public class RiderCamera_BarrelRollPhysics : MonoBehaviour 
 {
 	float m_barrelRollVel = 0;
-	float m_barrelRollVelRange = 100.0f;
+	float m_barrelRollVelRange = 2000.0f;
 	float m_barrelRollVelDecay = 1.0f;
 	float m_currentBarrelRollAngle = 0;
 	bool m_barrelRollVelDecayFlag = false;
@@ -16,7 +16,7 @@ public class RiderCamera_BarrelRollPhysics : MonoBehaviour
 		if(m_barrelRollVelDecayFlag == true)
 			m_barrelRollVel -= m_barrelRollVel * m_barrelRollVelDecay * Time.deltaTime;
 
-		Quaternion barrelRollRotation = Quaternion.Euler(new Vector3(0,0, m_currentBarrelRollAngle));
+		Quaternion barrelRollRotation = Quaternion.Euler(new Vector3(0,0, -m_currentBarrelRollAngle));
 		transform.localRotation = barrelRollRotation;
 	}
 

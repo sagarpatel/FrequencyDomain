@@ -131,7 +131,7 @@ public class RiderPhysics : MonoBehaviour
 		// first frame of jump
 		if( m_oldRiderHeightState == RiderHeightState.RisingGround && terrainHeightDiff < -m_heightDeltaEpsilon )
 		{
-			Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
+			//Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
 			m_heightVelocity = m_heightAccumulator;
 			m_heightAccumulator = 0;
 		}
