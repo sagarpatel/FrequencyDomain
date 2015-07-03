@@ -71,6 +71,7 @@ public class RiderController : MonoBehaviour
 	{
 		m_riderInput = new RiderActions();
 
+		// keyboard controlls
 		m_riderInput.Warp.AddDefaultBinding( Key.Space );
 		m_riderInput.Up.AddDefaultBinding( Key.I );
 		m_riderInput.Down.AddDefaultBinding( Key.K );
@@ -78,6 +79,16 @@ public class RiderController : MonoBehaviour
 		m_riderInput.Right.AddDefaultBinding( Key.L );
 		m_riderInput.RollRight.AddDefaultBinding( Key.O );
 		m_riderInput.RollLeft.AddDefaultBinding( Key.U );
+
+		// gamepad controls
+		m_riderInput.Warp.AddDefaultBinding( InputControlType.Action3 );
+		m_riderInput.Left.AddDefaultBinding( InputControlType.LeftStickLeft );
+		m_riderInput.Right.AddDefaultBinding( InputControlType.LeftStickRight );
+		m_riderInput.Up.AddDefaultBinding( InputControlType.LeftStickUp );
+		m_riderInput.Down.AddDefaultBinding( InputControlType.LeftStickDown );
+		m_riderInput.RollRight.AddDefaultBinding( InputControlType.RightTrigger );
+		m_riderInput.RollLeft.AddDefaultBinding( InputControlType.LeftTrigger );
+
 	}
 
 	void Start()
