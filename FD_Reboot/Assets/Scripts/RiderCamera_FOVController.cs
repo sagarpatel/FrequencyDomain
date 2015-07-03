@@ -12,6 +12,7 @@ public class RiderCamera_FOVController : MonoBehaviour
 	float m_currentStep_Curve = 0;
 	float m_inputTimeCounter = 0;
 	float m_timeToMaxFOV = 3.0f;
+	float m_timeCounterDecayScale = 4.0f;
 	bool m_fovDecayFlag = false;
 
 	void Start()
@@ -25,7 +26,7 @@ public class RiderCamera_FOVController : MonoBehaviour
 	{
 		if(m_fovDecayFlag == true)
 		{
-			m_inputTimeCounter = Mathf.Clamp( m_inputTimeCounter - Time.deltaTime, 0, m_riderCameraFOV_Max);
+			m_inputTimeCounter = Mathf.Clamp( m_inputTimeCounter - m_timeCounterDecayScale * Time.deltaTime, 0, m_riderCameraFOV_Max);
 		}
 
 		m_currentStep_Linear = Mathf.InverseLerp(0, m_timeToMaxFOV, m_inputTimeCounter);
@@ -40,7 +41,7 @@ public class RiderCamera_FOVController : MonoBehaviour
 	{
 		if(controlInput > 0)
 		{
-			m_inputTimeCounter = Mathf.Clamp( m_inputTimeCounter + Time.deltaTime, 0, m_riderCameraFOV_Max);
+			m_inputTimeCounter = Mathf.Clamp( m_inputTimeCounter + Time.deltaTime, 0, m_timeToMaxFOV);
 			m_fovDecayFlag = false;
 		}
 		else

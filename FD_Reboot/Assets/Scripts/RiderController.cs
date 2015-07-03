@@ -58,6 +58,7 @@ public class RiderController : MonoBehaviour
 	RiderActions m_riderInput;
 	RiderPhysics m_riderPhysics;
 	RiderCamera_BarrelRollPhysics m_riderCameraBarrelRollPhysics;
+	RiderCamera_FOVController m_riderCameraFOVController;
 
 	float m_widthMoveScale = 0.50f;
 	float m_depthMoveScale = 0.50f;
@@ -83,11 +84,11 @@ public class RiderController : MonoBehaviour
 	{
 		m_riderPhysics = GetComponent<RiderPhysics>();
 		m_riderCameraBarrelRollPhysics = GetComponentInChildren<RiderCamera_BarrelRollPhysics>();
+		m_riderCameraFOVController = GetComponentInChildren<RiderCamera_FOVController>();
 	}
 
 	void Update()
 	{
-
 		float widthMove = m_riderInput.Move.X * m_widthMoveScale * Time.deltaTime;
 		float depthMove = m_riderInput.Move.Y * m_depthMoveScale * Time.deltaTime;
 		float barrelRollInput = m_riderInput.BarrelRoll;
@@ -102,6 +103,9 @@ public class RiderController : MonoBehaviour
 
 		m_riderPhysics.IncrementWidthDepthVelocities(widthMove, depthMove);
 		m_riderCameraBarrelRollPhysics.IncrementBarrelRollVelocity( barrelRollIncrement );
+
+		float warpInput = m_riderInput.Warp;
+		m_riderCameraFOVController.RiderCameraFOVInput(warpInput);
 	}
 
 }
