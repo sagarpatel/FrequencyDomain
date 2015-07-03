@@ -35,6 +35,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_oldTerrainHeight = 0;
 	float m_heightAccumulator = 0;
 	float m_heightDeltaEpsilon = 0.1f;
+	float m_heightAccumulatorScaler = 1.70f;
 
 	enum RiderHeightState
 	{
@@ -132,7 +133,7 @@ public class RiderPhysics : MonoBehaviour
 		if( m_oldRiderHeightState == RiderHeightState.RisingGround && terrainHeightDiff < -m_heightDeltaEpsilon )
 		{
 			//Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
-			m_heightVelocity = m_heightAccumulator;
+			m_heightVelocity = m_heightAccumulatorScaler * m_heightAccumulator;
 			m_heightAccumulator = 0;
 		}
 
