@@ -61,7 +61,10 @@ public class RiderController : MonoBehaviour
 
 	float m_widthMoveScale = 0.50f;
 	float m_depthMoveScale = 0.50f;
-	float m_barrelRollInputScaler = 300.0f;
+	float m_barrelRollInputScaler = 900.0f;
+	float m_barrelRollInputTimeCounter = 0;
+
+	public AnimationCurve barrelRollInputCurve;
 
 	void OnEnable()
 	{
@@ -87,10 +90,18 @@ public class RiderController : MonoBehaviour
 
 		float widthMove = m_riderInput.Move.X * m_widthMoveScale * Time.deltaTime;
 		float depthMove = m_riderInput.Move.Y * m_depthMoveScale * Time.deltaTime;
-		float barrelRollInput = m_riderInput.BarrelRoll * m_barrelRollInputScaler * Time.deltaTime;
+		float barrelRollInput = m_riderInput.BarrelRoll;
+
+		if(Mathf.Abs(barrelRollInput) > 0)
+			m_barrelRollInputTimeCounter += Time.deltaTime;
+		else
+			m_barrelRollInputTimeCounter = 0;
+
+		m_barrelRollInputTimeCounter = Mathf.Clamp(m_barrelRollInputTimeCounter, 0, 1);
+		float barrelRollIncrement = Mathf.Sign(barrelRollInput) * barrelRollInputCurve.Evaluate(m_barrelRollInputTimeCounter) * m_barrelRollInputScaler * Time.deltaTime ;
 
 		m_riderPhysics.IncrementWidthDepthVelocities(widthMove, depthMove);
-		m_riderCameraBarrelRollPhysics.IncrementBarrelRollVelocity(barrelRollInput);
+		m_riderCameraBarrelRollPhysics.IncrementBarrelRollVelocity( barrelRollIncrement );
 	}
 
 }
