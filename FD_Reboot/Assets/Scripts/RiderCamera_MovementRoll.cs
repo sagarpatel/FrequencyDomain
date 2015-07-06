@@ -5,7 +5,7 @@ public class RiderCamera_MovementRoll : MonoBehaviour
 {
 	RiderPhysics m_riderPhysics;
 	public AnimationCurve m_rollProgressCurve;
-	float m_rollRange = 15.0f;
+	float m_rollRange = 25.0f;
 
 	void Start()
 	{

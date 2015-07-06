@@ -20,15 +20,15 @@ public class RiderPhysics : MonoBehaviour
 	float m_heightOffsetBaseCurveRange_Min = 0;
 	float m_heightOffsetBaseCurveRange_Max = 200.0f; // TODO need to convert this to ratio
 
-	float m_widthVelocityDecay = 1.0f;
-	float m_depthVelocityDecay = 1.0f;
+	float m_widthVelocityDecay = 2.0f;
+	float m_depthVelocityDecay = 3.0f;
 	bool m_widthDecayFlag = false;
 	bool m_depthDecayFlag = false;
 
 	float m_widthVelocity_Min = -1.0f;
 	float m_widthVelocity_Max = 1.0f;
-	float m_depthVelocity_Min = -1.0f;
-	float m_depthVelocity_Max = 1.0f;
+	float m_depthVelocity_Min = -0.250f;
+	float m_depthVelocity_Max = 0.250f;
 
 	float m_gravity = 200.0f;
 	float m_newTerrainHeight = 0;
@@ -152,6 +152,11 @@ public class RiderPhysics : MonoBehaviour
 
 	public void IncrementWidthDepthVelocities(float extraWdith, float extraDepth)
 	{
+		if( Mathf.Sign(m_widthVelocity) != Mathf.Sign(extraWdith))
+			extraWdith = 2.0f * extraWdith;
+		if( Mathf.Sign(m_depthVelocity) != Mathf.Sign(extraDepth))
+		   	extraDepth = 2.0f * extraDepth;
+
 		m_widthVelocity = Mathf.Clamp( m_widthVelocity + extraWdith, m_widthVelocity_Min, m_widthVelocity_Max);
 		m_depthVelocity = Mathf.Clamp( m_depthVelocity + extraDepth, m_depthVelocity_Min, m_depthVelocity_Max);
 

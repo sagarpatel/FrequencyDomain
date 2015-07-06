@@ -88,7 +88,6 @@ public class RiderController : MonoBehaviour
 		m_riderInput.Down.AddDefaultBinding( InputControlType.LeftStickDown );
 		m_riderInput.RollRight.AddDefaultBinding( InputControlType.RightTrigger );
 		m_riderInput.RollLeft.AddDefaultBinding( InputControlType.LeftTrigger );
-
 	}
 
 	void Start()
