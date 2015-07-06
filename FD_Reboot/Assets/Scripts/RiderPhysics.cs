@@ -5,7 +5,8 @@ public class RiderPhysics : MonoBehaviour
 {
 
 	MeshTerrainGenerator m_meshTerrainGenerator;
-	
+	MeshTerrainWireframeController m_meshTerrainWireframeController;
+
 	float m_widthRatio = 0; // 0 is front of terrain, 1 is the furthest back
 	float m_depthRatio = 0; // -1 is full left, +1 is full right
 	float m_heightOffsetBaseCurve = 0;
@@ -37,6 +38,9 @@ public class RiderPhysics : MonoBehaviour
 	float m_heightDeltaEpsilon = 0.1f;
 	float m_heightAccumulatorScaler = 1.70f;
 
+	float m_airtimeCounter = 0;
+	float m_airtimeBurstScaler = 0.15f;
+
 	enum RiderHeightState
 	{
 		RisingGround,
@@ -46,11 +50,13 @@ public class RiderPhysics : MonoBehaviour
 	};
 	RiderHeightState m_newRiderHeightState = RiderHeightState.FallingGround;
 	RiderHeightState m_oldRiderHeightState = RiderHeightState.FallingGround;
+
+
 	
 	void Start()
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
-		
+		m_meshTerrainWireframeController = FindObjectOfType<MeshTerrainWireframeController>();
 	}
 	
 	void Update()
@@ -83,15 +89,11 @@ public class RiderPhysics : MonoBehaviour
 			m_widthRatio = Mathf.Clamp( m_widthRatio + m_widthVelocity * Time.deltaTime, -m_widthRange, m_widthRange );
 		}
 
-
-
 		// update velocity decays/gravity
 		if(m_widthDecayFlag == true)
 			m_widthVelocity -= m_widthVelocity * m_widthVelocityDecay * Time.deltaTime;
 		if(m_depthDecayFlag == true)
 			m_depthVelocity -= m_depthVelocity * m_depthVelocityDecay * Time.deltaTime;
-
-
 
 
 		// handle terrain height
@@ -129,12 +131,26 @@ public class RiderPhysics : MonoBehaviour
 			}
 		}
 
+		// increment air time
+		if(m_newRiderHeightState == RiderHeightState.RisingAir || m_newRiderHeightState == RiderHeightState.FallingAir)
+		{
+			m_airtimeCounter += Time.deltaTime;
+		}
+
 		// first frame of jump
 		if( m_oldRiderHeightState == RiderHeightState.RisingGround && terrainHeightDiff < -m_heightDeltaEpsilon )
 		{
 			//Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
 			m_heightVelocity = m_heightAccumulatorScaler * m_heightAccumulator;
 			m_heightAccumulator = 0;
+		}
+
+		// first contact on ground after air time
+		if( m_oldRiderHeightState == RiderHeightState.FallingAir && ( m_newRiderHeightState == RiderHeightState.FallingGround || m_newRiderHeightState == RiderHeightState.RisingGround ) ) //m_heightOffsetBaseCurve <= m_newTerrainHeight)
+		{
+			//Debug.Log(m_airtimeCounter);
+			m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
+			m_airtimeCounter = 0;
 		}
 
 		// calcluations for how high off the the mesh rider should be 

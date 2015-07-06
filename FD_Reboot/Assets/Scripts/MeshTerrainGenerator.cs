@@ -267,7 +267,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_currentMaterialColor = m_frequencyDataManager.GetFreshRGB();
 		m_meshStripsMaterial.color = m_currentMaterialColor;
 		float cutoff = 0.015f + 0.150f * (m_currentMaterialColor.r + m_currentMaterialColor.g +m_currentMaterialColor.b); //0.02f + 0.9733f * m_currentMaterialColor.r; //0.025f + 0.2f * Mathf.Abs(Mathf.Sin(0.95f * Time.time));
-		m_meshStripsMaterial.SetFloat("_Cutoff", cutoff);
+		//m_meshStripsMaterial.SetFloat("_Cutoff", cutoff);
 		Profiler.EndSample();
 		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
 	}
