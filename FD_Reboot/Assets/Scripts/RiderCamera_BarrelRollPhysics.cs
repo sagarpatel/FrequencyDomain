@@ -5,7 +5,7 @@ public class RiderCamera_BarrelRollPhysics : MonoBehaviour
 {
 	float m_barrelRollVel = 0;
 	float m_barrelRollVelRange = 2000.0f;
-	float m_barrelRollVelDecay = 3.3f;
+	float m_barrelRollVelDecay = 4.3f;
 	float m_currentBarrelRollAngle = 0;
 	bool m_barrelRollVelDecayFlag = false;
 

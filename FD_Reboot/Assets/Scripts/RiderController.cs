@@ -62,7 +62,7 @@ public class RiderController : MonoBehaviour
 
 	float m_widthMoveScale = 0.250f;
 	float m_depthMoveScale = 0.150f;
-	float m_barrelRollInputScaler = 900.0f;
+	float m_barrelRollInputScaler = 1500.0f;
 	float m_barrelRollInputTimeCounter = 0;
 
 	public AnimationCurve barrelRollInputCurve;
