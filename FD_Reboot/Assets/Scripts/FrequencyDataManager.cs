@@ -36,6 +36,10 @@ public class FrequencyDataManager : MonoBehaviour
 	float m_bScaler = 1.0f;
 	float m_colorScaler = 25.0f;
 
+	float m_localPeakValueThreashold = 0.15f;
+	float m_localPeakRedistributionRatio = 0.25f;
+	int m_peakValuesSpreadItterations = 3;
+
 	void Start()
 	{
 		m_currentRawFFTDataArray = new float[m_rawFFTDataSize];
@@ -86,8 +90,44 @@ public class FrequencyDataManager : MonoBehaviour
 			// averageing with previous to smooth out depth axis and hide repeat data
 			m_processedFFTDataArray[i] = ( 0.75f *  m_processedFFTDataArray[i] + 0.25f * m_previousProcessedFFTDataArray[i]);
 			m_previousProcessedFFTDataArray[i] = m_processedFFTDataArray[i];
-
 		}
+
+		SpreadOutPeakValues();
+	}
+
+	void SpreadOutPeakValues()
+	{
+		int spreadCounter = 0;
+		float prevDelta = 0;
+		float postDelta = 0;
+
+		// Do multiple passes
+		for(int j = 0; j < m_peakValuesSpreadItterations; j++)
+		{
+			// TODO: handle cases for high values at begining and end of array
+			for(int i = 1; i < m_processedFFTDataArray.Length - 1; i++)
+			{
+				float amountToRedistributePerSide = 0.5f * m_localPeakRedistributionRatio * m_processedFFTDataArray[i];
+				prevDelta =  m_processedFFTDataArray[i] - m_processedFFTDataArray[i-1] ;
+				postDelta =  m_processedFFTDataArray[i] - m_processedFFTDataArray[i+1] ;
+
+				if(prevDelta > m_localPeakValueThreashold)
+				{
+					spreadCounter ++;
+					m_processedFFTDataArray[i] -= amountToRedistributePerSide;
+					m_processedFFTDataArray[i-1] += 0.5f * amountToRedistributePerSide;
+				}
+				if(postDelta > m_localPeakValueThreashold)
+				{
+					spreadCounter ++;
+					m_processedFFTDataArray[i] -= amountToRedistributePerSide;
+					m_processedFFTDataArray[i+1] += 0.5f * amountToRedistributePerSide;
+				}
+			}
+		}
+
+		//if(spreadCounter > 0)
+		//	Debug.LogError("spread: " + spreadCounter );
 	}
 
 	public Color GetFreshRGB()
