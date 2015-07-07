@@ -32,6 +32,9 @@ public class MeshStripGenerator : MonoBehaviour
 
 	float m_meshBendFactor = 0;
 
+	Material m_meshStripMaterial_Left;
+	Material m_meshStripMaterial_Right;
+
 	//MeshCollider m_meshCollider_Up_Left;
 	//MeshCollider m_meshCollider_Up_Right;
 
@@ -53,6 +56,7 @@ public class MeshStripGenerator : MonoBehaviour
 		//meshStripGO_Up_Right.AddComponent<MeshCollider>();
 
 
+
 		GameObject meshStripGO_Down_Right = new GameObject();
 		meshStripGO_Down_Right.transform.parent = transform;
 		meshStripGO_Down_Right.transform.localPosition = Vector3.zero;
@@ -72,6 +76,7 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Up_Left.AddComponent<MeshRenderer>();
 		meshStripGO_Up_Left.AddComponent<MeshFilter>();
 		//meshStripGO_Up_Left.AddComponent<MeshCollider>();
+
 		
 		
 		GameObject meshStripGO_Down_Left = new GameObject();
@@ -89,6 +94,8 @@ public class MeshStripGenerator : MonoBehaviour
 		meshStripGO_Up_Left.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
 		meshStripGO_Down_Left.GetComponent<MeshRenderer>().sharedMaterial = meshMaterial;
 
+		m_meshStripMaterial_Right = meshStripGO_Up_Right.GetComponent<MeshRenderer>().material;
+		m_meshStripMaterial_Left = meshStripGO_Up_Left.GetComponent<MeshRenderer>().material;
 
 		// generate vertices, Right, Left get their unique set 
 		List<Vector3> verticesList_Right = new List<Vector3>();
@@ -477,6 +484,12 @@ public class MeshStripGenerator : MonoBehaviour
 			return true;
 		else
 			return false;
+	}
+
+	public void SetMeshStripColor(Color color)
+	{
+		m_meshStripMaterial_Right.color = color;
+		m_meshStripMaterial_Left.color = color;
 	}
 
 
