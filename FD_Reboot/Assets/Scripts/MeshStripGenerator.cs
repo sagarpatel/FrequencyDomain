@@ -38,7 +38,7 @@ public class MeshStripGenerator : MonoBehaviour
 	//MeshCollider m_meshCollider_Up_Left;
 	//MeshCollider m_meshCollider_Up_Right;
 
-
+	string m_wireframePropertyString = "_Cutoff";
 
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth, Material meshMaterial)
 	{
@@ -490,6 +490,12 @@ public class MeshStripGenerator : MonoBehaviour
 	{
 		m_meshStripMaterial_Right.color = color;
 		m_meshStripMaterial_Left.color = color;
+	}
+
+	public void SetMeshStripWireframeValue(float wireframeValue)
+	{
+		m_meshStripMaterial_Right.SetFloat( m_wireframePropertyString, wireframeValue );
+		m_meshStripMaterial_Left.SetFloat( m_wireframePropertyString, wireframeValue);
 	}
 
 

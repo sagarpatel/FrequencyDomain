@@ -155,7 +155,7 @@ public class RiderPhysics : MonoBehaviour
 			{
 				//Debug.LogError("brst");
 				//targetMeshStripGenerator.LaunchWireframeBurstAnimation(null, m_airtimeCounter * m_airtimeBurstScaler);
-				m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
+				//m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
 			}
 			m_airtimeCounter = 0;
 		}
