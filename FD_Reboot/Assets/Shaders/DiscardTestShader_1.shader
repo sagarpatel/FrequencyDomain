@@ -31,7 +31,8 @@
 		
 		// example from http://forum.unity3d.com/threads/how-can-i-get-tangent-on-a-surface-shader.184441/
 		void vert(inout appdata_tan i, out Input o)
-		{		
+		{
+			UNITY_INITIALIZE_OUTPUT(Input, o);		
 			half3 tangent_normalized = normalize(i.tangent.xyz);
 			o.barryCenterCoord = tangent_normalized;
 		}
