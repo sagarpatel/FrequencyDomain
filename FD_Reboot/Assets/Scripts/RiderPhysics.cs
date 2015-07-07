@@ -40,6 +40,7 @@ public class RiderPhysics : MonoBehaviour
 
 	float m_airtimeCounter = 0;
 	float m_airtimeBurstScaler = 0.15f;
+	float m_wireframeBurstAirTimethreashold = 0.5f;
 
 	enum RiderHeightState
 	{
@@ -149,7 +150,13 @@ public class RiderPhysics : MonoBehaviour
 		if( m_oldRiderHeightState == RiderHeightState.FallingAir && ( m_newRiderHeightState == RiderHeightState.FallingGround || m_newRiderHeightState == RiderHeightState.RisingGround ) ) //m_heightOffsetBaseCurve <= m_newTerrainHeight)
 		{
 			//Debug.Log(m_airtimeCounter);
-			m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
+
+			if(m_airtimeCounter > m_wireframeBurstAirTimethreashold)
+			{
+				//Debug.LogError("brst");
+				//targetMeshStripGenerator.LaunchWireframeBurstAnimation(null, m_airtimeCounter * m_airtimeBurstScaler);
+				m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
+			}
 			m_airtimeCounter = 0;
 		}
 
