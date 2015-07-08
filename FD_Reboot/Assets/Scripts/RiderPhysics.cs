@@ -16,7 +16,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_heightVelocity = 0;
 	
 	float m_widthRange = 0.9990f;
-	float m_depthRange_Min = 0.10f;
+	float m_depthRange_Min = 0.20f;
 	float m_depthRange_Max = 0.90f;
 	float m_heightOffsetBaseCurveRange_Min = 0;
 	float m_heightOffsetBaseCurveRange_Max = 200.0f; // TODO need to convert this to ratio
@@ -83,7 +83,7 @@ public class RiderPhysics : MonoBehaviour
 			// loop around to the other side
 			float widthLoopDiff = nextWidthAbs - m_widthRange;
 			m_widthRatio = -Mathf.Sign(m_widthRatio) * (m_widthRange - widthLoopDiff);
-			Debug.Log("FLippin! " + Time.frameCount);
+			//Debug.Log("FLippin! " + Time.frameCount);
 		}
 		else
 		{
