@@ -15,7 +15,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_depthVelocity = 0;
 	float m_heightVelocity = 0;
 	
-	float m_widthRange = 0.990f;
+	float m_widthRange = 0.9990f;
 	float m_depthRange_Min = 0.10f;
 	float m_depthRange_Max = 0.90f;
 	float m_heightOffsetBaseCurveRange_Min = 0;
@@ -78,11 +78,12 @@ public class RiderPhysics : MonoBehaviour
 		// now that we know target meshstrip, we can check if its looping
 		// check for looping around mesh
 		float nextWidthAbs = Mathf.Abs(m_widthRatio) + Mathf.Abs(m_widthVelocity * Time.deltaTime);
-		if( targetMeshStripGenerator.IsLoopClosed() == true && nextWidthAbs >= m_widthRange)
+		if( targetMeshStripGenerator.IsLoopClosed() == true && nextWidthAbs >= m_widthRange && Mathf.Sign(m_widthVelocity) == Mathf.Sign(m_widthRatio) )
 		{
 			// loop around to the other side
 			float widthLoopDiff = nextWidthAbs - m_widthRange;
 			m_widthRatio = -Mathf.Sign(m_widthRatio) * (m_widthRange - widthLoopDiff);
+			Debug.Log("FLippin! " + Time.frameCount);
 		}
 		else
 		{
