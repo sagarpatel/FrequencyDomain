@@ -8,9 +8,9 @@ public class MeshCreaturePhysics : MonoBehaviour
 
 	Vector3 m_rotVel;
 
-	float m_rotVelRange_x = 20.0f;
-	float m_rotVelRange_y = 20.0f;
-	float m_rotVelRange_z = 20.0f;
+	float m_rotVelRange_x = 30.0f;
+	float m_rotVelRange_y = 30.0f;
+	float m_rotVelRange_z = 30.0f;
 
 	float m_rotVelDecay_x = 1.0f;
 	float m_rotVelDecay_y = 1.0f;

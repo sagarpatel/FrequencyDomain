@@ -72,9 +72,9 @@ public class MeshCreatureController : MonoBehaviour
 	MeshCreatureActions m_meshCreatureInputs;
 	MeshTerrainBendPhysics m_meshTerrainBendPhysics;
 
-	float yawScale = 10.0f;
-	float pitchScale = 10.0f;
-	float rollScale = 10.0f;
+	float yawScale = 15.0f;
+	float pitchScale = 20.0f;
+	float rollScale = 20.0f;
 	float bendScale = 0.250f;
 
 	void OnEnable()
