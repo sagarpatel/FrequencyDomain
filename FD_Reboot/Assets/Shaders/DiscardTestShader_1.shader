@@ -59,16 +59,28 @@
 			//clip(IN.barryCenterCoord.x - 0.2);
 			float cut = _Cutoff; //0.09;
 			
-			if(IN.barryCenterCoord.x < cut || IN.barryCenterCoord.y < cut || IN.barryCenterCoord.z < cut)
+			if( IN.barryCenterCoord.x < 0.0351 || IN.barryCenterCoord.y < 0.0351 || IN.barryCenterCoord.z < 0.0351)
 			{
-				//clip(-1);
+				// basic wireframe
 			}
 			else
 			{
-				clip(-1);
+				// bass needs some extra boost to feel
+				if(IN.barryCenterCoord.x + 1.5 * c.r > 1 )
+				{
+					
+				}
+				else if(IN.barryCenterCoord.y + 1.00 * c.g > 1 )
+				{
+				
+				}
+				else if(IN.barryCenterCoord.z + 1.0 * c.b > 1 )
+				{
+				
+				}
+				else
+					clip(-1);
 			}
-		
-			
 			
 			
 			o.Albedo = c.rgb;

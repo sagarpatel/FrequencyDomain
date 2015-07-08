@@ -265,7 +265,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 		SetMeshTerrainColor(m_currentMaterialColor);
 		float cutoff = 0.02f + 0.1720f * (m_currentMaterialColor.r + m_currentMaterialColor.g +m_currentMaterialColor.b); //0.02f + 0.9733f * m_currentMaterialColor.r; //0.025f + 0.2f * Mathf.Abs(Mathf.Sin(0.95f * Time.time));
 		//m_meshStripsMaterial.SetFloat("_Cutoff", cutoff);
-		SetMeshTerrainWireframeValue(cutoff);
+		//SetMeshTerrainWireframeValue(cutoff);
 		Profiler.EndSample();
 		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
 	}
