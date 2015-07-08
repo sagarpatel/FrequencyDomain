@@ -87,7 +87,7 @@ public class RiderController : MonoBehaviour
 		m_riderInput.RollLeft.AddDefaultBinding( Key.U );
 
 		// gamepad controls
-		m_riderInput.Warp.AddDefaultBinding( InputControlType.Action3 );
+		m_riderInput.Warp.AddDefaultBinding( InputControlType.Action1 );
 		m_riderInput.Left.AddDefaultBinding( InputControlType.LeftStickLeft );
 		m_riderInput.Right.AddDefaultBinding( InputControlType.LeftStickRight );
 		m_riderInput.Up.AddDefaultBinding( InputControlType.LeftStickUp );
