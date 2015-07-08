@@ -18,6 +18,7 @@ public class MeshCreatureActions: PlayerActionSet
 	public PlayerAction BendIn;
 	public PlayerAction BendOut;
 	public PlayerOneAxisAction Bend;
+	public PlayerAction SpeedUp;
 
 	public MeshCreatureActions()
 	{
@@ -33,6 +34,8 @@ public class MeshCreatureActions: PlayerActionSet
 		BendIn = CreatePlayerAction("Bend In");
 		BendOut = CreatePlayerAction("Bend Out");
 		Bend = CreateOneAxisPlayerAction(BendOut, BendIn);
+
+		SpeedUp = CreatePlayerAction("Speed Up");
 	}
 
 	// for controller
@@ -50,6 +53,8 @@ public class MeshCreatureActions: PlayerActionSet
 		BendIn = CreatePlayerAction("Bend In");
 		BendOut = CreatePlayerAction("Bend Out");
 		Bend = CreateOneAxisPlayerAction(BendOut, BendIn);
+
+		SpeedUp = CreatePlayerAction("Speed Up");
 
 		if(deviceIndex >= 0)
 		{
@@ -88,6 +93,7 @@ public class MeshCreatureController : MonoBehaviour
 		m_meshCreatureInputs.RollRight.AddDefaultBinding(Key.E);
 		m_meshCreatureInputs.BendIn.AddDefaultBinding(Key.Z);
 		m_meshCreatureInputs.BendOut.AddDefaultBinding(Key.X);
+		m_meshCreatureInputs.SpeedUp.AddDefaultBinding(Key.F);
 
 		// gamepad controls
 		m_meshCreatureInputs.YawLeft.AddDefaultBinding( InputControlType.LeftStickLeft );
@@ -98,6 +104,7 @@ public class MeshCreatureController : MonoBehaviour
 		m_meshCreatureInputs.RollRight.AddDefaultBinding( InputControlType.RightTrigger );
 		m_meshCreatureInputs.BendIn.AddDefaultBinding( InputControlType.LeftBumper );
 		m_meshCreatureInputs.BendOut.AddDefaultBinding( InputControlType.RightBumper );
+		m_meshCreatureInputs.SpeedUp.AddDefaultBinding( InputControlType.Action1 );
 	}
 
 	void Start()
@@ -113,8 +120,10 @@ public class MeshCreatureController : MonoBehaviour
 		float inputPitch = m_meshCreatureInputs.YawPitch.Y * pitchScale * Time.deltaTime;
 		float inputRoll = m_meshCreatureInputs.Roll.Value * rollScale * Time.deltaTime;
 		float inputBend = m_meshCreatureInputs.Bend.Value * bendScale * Time.deltaTime;
+		float inputSpeedUp = m_meshCreatureInputs.SpeedUp.Value * Time.deltaTime;
 
 		m_meshCreaturePhysics.IncrementCreatureRotationalVel( inputPitch , inputYaw, -inputRoll );
+		m_meshCreaturePhysics.IncrementExtraSpeedStep(inputSpeedUp);
 		m_meshTerrainBendPhysics.IncrementMeshBendVelocity(inputBend);
 	}
 

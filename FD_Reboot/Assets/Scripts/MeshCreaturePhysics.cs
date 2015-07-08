@@ -3,11 +3,11 @@ using System.Collections;
 
 public class MeshCreaturePhysics : MonoBehaviour 
 {
-	float m_speed = 200.0f;
+	float m_baseSpeed = 200.0f;
+	float m_currentSpeed = 0;
+
 	Vector3 m_rotVel;
 
-	float m_speedMin = 100.0f;
-	float m_speedMax = 1000.0f;
 	float m_rotVelRange_x = 20.0f;
 	float m_rotVelRange_y = 20.0f;
 	float m_rotVelRange_z = 20.0f;
@@ -20,6 +20,13 @@ public class MeshCreaturePhysics : MonoBehaviour
 	bool m_decayFlag_y = false;
 	bool m_decayFlag_z = false;
 
+	float m_extraSpeed = 0;
+	float m_extraSpeedProgress = 0;
+	float m_extraSpeedMax = 500.0f;
+
+	public AnimationCurve m_extraSpeedCurve;
+	float m_extraSpeedRampUpDuration = 5.0f;
+	bool m_extraSpeedDecayFlag = false;
 
 	void FixedUpdate()
 	{
@@ -31,7 +38,14 @@ public class MeshCreaturePhysics : MonoBehaviour
 			m_rotVel.z -= m_rotVelDecay_z * m_rotVel.z * Time.deltaTime;
 
 		transform.Rotate(m_rotVel * Time.deltaTime);
-		transform.position += transform.forward * m_speed * Time.deltaTime;
+
+		float step = m_extraSpeedCurve.Evaluate(m_extraSpeedProgress);
+		if(m_extraSpeedDecayFlag == true)
+			m_extraSpeedProgress = Mathf.Clamp( m_extraSpeedProgress - Time.deltaTime/m_extraSpeedRampUpDuration, 0, 1);
+
+		m_extraSpeed = Mathf.Lerp(0, m_extraSpeedMax, step);
+		m_currentSpeed = m_baseSpeed + m_extraSpeed;
+		transform.position += transform.forward * m_currentSpeed * Time.deltaTime;
 	}
 
 	public void IncrementCreatureRotationalVel(float increment_x, float increment_y, float increment_z)
@@ -56,5 +70,14 @@ public class MeshCreaturePhysics : MonoBehaviour
 			m_decayFlag_z = false;
 	}
 
+	public void IncrementExtraSpeedStep(float stepIncrement)
+	{
+		m_extraSpeedProgress = Mathf.Clamp(m_extraSpeedProgress + stepIncrement/m_extraSpeedRampUpDuration, 0, 1.0f);
+
+		if(stepIncrement == 0)
+			m_extraSpeedDecayFlag = true;
+		else
+			m_extraSpeedDecayFlag = false;
+	}
 
 }
