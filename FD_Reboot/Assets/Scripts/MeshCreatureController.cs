@@ -65,6 +65,7 @@ public class MeshCreatureController : MonoBehaviour
 	MeshCreaturePhysics m_meshCreaturePhysics;
 	MeshTerrainGenerator m_meshTerrainGenerator;
 	MeshCreatureActions m_meshCreatureInputs;
+	MeshTerrainBendPhysics m_meshTerrainBendPhysics;
 
 	float yawScale = 10.0f;
 	float pitchScale = 10.0f;
@@ -103,6 +104,7 @@ public class MeshCreatureController : MonoBehaviour
 	{
 		m_meshCreaturePhysics = GetComponent<MeshCreaturePhysics>();
 		m_meshTerrainGenerator = GetComponent<MeshTerrainGenerator>();
+		m_meshTerrainBendPhysics = GetComponent<MeshTerrainBendPhysics>();
 	}
 
 	void Update()
@@ -113,7 +115,7 @@ public class MeshCreatureController : MonoBehaviour
 		float inputBend = m_meshCreatureInputs.Bend.Value * bendScale * Time.deltaTime;
 
 		m_meshCreaturePhysics.IncrementCreatureRotationalVel( inputPitch , inputYaw, -inputRoll );
-		m_meshTerrainGenerator.IncrementMeshBend(inputBend);
+		m_meshTerrainBendPhysics.IncrementMeshBendVelocity(inputBend);
 	}
 
 }

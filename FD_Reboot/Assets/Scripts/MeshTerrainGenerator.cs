@@ -35,11 +35,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	float[] testHeightValues;
 
-	[Range(-1,1)]
 	float m_bendFactor = 0;
-	float m_bendRange = 1.0f;
-
-	public float d_bendOscilationFrequency = 0.0f;
 
 	float m_stripHalfWidth;
 	float m_circleFormRadius;
@@ -274,9 +270,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 		//m_meshStripsMaterial.SetColor("_EmissionColor", m_currentMaterialColor);
 	}
 
-	public void IncrementMeshBend(float bendIncrement)
+	public void SetMeshBendValue(float bendValue)
 	{
-		m_bendFactor = Mathf.Clamp(m_bendFactor + bendIncrement, -m_bendRange, m_bendRange);
+		m_bendFactor = bendValue;
 	}
 	
 	void SetMeshTerrainColor(Color color)
