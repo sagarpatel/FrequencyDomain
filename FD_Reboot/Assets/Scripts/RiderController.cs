@@ -5,7 +5,6 @@ using System.Text;
 using UnityEngine;
 using InControl;
 
-
 public class RiderActions : PlayerActionSet
 {
 	public PlayerAction Warp;
@@ -69,7 +68,14 @@ public class RiderController : MonoBehaviour
 
 	void OnEnable()
 	{
-		m_riderInput = new RiderActions();
+		Debug.Log(InputManager.Devices.Count);
+		for(int i = 0; i < InputManager.Devices.Count; i++)
+			Debug.Log(InputManager.Devices[i]);
+
+		if(InputManager.Devices.Count >= 1)
+			m_riderInput = new RiderActions(0);
+		else
+			m_riderInput = new RiderActions();
 
 		// keyboard controlls
 		m_riderInput.Warp.AddDefaultBinding( Key.Space );

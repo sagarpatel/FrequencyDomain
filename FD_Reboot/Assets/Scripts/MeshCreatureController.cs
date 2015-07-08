@@ -60,7 +60,6 @@ public class MeshCreatureActions: PlayerActionSet
 }
 
 
-
 public class MeshCreatureController : MonoBehaviour 
 {
 	MeshCreaturePhysics m_meshCreaturePhysics;
@@ -74,8 +73,12 @@ public class MeshCreatureController : MonoBehaviour
 
 	void OnEnable()
 	{
-		m_meshCreatureInputs = new MeshCreatureActions();
+		if(InputManager.Devices.Count >= 2)
+			m_meshCreatureInputs = new MeshCreatureActions(1);
+		else
+			m_meshCreatureInputs = new MeshCreatureActions();
 
+		//keyboard controls
 		m_meshCreatureInputs.YawLeft.AddDefaultBinding(Key.A);
 		m_meshCreatureInputs.YawRight.AddDefaultBinding(Key.D);
 		m_meshCreatureInputs.PitchUp.AddDefaultBinding(Key.W);
@@ -84,6 +87,16 @@ public class MeshCreatureController : MonoBehaviour
 		m_meshCreatureInputs.RollRight.AddDefaultBinding(Key.E);
 		m_meshCreatureInputs.BendIn.AddDefaultBinding(Key.Z);
 		m_meshCreatureInputs.BendOut.AddDefaultBinding(Key.X);
+
+		// gamepad controls
+		m_meshCreatureInputs.YawLeft.AddDefaultBinding( InputControlType.LeftStickLeft );
+		m_meshCreatureInputs.YawRight.AddDefaultBinding( InputControlType.LeftStickRight );
+		m_meshCreatureInputs.PitchUp.AddDefaultBinding( InputControlType.LeftStickUp );
+		m_meshCreatureInputs.PitchDown.AddDefaultBinding( InputControlType.LeftStickDown );
+		m_meshCreatureInputs.RollLeft.AddDefaultBinding( InputControlType.LeftTrigger );
+		m_meshCreatureInputs.RollRight.AddDefaultBinding( InputControlType.RightTrigger );
+		m_meshCreatureInputs.BendIn.AddDefaultBinding( InputControlType.LeftBumper );
+		m_meshCreatureInputs.BendOut.AddDefaultBinding( InputControlType.RightBumper );
 	}
 
 	void Start()
