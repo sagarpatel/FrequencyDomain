@@ -57,17 +57,22 @@ public class RiderPhysics : MonoBehaviour
 
 	List<Vector4> m_riderAirtimeStateRecordingList; // use x for depthRatio, y for widthRatio, z for height offset, w for barrel roll value
 	List<Color> m_audioAirtimeStateRecordingList;
+	List<Quaternion> m_riderCameraRotationsRecordingList;
 	FrequencyDataManager m_frequencyDataManager;
 	GhostRiderCreaturesGenerator m_ghostRiderCreaturesGenerator;
+	Transform m_riderCameraTransform;
 	
 	void Start()
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
 		m_meshTerrainWireframeController = FindObjectOfType<MeshTerrainWireframeController>();
-		m_riderAirtimeStateRecordingList = new List<Vector4>();
-		m_audioAirtimeStateRecordingList = new List<Color>();
 		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
 		m_ghostRiderCreaturesGenerator = FindObjectOfType<GhostRiderCreaturesGenerator>();
+		m_riderCameraTransform = GetComponentInChildren<Camera>().transform;
+
+		m_riderAirtimeStateRecordingList = new List<Vector4>();
+		m_audioAirtimeStateRecordingList = new List<Color>();
+		m_riderCameraRotationsRecordingList = new List<Quaternion>();
 	}
 	
 	void Update()
@@ -150,6 +155,7 @@ public class RiderPhysics : MonoBehaviour
 			m_airtimeCounter += Time.deltaTime;
 			m_riderAirtimeStateRecordingList.Add(new Vector4(m_depthRatio, m_widthRatio, m_heightOffsetBaseCurve, 0)); // TODO : add barrel roll rotatoin as w, height data is a frame let, meh rushing for bitsummit now
 			m_audioAirtimeStateRecordingList.Add(m_frequencyDataManager.d_color);
+			m_riderCameraRotationsRecordingList.Add(m_riderCameraTransform.rotation);
 		}
 
 		// first frame of jump
@@ -160,6 +166,7 @@ public class RiderPhysics : MonoBehaviour
 			m_heightAccumulator = 0;
 			m_riderAirtimeStateRecordingList.Clear();
 			m_audioAirtimeStateRecordingList.Clear();
+			m_riderCameraRotationsRecordingList.Clear();
 		}
 
 		// first contact on ground after air time
@@ -172,7 +179,7 @@ public class RiderPhysics : MonoBehaviour
 				//Debug.LogError("brst");
 				//targetMeshStripGenerator.LaunchWireframeBurstAnimation(null, m_airtimeCounter * m_airtimeBurstScaler);
 				//m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
-				m_ghostRiderCreaturesGenerator.SpawnGhostRiderCreature(m_riderAirtimeStateRecordingList.ToArray(), m_audioAirtimeStateRecordingList.ToArray(), m_airtimeCounter);
+				m_ghostRiderCreaturesGenerator.SpawnGhostRiderCreature(m_riderAirtimeStateRecordingList.ToArray(), m_audioAirtimeStateRecordingList.ToArray(), m_riderCameraRotationsRecordingList.ToArray(), m_airtimeCounter);
 				//Debug.LogError("spawn");
 			}
 			m_airtimeCounter = 0;

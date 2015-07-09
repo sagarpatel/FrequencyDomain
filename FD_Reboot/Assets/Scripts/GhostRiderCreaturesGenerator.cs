@@ -20,13 +20,13 @@ public class GhostRiderCreaturesGenerator : MonoBehaviour
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
 	}
 
-	public void SpawnGhostRiderCreature(Vector4[] riderDataArray, Color[] colorDataArray, float airTime)
+	public void SpawnGhostRiderCreature(Vector4[] riderDataArray, Color[] colorDataArray, Quaternion[] riderCamRotationsArray, float airTime)
 	{
 		int bodyPartsCount = m_bodyPartsMin + (int)(airTime * m_airtimeToBodyPartsRatio);
 
 		GameObject ghostRiderCreature = new GameObject("Ghost Rider Creature " + m_ghostRiderCreaturesSpawnCounter);
 		ghostRiderCreature.AddComponent<GhostRiderCreature>();
-		ghostRiderCreature.GetComponent<GhostRiderCreature>().InitializeGhostRiderCreature(this, m_meshTerrainGenerator, riderDataArray, colorDataArray, creatureHeadPartPrefab, creatureBodyPartPrefab, bodyPartsCount);
+		ghostRiderCreature.GetComponent<GhostRiderCreature>().InitializeGhostRiderCreature(this, m_meshTerrainGenerator, riderDataArray, colorDataArray, riderCamRotationsArray, creatureHeadPartPrefab, creatureBodyPartPrefab, bodyPartsCount);
 
 		m_ghostRiderCreaturesSpawnCounter ++;
 	}

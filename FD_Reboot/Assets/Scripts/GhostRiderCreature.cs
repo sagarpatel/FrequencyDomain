@@ -11,6 +11,7 @@ public class GhostRiderCreature : MonoBehaviour
 
 	Vector4[] m_movementsDataArray;
 	Color[] m_colorsDataArray;
+	Quaternion[] m_rotationsArray;
 
 	int m_moveCounter = 0;
 
@@ -61,7 +62,7 @@ public class GhostRiderCreature : MonoBehaviour
 
 	GhostRiderCreaturesGenerator m_ghostRiderCreatureGenerator;
 
-	public void InitializeGhostRiderCreature(GhostRiderCreaturesGenerator generator, MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
+	public void InitializeGhostRiderCreature(GhostRiderCreaturesGenerator generator, MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, Quaternion[] riderCameraRotationsArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
 	{
 		m_ghostRiderCreatureGenerator = generator;
 		m_meshTerrainGenerator = meshTerrainGenerator;
@@ -74,6 +75,7 @@ public class GhostRiderCreature : MonoBehaviour
 		m_bodyPartsArray = new GameObject[bodyPartsCount];
 		m_movementsDataArray = movementsDataArray;
 		m_colorsDataArray = colorDataArray;
+		m_rotationsArray = riderCameraRotationsArray;
 
 		for(int i = 0; i < bodyPartsCount; i++)
 		{
@@ -120,7 +122,7 @@ public class GhostRiderCreature : MonoBehaviour
 			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
 
 			m_headPart.transform.position = pos;
-			m_headPart.transform.rotation = rot;
+			m_headPart.transform.rotation = m_rotationsArray[m_moveCounter]; //rot;
 			m_headPartMaterial.color = m_colorsDataArray[m_moveCounter];
 			LerpBodyParts();
 
