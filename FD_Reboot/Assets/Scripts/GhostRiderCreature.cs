@@ -44,8 +44,10 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 	}
 
-	public void InitializeGhostRiderCreature(Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
+	public void InitializeGhostRiderCreature(MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
 	{
+		m_meshTerrainGenerator = meshTerrainGenerator;
+
 		m_headPart = (GameObject)Instantiate(headPartPrefab);
 		m_headPart.transform.parent = transform;
 		m_headPart.transform.localPosition = Vector3.zero;
@@ -65,7 +67,7 @@ public class GhostRiderCreature : MonoBehaviour
 			m_bodyPartsArray[i] = bodyPart;
 		}
 
-		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
+		StartCoroutine(AnimateGhostRiderCreature());
 	}
 
 	IEnumerator AnimateGhostRiderCreature()
@@ -79,21 +81,26 @@ public class GhostRiderCreature : MonoBehaviour
 		int targetMeshIndex;
 		MeshStripGenerator targetMeshStripGenerator;
 
-
-
 		while(m_moveCounter < m_movementsDataArray.Length)
-		{
-			
+		{			
 			meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
 			frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;		
 			targetMeshStripIndexOffset = (int)(m_currentDepthRatio * (float)meshStripsCount);
 			targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
 			targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
 
+			targetMeshStripGenerator.CalculatePositionOnStrip( m_currentWidthRatio, m_currentHeightOffsetTerrain, out pos, out rot);
+
+			transform.position = pos;
+			transform.rotation = rot;
 
 			m_moveCounter ++;
 			yield return null;
 		}
 
+		Destroy(gameObject);
+
 	}
+
+
 }

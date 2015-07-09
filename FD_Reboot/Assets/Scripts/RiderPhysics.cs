@@ -57,6 +57,7 @@ public class RiderPhysics : MonoBehaviour
 	List<Vector4> m_riderAirtimeStateRecordingList; // use x for depthRatio, y for widthRatio, z for height offset, w for barrel roll value
 	List<Color> m_audioAirtimeStateRecordingList;
 	FrequencyDataManager m_frequencyDataManager;
+	GhostRiderCreaturesGenerator m_ghostRiderCreaturesGenerator;
 	
 	void Start()
 	{
@@ -65,6 +66,7 @@ public class RiderPhysics : MonoBehaviour
 		m_riderAirtimeStateRecordingList = new List<Vector4>();
 		m_audioAirtimeStateRecordingList = new List<Color>();
 		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
+		m_ghostRiderCreaturesGenerator = FindObjectOfType<GhostRiderCreaturesGenerator>();
 	}
 	
 	void Update()
@@ -168,6 +170,7 @@ public class RiderPhysics : MonoBehaviour
 				//Debug.LogError("brst");
 				//targetMeshStripGenerator.LaunchWireframeBurstAnimation(null, m_airtimeCounter * m_airtimeBurstScaler);
 				//m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
+				m_ghostRiderCreaturesGenerator.SpawnGhostRiderCreature(m_riderAirtimeStateRecordingList.ToArray(), m_audioAirtimeStateRecordingList.ToArray(), m_airtimeCounter);
 			}
 			m_airtimeCounter = 0;
 		}
