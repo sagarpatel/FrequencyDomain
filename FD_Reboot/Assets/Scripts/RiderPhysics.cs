@@ -12,6 +12,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_depthRatio = 0; // -1 is full left, +1 is full right
 	float m_heightOffsetBaseCurve = 0;
 	float m_heighOffsetOffTerrain = 0;
+	float m_heightOffsetRaw = 0;
 
 	float m_widthVelocity = 0;
 	float m_depthVelocity = 0;
@@ -125,6 +126,7 @@ public class RiderPhysics : MonoBehaviour
 			{
 				m_newRiderHeightState = RiderHeightState.FallingGround;
 				m_heightOffsetBaseCurve = 0;
+				m_heightOffsetRaw = 0;
 			}
 
 		}
@@ -146,7 +148,7 @@ public class RiderPhysics : MonoBehaviour
 		if(m_newRiderHeightState == RiderHeightState.RisingAir || m_newRiderHeightState == RiderHeightState.FallingAir)
 		{
 			m_airtimeCounter += Time.deltaTime;
-			m_riderAirtimeStateRecordingList.Add(new Vector4(m_depthRatio, m_widthRatio, m_heighOffsetOffTerrain, 0)); // TODO : add barrel roll rotatoin as w, height data is a frame let, meh rushing for bitsummit now
+			m_riderAirtimeStateRecordingList.Add(new Vector4(m_depthRatio, m_widthRatio, m_heightOffsetBaseCurve, 0)); // TODO : add barrel roll rotatoin as w, height data is a frame let, meh rushing for bitsummit now
 			m_audioAirtimeStateRecordingList.Add(m_frequencyDataManager.d_color);
 		}
 
@@ -171,15 +173,17 @@ public class RiderPhysics : MonoBehaviour
 				//targetMeshStripGenerator.LaunchWireframeBurstAnimation(null, m_airtimeCounter * m_airtimeBurstScaler);
 				//m_meshTerrainWireframeController.IncrementWireframeValue(m_airtimeCounter * m_airtimeBurstScaler);
 				m_ghostRiderCreaturesGenerator.SpawnGhostRiderCreature(m_riderAirtimeStateRecordingList.ToArray(), m_audioAirtimeStateRecordingList.ToArray(), m_airtimeCounter);
+				//Debug.LogError("spawn");
 			}
 			m_airtimeCounter = 0;
 		}
 
 		// calcluations for how high off the the mesh rider should be 
+		m_heightOffsetRaw = Mathf.Clamp( m_heightOffsetRaw + m_heightVelocity * Time.deltaTime,0, m_heightOffsetBaseCurveRange_Max);
 		m_heightOffsetBaseCurve = Mathf.Clamp( m_heightOffsetBaseCurve + m_heightVelocity * Time.deltaTime, m_newTerrainHeight, m_heightOffsetBaseCurveRange_Max);
 		m_heighOffsetOffTerrain = Mathf.Clamp( m_heightOffsetBaseCurve - m_newTerrainHeight, m_heightOffsetBaseCurveRange_Min, m_heightOffsetBaseCurveRange_Max);
 
-		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, m_heighOffsetOffTerrain, out pos, out rot);		
+		targetMeshStripGenerator.CalculatePositionOnStrip_Rider( m_widthRatio, m_heighOffsetOffTerrain, out pos, out rot);		
 
 		// final position calcluations and set
 		transform.position = pos;

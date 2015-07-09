@@ -434,7 +434,33 @@ public class MeshStripGenerator : MonoBehaviour
 		return lerpedHeight;
 	}
 
-	public void CalculatePositionOnStrip(float widthPosRatio, float heightOffset, out Vector3 calculatedPosition, out Quaternion calculatedRotation)
+	public Vector3 CalculateTerrainUpVector(float widthPosRatio)
+	{
+		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
+		int widthVertexIndex_Ceil = Mathf.CeilToInt(widthVertexIndexLocation);
+		int widthVertexIndex_Floor = Mathf.FloorToInt(widthVertexIndexLocation);
+		
+		Vector3 upVector_Ceil;
+		Vector3 upVector_Floor;
+		
+		// right side
+		if(widthPosRatio > 0)
+		{
+			upVector_Ceil = m_upVectorsArray_Right[widthVertexIndex_Ceil];
+			upVector_Floor = m_upVectorsArray_Right[widthVertexIndex_Floor];
+		}
+		else
+		{
+			upVector_Ceil = m_upVectorsArray_Left[widthVertexIndex_Ceil];
+			upVector_Floor = m_upVectorsArray_Left[widthVertexIndex_Floor];
+		}
+		
+		float lerpStep = widthVertexIndexLocation - (float)widthVertexIndex_Floor;
+		Vector3 lerpedUpVector = Vector3.Lerp (upVector_Floor, upVector_Ceil, lerpStep);
+		return lerpedUpVector;
+	}
+
+	public void CalculatePositionOnStrip_Rider(float widthPosRatio, float heightOffset, out Vector3 calculatedPosition, out Quaternion calculatedRotation)
 	{
 		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
 		int widthVertexIndex_Ceil = Mathf.CeilToInt(widthVertexIndexLocation);
@@ -474,6 +500,52 @@ public class MeshStripGenerator : MonoBehaviour
 		Quaternion finalLocalRot = Quaternion.FromToRotation(Vector3.up, lerpedUpVector);
 		Quaternion finalWorldRot = transform.rotation * finalLocalRot;
 
+		calculatedPosition = finalWorldPos;
+		calculatedRotation = finalWorldRot;
+	}
+
+	public void CalculatePositionOnStrip_Ghost(float widthPosRatio, float heightOffset, out Vector3 calculatedPosition, out Quaternion calculatedRotation)
+	{
+		float widthVertexIndexLocation = Mathf.Abs(widthPosRatio) * (float)(m_verticesArray_FrontRow_Right.Length - 1);
+		int widthVertexIndex_Ceil = Mathf.CeilToInt(widthVertexIndexLocation);
+		int widthVertexIndex_Floor = Mathf.FloorToInt(widthVertexIndexLocation);
+		
+		Vector3 widthPos_Ceil = Vector3.zero;
+		Vector3 widthPos_Floor = Vector3.zero;
+		Vector3 upVector_Ceil = Vector3.up;
+		Vector3 upVector_Floor = Vector3.up;
+		
+		// right side
+		if(widthPosRatio > 0)
+		{
+			widthPos_Ceil = m_verticesArray_FrontRow_Right[widthVertexIndex_Ceil];
+			widthPos_Floor = m_verticesArray_FrontRow_Right[widthVertexIndex_Floor];
+			upVector_Ceil = m_upVectorsArray_Right[widthVertexIndex_Ceil];
+			upVector_Floor = m_upVectorsArray_Right[widthVertexIndex_Floor];
+		}
+		else // left side
+		{
+			widthPos_Ceil = m_verticesArray_FrontRow_Left[widthVertexIndex_Ceil];
+			widthPos_Floor = m_verticesArray_FrontRow_Left[widthVertexIndex_Floor];
+			upVector_Ceil = m_upVectorsArray_Left[widthVertexIndex_Ceil];
+			upVector_Floor = m_upVectorsArray_Left[widthVertexIndex_Floor];
+		}
+		
+		float lerpStep = widthVertexIndexLocation - (float)widthVertexIndex_Floor;
+		// basic pos
+		Vector3 lerpedWidthPos = Vector3.Lerp(widthPos_Floor, widthPos_Ceil, lerpStep);
+		// remove height to get back basic curve
+		lerpedWidthPos -= CalculateTerrainUpVector(widthPosRatio) * CalculateTerrainHeightValue(widthPosRatio);
+		
+		// apply height offset
+		Vector3 lerpedUpVector = Vector3.Lerp(upVector_Floor, upVector_Ceil, lerpStep);
+		Vector3 finalLocalPos = lerpedWidthPos + (heightOffset * lerpedUpVector);
+		
+		Vector3 finalWorldPos = transform.TransformPoint(finalLocalPos);
+		
+		Quaternion finalLocalRot = Quaternion.FromToRotation(Vector3.up, lerpedUpVector);
+		Quaternion finalWorldRot = transform.rotation * finalLocalRot;
+		
 		calculatedPosition = finalWorldPos;
 		calculatedRotation = finalWorldRot;
 	}

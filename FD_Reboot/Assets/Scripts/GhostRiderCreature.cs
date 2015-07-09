@@ -12,7 +12,7 @@ public class GhostRiderCreature : MonoBehaviour
 
 	MeshTerrainGenerator m_meshTerrainGenerator;
 
-	float m_currentDepthRatio
+	float m_riderDataDepthRatio
 	{
 		get
 		{
@@ -20,7 +20,7 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 	}
 
-	float m_currentWidthRatio
+	float m_riderDataWidthRatio
 	{
 		get
 		{
@@ -28,7 +28,7 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 	}
 
-	float m_currentHeightOffsetTerrain
+	float m_riderDataHeightOffsetTerrain
 	{
 		get
 		{
@@ -36,13 +36,17 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 	}
 
-	float m_currentBarrelRollAngle
+	float m_riderDataBarrelRollAngle
 	{
 		get
 		{
 			return m_movementsDataArray[m_moveCounter].w;
 		}
 	}
+
+	float m_ghostDepthRatio = 0;
+	float m_ghostDepthSpeed = 0.120f;
+	float m_ghostSpeedAccumulator = 0;
 
 	public void InitializeGhostRiderCreature(MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
 	{
@@ -81,15 +85,20 @@ public class GhostRiderCreature : MonoBehaviour
 		int targetMeshIndex;
 		MeshStripGenerator targetMeshStripGenerator;
 
+
 		while(m_moveCounter < m_movementsDataArray.Length)
 		{			
 			meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
-			frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;		
-			targetMeshStripIndexOffset = (int)(m_currentDepthRatio * (float)meshStripsCount);
+			frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;	
+
+			m_ghostSpeedAccumulator += m_ghostDepthSpeed * Time.deltaTime;
+			m_ghostDepthRatio = Mathf.Clamp( m_riderDataDepthRatio + m_ghostSpeedAccumulator, 0, 1);
+
+			targetMeshStripIndexOffset = (int)( m_ghostDepthRatio * (float)meshStripsCount);
 			targetMeshIndex = (frontStripIndex + targetMeshStripIndexOffset) % meshStripsCount;
 			targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
 
-			targetMeshStripGenerator.CalculatePositionOnStrip( m_currentWidthRatio, m_currentHeightOffsetTerrain, out pos, out rot);
+			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
 
 			transform.position = pos;
 			transform.rotation = rot;
