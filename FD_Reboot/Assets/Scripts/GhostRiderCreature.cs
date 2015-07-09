@@ -13,69 +13,44 @@ public class GhostRiderCreature : MonoBehaviour
 	Color[] m_colorsDataArray;
 	Quaternion[] m_rotationsArray;
 
-	int m_moveCounter = 0;
-
 	MeshTerrainGenerator m_meshTerrainGenerator;
 
-	float m_riderDataDepthRatio
-	{
-		get
-		{
-			return m_movementsDataArray[m_moveCounter].x;
-		}
-	}
-
-	float m_riderDataWidthRatio
-	{
-		get
-		{
-			return m_movementsDataArray[m_moveCounter].y;
-		}
-	}
-
-	float m_riderDataHeightOffsetTerrain
-	{
-		get
-		{
-			return m_movementsDataArray[m_moveCounter].z;
-		}
-	}
-
-	float m_riderDataBarrelRollAngle
-	{
-		get
-		{
-			return m_movementsDataArray[m_moveCounter].w;
-		}
-	}
-
+	float m_riderDataDepthRatio = 0;	
+	float m_riderDataWidthRatio = 0;
+	float m_riderDataHeightOffsetTerrain = 0;	
+	float m_riderDataBarrelRollAngle = 0;
+	
 	float m_ghostDepthRatio = 0;
-	float m_ghostDepthSpeed = 0.120f;
+	float m_ghostDepthSpeed = 0.08f;
 	float m_ghostSpeedAccumulator = 0;
-	float m_bodyPartMoveStepScaler = 25.0f;
+	float m_bodyPartMoveStepScaler = 15.0f;
 	float m_moveToFrontAnimationDuration = 1.0f;
 	float m_headToTailDistanceTriggerThreashold = 1.0f;
 	float m_raiseAnimationDuration = 0.5f;
 	float m_explosionAnimationDuration = 1.0f;
 	float m_explosionSpeed_Start = 500.0f;
 	float m_explosionSpeed_End = 3000.0f;
+	float m_ghostMovementAnimationDuration = 0;
 
 	GhostRiderCreaturesGenerator m_ghostRiderCreatureGenerator;
 
-	public void InitializeGhostRiderCreature(GhostRiderCreaturesGenerator generator, MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, Quaternion[] riderCameraRotationsArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
+	public void InitializeGhostRiderCreature(GhostRiderCreaturesGenerator generator, MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, Quaternion[] riderCameraRotationsArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount, float moveAnimationDuration)
 	{
+		// copy params locally
 		m_ghostRiderCreatureGenerator = generator;
 		m_meshTerrainGenerator = meshTerrainGenerator;
+		m_movementsDataArray = movementsDataArray;
+		m_colorsDataArray = colorDataArray;
+		m_rotationsArray = riderCameraRotationsArray;
+		m_ghostMovementAnimationDuration = moveAnimationDuration;
 
+		// create parts
 		m_headPart = (GameObject)Instantiate(headPartPrefab);
 		m_headPart.transform.parent = transform;
 		m_headPart.transform.localPosition = Vector3.zero;
 		m_headPart.transform.localRotation = Quaternion.identity;
 
 		m_bodyPartsArray = new GameObject[bodyPartsCount];
-		m_movementsDataArray = movementsDataArray;
-		m_colorsDataArray = colorDataArray;
-		m_rotationsArray = riderCameraRotationsArray;
 
 		for(int i = 0; i < bodyPartsCount; i++)
 		{
@@ -107,10 +82,29 @@ public class GhostRiderCreature : MonoBehaviour
 		int targetMeshIndex;
 		MeshStripGenerator targetMeshStripGenerator;
 
-		while(m_moveCounter < m_movementsDataArray.Length)
+		float ghostDataAnimationTimeCounter = 0;
+
+		while(ghostDataAnimationTimeCounter < m_ghostMovementAnimationDuration)
 		{			
 			meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
 			frontStripIndex = m_meshTerrainGenerator.m_lastActivatedStripIndex;	
+
+			float progress = ghostDataAnimationTimeCounter/m_ghostMovementAnimationDuration;
+			float dataIndexLocation = progress * (float)(m_movementsDataArray.Length - 1);
+			int dataIndexFloor = Mathf.FloorToInt(dataIndexLocation);
+			int dataIndexCeil = Mathf.CeilToInt(dataIndexLocation);
+			float dataIndexLerpStep = dataIndexLocation - (float)dataIndexFloor;
+
+			//Debug.Log("Array length: " + m_movementsDataArray.Length + " ceil index: " + dataIndexCeil + " progress: " + progress);
+
+			Vector4 lerpedRiderMovementData = Vector4.Lerp(m_movementsDataArray[dataIndexFloor], m_movementsDataArray[dataIndexCeil], dataIndexLerpStep);
+			m_riderDataDepthRatio = lerpedRiderMovementData.x;
+			m_riderDataWidthRatio = lerpedRiderMovementData.y;
+			m_riderDataHeightOffsetTerrain = lerpedRiderMovementData.z;
+			m_riderDataBarrelRollAngle = lerpedRiderMovementData.w; // looks like im not using this now since I'm passing the entire rotation in the other array
+
+			Quaternion lerpedCameraRotation = Quaternion.Slerp(m_rotationsArray[dataIndexFloor], m_rotationsArray[dataIndexCeil], dataIndexLerpStep);
+			Color lerpedColor = Color.Lerp(m_colorsDataArray[dataIndexFloor], m_colorsDataArray[dataIndexCeil], dataIndexLerpStep);
 
 			m_ghostSpeedAccumulator += m_ghostDepthSpeed * Time.deltaTime;
 			m_ghostDepthRatio = Mathf.Clamp( m_riderDataDepthRatio + m_ghostSpeedAccumulator, 0, 1);
@@ -122,12 +116,12 @@ public class GhostRiderCreature : MonoBehaviour
 			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
 
 			m_headPart.transform.position = pos;
-			m_headPart.transform.rotation = m_rotationsArray[m_moveCounter];  //Quaternion.Inverse( rot ) * m_rotationsArray[m_moveCounter]; 
-			m_headPartMaterial.color = m_colorsDataArray[m_moveCounter];
+			m_headPart.transform.rotation = lerpedCameraRotation; 
+			m_headPartMaterial.color = lerpedColor;
 			LerpBodyParts();
 
 			// first pos/rot etc set
-			if(m_moveCounter == 0)
+			if(ghostDataAnimationTimeCounter == 0)
 			{
 				for(int i = 1; i < m_bodyPartsArray.Length; i++)
 				{
@@ -136,15 +130,14 @@ public class GhostRiderCreature : MonoBehaviour
 				}
 			}
 
-			m_moveCounter ++;
+			ghostDataAnimationTimeCounter += Time.deltaTime;
 			yield return null;
 		}
 
-		Debug.Log(gameObject.name + " Main animation complete " + Time.frameCount);
+		//Debug.Log(gameObject.name + " Main animation complete " + Time.frameCount);
 		
 		// main animation complete, now moving the creature to the front over fixed amount of time
 		Vector3 upVectorAtFront = Vector3.up;
-		m_moveCounter --;
 		float moveToFrontTimeCounter = 0;
 		while(moveToFrontTimeCounter < m_moveToFrontAnimationDuration)
 		{
@@ -189,7 +182,7 @@ public class GhostRiderCreature : MonoBehaviour
 			yield return null;
 		}
 
-		Debug.Log(gameObject.name + " Parts catch up complete " + Time.frameCount);
+		//Debug.Log(gameObject.name + " Parts catch up complete " + Time.frameCount);
 		
 		// do raise and explosion animation
 		float raiseTimeCounter = 0;
