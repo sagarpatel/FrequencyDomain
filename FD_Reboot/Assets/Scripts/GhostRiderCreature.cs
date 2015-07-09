@@ -209,7 +209,7 @@ public class GhostRiderCreature : MonoBehaviour
 		Debug.Log(gameObject.name + " Raise up complete " + Time.frameCount);
 
 		// do parts explosino
-		Destroy(m_headPart);
+		m_headPart.GetComponent<MeshRenderer>().enabled = false;
 		Vector3[] partsRandomDirectionArray = new Vector3[m_bodyPartsArray.Length];
 		for(int i = 0; i < partsRandomDirectionArray.Length; i++)
 			partsRandomDirectionArray[i] = Random.onUnitSphere;
