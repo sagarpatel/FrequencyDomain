@@ -5,6 +5,10 @@ public class GhostRiderCreature : MonoBehaviour
 {
 	GameObject m_headPart;
 	GameObject[] m_bodyPartsArray;
+
+	Material m_headPartMaterial;
+	Material[] m_bodyPartsMaterialsArray;
+
 	Vector4[] m_movementsDataArray;
 	Color[] m_colorsDataArray;
 
@@ -69,7 +73,7 @@ public class GhostRiderCreature : MonoBehaviour
 
 		m_bodyPartsArray = new GameObject[bodyPartsCount];
 		m_movementsDataArray = movementsDataArray;
-		m_colorsDataArray = m_colorsDataArray;
+		m_colorsDataArray = colorDataArray;
 
 		for(int i = 0; i < bodyPartsCount; i++)
 		{
@@ -81,6 +85,11 @@ public class GhostRiderCreature : MonoBehaviour
 
 			m_bodyPartsArray[i] = bodyPart;
 		}
+
+		m_headPartMaterial = m_headPart.GetComponent<MeshRenderer>().material;
+		m_bodyPartsMaterialsArray = new Material[m_bodyPartsArray.Length];
+		for(int i = 0; i < m_bodyPartsArray.Length; i++)
+			m_bodyPartsMaterialsArray[i] = m_bodyPartsArray[i].GetComponent<MeshRenderer>().material;
 
 		StartCoroutine(AnimateGhostRiderCreature());
 	}
@@ -95,7 +104,6 @@ public class GhostRiderCreature : MonoBehaviour
 		int targetMeshStripIndexOffset;
 		int targetMeshIndex;
 		MeshStripGenerator targetMeshStripGenerator;
-
 
 		while(m_moveCounter < m_movementsDataArray.Length)
 		{			
@@ -113,6 +121,7 @@ public class GhostRiderCreature : MonoBehaviour
 
 			m_headPart.transform.position = pos;
 			m_headPart.transform.rotation = rot;
+			m_headPartMaterial.color = m_colorsDataArray[m_moveCounter];
 			LerpBodyParts();
 
 			// first pos/rot etc set
@@ -224,10 +233,12 @@ public class GhostRiderCreature : MonoBehaviour
 	void LerpBodyParts()
 	{
 		m_bodyPartsArray[0].transform.position = Vector3.Lerp( m_bodyPartsArray[0].transform.position, m_headPart.transform.position, m_bodyPartMoveStepScaler * Time.deltaTime);
+		m_bodyPartsMaterialsArray[0].color = Color.Lerp( m_bodyPartsMaterialsArray[0].color, m_headPartMaterial.color, m_bodyPartMoveStepScaler * Time.deltaTime);
 		for(int i = 1; i < m_bodyPartsArray.Length; i++)
 		{
 			m_bodyPartsArray[i].transform.position = Vector3.Lerp( m_bodyPartsArray[i].transform.position, m_bodyPartsArray[i-1].transform.position, m_bodyPartMoveStepScaler * Time.deltaTime);
 			m_bodyPartsArray[i].transform.rotation = Quaternion.Slerp( m_bodyPartsArray[i].transform.rotation, m_bodyPartsArray[i-1].transform.rotation, m_bodyPartMoveStepScaler * Time.deltaTime);
+			m_bodyPartsMaterialsArray[i].color = Color.Lerp( m_bodyPartsMaterialsArray[i].color, m_bodyPartsMaterialsArray[i-1].color, m_bodyPartMoveStepScaler * Time.deltaTime );
 		}
 	}
 
