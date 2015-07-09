@@ -122,7 +122,7 @@ public class GhostRiderCreature : MonoBehaviour
 			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
 
 			m_headPart.transform.position = pos;
-			m_headPart.transform.rotation = m_rotationsArray[m_moveCounter]; //rot;
+			m_headPart.transform.rotation = m_rotationsArray[m_moveCounter];  //Quaternion.Inverse( rot ) * m_rotationsArray[m_moveCounter]; 
 			m_headPartMaterial.color = m_colorsDataArray[m_moveCounter];
 			LerpBodyParts();
 
@@ -235,6 +235,7 @@ public class GhostRiderCreature : MonoBehaviour
 	void LerpBodyParts()
 	{
 		m_bodyPartsArray[0].transform.position = Vector3.Lerp( m_bodyPartsArray[0].transform.position, m_headPart.transform.position, m_bodyPartMoveStepScaler * Time.deltaTime);
+		m_bodyPartsArray[0].transform.rotation = Quaternion.Slerp( m_bodyPartsArray[0].transform.rotation, m_headPart.transform.rotation, m_bodyPartMoveStepScaler * Time.deltaTime);
 		m_bodyPartsMaterialsArray[0].color = Color.Lerp( m_bodyPartsMaterialsArray[0].color, m_headPartMaterial.color, m_bodyPartMoveStepScaler * Time.deltaTime);
 		for(int i = 1; i < m_bodyPartsArray.Length; i++)
 		{
