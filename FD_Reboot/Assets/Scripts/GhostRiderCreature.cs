@@ -50,10 +50,16 @@ public class GhostRiderCreature : MonoBehaviour
 	float m_bodyPartMoveStepScaler = 25.0f;
 	float m_moveToFrontAnimationDuration = 1.0f;
 	float m_headToTailDistanceTriggerThreashold = 1.0f;
-	float m_raiseAnimationDuration = 0.25f;
+	float m_raiseAnimationDuration = 0.5f;
+	float m_explosionAnimationDuration = 1.0f;
+	float m_explosionSpeed_Start = 500.0f;
+	float m_explosionSpeed_End = 3000.0f;
 
-	public void InitializeGhostRiderCreature(MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
+	GhostRiderCreaturesGenerator m_ghostRiderCreatureGenerator;
+
+	public void InitializeGhostRiderCreature(GhostRiderCreaturesGenerator generator, MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
 	{
+		m_ghostRiderCreatureGenerator = generator;
 		m_meshTerrainGenerator = meshTerrainGenerator;
 
 		m_headPart = (GameObject)Instantiate(headPartPrefab);
@@ -176,12 +182,12 @@ public class GhostRiderCreature : MonoBehaviour
 		
 		// do raise and explosion animation
 		float raiseTimeCounter = 0;
-		float targetHeight = 2.0f * (float)m_bodyPartsArray.Length;
+		float targetHeight = 10.0f * (float)m_bodyPartsArray.Length;
 		Vector3 headBasePos = m_headPart.transform.position;
 		while(raiseTimeCounter < m_raiseAnimationDuration)
 		{
 			float step = raiseTimeCounter/m_raiseAnimationDuration;
-			float lerpedHeight = Mathf.Lerp(m_riderDataHeightOffsetTerrain, targetHeight, m_bodyPartMoveStepScaler);
+			float lerpedHeight = Mathf.Lerp(0, targetHeight, step);
 
 			m_headPart.transform.position = headBasePos + upVectorAtFront * lerpedHeight;
 
@@ -192,6 +198,25 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 
 		Debug.Log(gameObject.name + " Raise up complete " + Time.frameCount);
+
+		// do parts explosino
+		Destroy(m_headPart);
+		Vector3[] partsRandomDirectionArray = new Vector3[m_bodyPartsArray.Length];
+		for(int i = 0; i < partsRandomDirectionArray.Length; i++)
+			partsRandomDirectionArray[i] = Random.onUnitSphere;
+
+		float explosionTimeCounter = 0;
+		while(explosionTimeCounter < m_explosionAnimationDuration)
+		{
+			float progress = explosionTimeCounter/m_explosionAnimationDuration;
+			float step = m_ghostRiderCreatureGenerator.m_partsExplosionSpeedCurve.Evaluate(progress);
+			float lerpedSpeed = Mathf.Lerp(m_explosionSpeed_Start, m_explosionSpeed_End, step);
+			for(int i = 0; i < m_bodyPartsArray.Length; i++)
+				m_bodyPartsArray[i].transform.position += partsRandomDirectionArray[i] * lerpedSpeed * Time.deltaTime;
+
+			explosionTimeCounter += Time.deltaTime;
+			yield return null;
+		}
 
 		Destroy(gameObject);
 	}

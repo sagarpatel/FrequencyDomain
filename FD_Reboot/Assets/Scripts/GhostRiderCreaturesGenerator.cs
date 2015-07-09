@@ -13,6 +13,8 @@ public class GhostRiderCreaturesGenerator : MonoBehaviour
 
 	MeshTerrainGenerator m_meshTerrainGenerator;
 
+	public AnimationCurve m_partsExplosionSpeedCurve;
+
 	void Start()
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
@@ -24,7 +26,7 @@ public class GhostRiderCreaturesGenerator : MonoBehaviour
 
 		GameObject ghostRiderCreature = new GameObject("Ghost Rider Creature " + m_ghostRiderCreaturesSpawnCounter);
 		ghostRiderCreature.AddComponent<GhostRiderCreature>();
-		ghostRiderCreature.GetComponent<GhostRiderCreature>().InitializeGhostRiderCreature(m_meshTerrainGenerator, riderDataArray, colorDataArray, creatureHeadPartPrefab, creatureBodyPartPrefab, bodyPartsCount);
+		ghostRiderCreature.GetComponent<GhostRiderCreature>().InitializeGhostRiderCreature(this, m_meshTerrainGenerator, riderDataArray, colorDataArray, creatureHeadPartPrefab, creatureBodyPartPrefab, bodyPartsCount);
 
 		m_ghostRiderCreaturesSpawnCounter ++;
 	}
