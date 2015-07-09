@@ -50,6 +50,7 @@ public class GhostRiderCreature : MonoBehaviour
 	float m_bodyPartMoveStepScaler = 25.0f;
 	float m_moveToFrontAnimationDuration = 1.0f;
 	float m_headToTailDistanceTriggerThreashold = 1.0f;
+	float m_raiseAnimationDuration = 0.25f;
 
 	public void InitializeGhostRiderCreature(MeshTerrainGenerator meshTerrainGenerator, Vector4[] movementsDataArray, Color[] colorDataArray, GameObject headPartPrefab, GameObject bodyPartPrefab, int bodyPartsCount)
 	{
@@ -124,7 +125,8 @@ public class GhostRiderCreature : MonoBehaviour
 
 		Debug.Log(gameObject.name + " Main animation complete " + Time.frameCount);
 		
-		// main animation complete, now moving the crature to the front over fixed amount of time
+		// main animation complete, now moving the creature to the front over fixed amount of time
+		Vector3 upVectorAtFront = Vector3.up;
 		m_moveCounter --;
 		float moveToFrontTimeCounter = 0;
 		while(moveToFrontTimeCounter < m_moveToFrontAnimationDuration)
@@ -140,7 +142,9 @@ public class GhostRiderCreature : MonoBehaviour
 			targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ targetMeshIndex ];
 			
 			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
-			
+
+			upVectorAtFront = rot * Vector3.up;
+
 			m_headPart.transform.position = pos;
 			m_headPart.transform.rotation = rot;
 			LerpBodyParts();
@@ -171,7 +175,23 @@ public class GhostRiderCreature : MonoBehaviour
 		Debug.Log(gameObject.name + " Parts catch up complete " + Time.frameCount);
 		
 		// do raise and explosion animation
+		float raiseTimeCounter = 0;
+		float targetHeight = 2.0f * (float)m_bodyPartsArray.Length;
+		Vector3 headBasePos = m_headPart.transform.position;
+		while(raiseTimeCounter < m_raiseAnimationDuration)
+		{
+			float step = raiseTimeCounter/m_raiseAnimationDuration;
+			float lerpedHeight = Mathf.Lerp(m_riderDataHeightOffsetTerrain, targetHeight, m_bodyPartMoveStepScaler);
 
+			m_headPart.transform.position = headBasePos + upVectorAtFront * lerpedHeight;
+
+			LerpBodyParts();
+
+			raiseTimeCounter += Time.deltaTime;
+			yield return null;
+		}
+
+		Debug.Log(gameObject.name + " Raise up complete " + Time.frameCount);
 
 		Destroy(gameObject);
 	}
