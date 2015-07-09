@@ -10,7 +10,7 @@ public class FrequencyDataManager : MonoBehaviour
 	float[] m_processedFFTDataArray;
 	float[] m_previousProcessedFFTDataArray;
 
-	int[] samplesAccumulationArray = {1,2,5,9,12,25,55,175};
+	int[] samplesAccumulationArray = {2,2,5,9,12,25,55,175};
 	int samplesAccumulationStartIndexOffset = 10;
 
 	enum DataSources
