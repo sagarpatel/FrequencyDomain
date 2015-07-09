@@ -22,7 +22,17 @@ public class LiveAudioDataManager : MonoBehaviour
 		m_liveAudioSource.playOnAwake = false;
 
 		m_audioDevicesArray = Microphone.devices;
-		m_currentAudioDeviceIndex = 1;
+		// try to get streaming audio
+		m_currentAudioDeviceIndex = 0;
+		for(int i = 0; i < m_audioDevicesArray.Length; i++)
+		{
+			if(m_audioDevicesArray[i].Contains("Stereo Mix") || m_audioDevicesArray[i].Contains("Boom"))
+			{
+				m_currentAudioDeviceIndex = i;
+				break;
+			}
+		}
+
 		m_currentAudioDeviceName = m_audioDevicesArray[m_currentAudioDeviceIndex];
 
 		// debug launch here
