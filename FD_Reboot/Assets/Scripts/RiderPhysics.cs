@@ -11,6 +11,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_widthRatio = 0; // 0 is front of terrain, 1 is the furthest back
 	float m_depthRatio = 0; // -1 is full left, +1 is full right
 	float m_heightOffsetBaseCurve = 0;
+	float m_heighOffsetOffTerrain = 0;
 
 	float m_widthVelocity = 0;
 	float m_depthVelocity = 0;
@@ -53,7 +54,7 @@ public class RiderPhysics : MonoBehaviour
 	RiderHeightState m_newRiderHeightState = RiderHeightState.FallingGround;
 	RiderHeightState m_oldRiderHeightState = RiderHeightState.FallingGround;
 
-	List<Vector3> m_riderAirtimeStateRecordingList; // use x for depthRatio, y for widthRatio, z for barrel roll value
+	List<Vector4> m_riderAirtimeStateRecordingList; // use x for depthRatio, y for widthRatio, z for height offset, w for barrel roll value
 	List<Color> m_audioAirtimeStateRecordingList;
 	FrequencyDataManager m_frequencyDataManager;
 	
@@ -61,7 +62,7 @@ public class RiderPhysics : MonoBehaviour
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
 		m_meshTerrainWireframeController = FindObjectOfType<MeshTerrainWireframeController>();
-		m_riderAirtimeStateRecordingList = new List<Vector3>();
+		m_riderAirtimeStateRecordingList = new List<Vector4>();
 		m_audioAirtimeStateRecordingList = new List<Color>();
 		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
 	}
@@ -143,7 +144,7 @@ public class RiderPhysics : MonoBehaviour
 		if(m_newRiderHeightState == RiderHeightState.RisingAir || m_newRiderHeightState == RiderHeightState.FallingAir)
 		{
 			m_airtimeCounter += Time.deltaTime;
-			m_riderAirtimeStateRecordingList.Add(new Vector3(m_depthRatio, m_widthRatio, 0)); // TODO : add barrel roll rotatoin as z 
+			m_riderAirtimeStateRecordingList.Add(new Vector4(m_depthRatio, m_widthRatio, m_heighOffsetOffTerrain, 0)); // TODO : add barrel roll rotatoin as w, height data is a frame let, meh rushing for bitsummit now
 			m_audioAirtimeStateRecordingList.Add(m_frequencyDataManager.d_color);
 		}
 
@@ -173,9 +174,9 @@ public class RiderPhysics : MonoBehaviour
 
 		// calcluations for how high off the the mesh rider should be 
 		m_heightOffsetBaseCurve = Mathf.Clamp( m_heightOffsetBaseCurve + m_heightVelocity * Time.deltaTime, m_newTerrainHeight, m_heightOffsetBaseCurveRange_Max);
-		float heighOffsetOffTerrain = Mathf.Clamp( m_heightOffsetBaseCurve - m_newTerrainHeight, m_heightOffsetBaseCurveRange_Min, m_heightOffsetBaseCurveRange_Max);
+		m_heighOffsetOffTerrain = Mathf.Clamp( m_heightOffsetBaseCurve - m_newTerrainHeight, m_heightOffsetBaseCurveRange_Min, m_heightOffsetBaseCurveRange_Max);
 
-		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, heighOffsetOffTerrain, out pos, out rot);		
+		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, m_heighOffsetOffTerrain, out pos, out rot);		
 
 		// final position calcluations and set
 		transform.position = pos;
