@@ -22,7 +22,7 @@ public class RiderPhysics : MonoBehaviour
 	float m_depthRange_Min = 0.20f;
 	float m_depthRange_Max = 0.90f;
 	float m_heightOffsetBaseCurveRange_Min = 0;
-	float m_heightOffsetBaseCurveRange_Max = 200.0f; // TODO need to convert this to ratio
+	float m_heightOffsetBaseCurveRange_Max = 300.0f; // TODO need to convert this to ratio
 
 	float m_widthVelocityDecay = 2.0f;
 	float m_depthVelocityDecay = 3.0f;
