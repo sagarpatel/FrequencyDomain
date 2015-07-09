@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RiderPhysics : MonoBehaviour 
 {
@@ -52,12 +53,17 @@ public class RiderPhysics : MonoBehaviour
 	RiderHeightState m_newRiderHeightState = RiderHeightState.FallingGround;
 	RiderHeightState m_oldRiderHeightState = RiderHeightState.FallingGround;
 
-
+	List<Vector3> m_riderAirtimeStateRecordingList; // use x for depthRatio, y for widthRatio, z for barrel roll value
+	List<Color> m_audioAirtimeStateRecordingList;
+	FrequencyDataManager m_frequencyDataManager;
 	
 	void Start()
 	{
 		m_meshTerrainGenerator = FindObjectOfType<MeshTerrainGenerator>();
 		m_meshTerrainWireframeController = FindObjectOfType<MeshTerrainWireframeController>();
+		m_riderAirtimeStateRecordingList = new List<Vector3>();
+		m_audioAirtimeStateRecordingList = new List<Color>();
+		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
 	}
 	
 	void Update()
@@ -137,6 +143,8 @@ public class RiderPhysics : MonoBehaviour
 		if(m_newRiderHeightState == RiderHeightState.RisingAir || m_newRiderHeightState == RiderHeightState.FallingAir)
 		{
 			m_airtimeCounter += Time.deltaTime;
+			m_riderAirtimeStateRecordingList.Add(new Vector3(m_depthRatio, m_widthRatio, 0)); // TODO : add barrel roll rotatoin as z 
+			m_audioAirtimeStateRecordingList.Add(m_frequencyDataManager.d_color);
 		}
 
 		// first frame of jump
@@ -145,6 +153,8 @@ public class RiderPhysics : MonoBehaviour
 			//Debug.Log("jumpn, heigh accu: " + m_heightAccumulator);
 			m_heightVelocity = m_heightAccumulatorScaler * m_heightAccumulator;
 			m_heightAccumulator = 0;
+			m_riderAirtimeStateRecordingList.Clear();
+			m_audioAirtimeStateRecordingList.Clear();
 		}
 
 		// first contact on ground after air time
@@ -166,7 +176,6 @@ public class RiderPhysics : MonoBehaviour
 		float heighOffsetOffTerrain = Mathf.Clamp( m_heightOffsetBaseCurve - m_newTerrainHeight, m_heightOffsetBaseCurveRange_Min, m_heightOffsetBaseCurveRange_Max);
 
 		targetMeshStripGenerator.CalculatePositionOnStrip( m_widthRatio, heighOffsetOffTerrain, out pos, out rot);		
-
 
 		// final position calcluations and set
 		transform.position = pos;
