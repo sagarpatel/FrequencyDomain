@@ -202,8 +202,7 @@ public class FrequencyDataManager : MonoBehaviour
 	{
 		int maxSamplesCount = m_samplesAccumulationPerSectionArray[sectionIndex] + CalculateMaxExtraSamplesCountForSection(sectionIndex);
 		int changedSamplesCountRaw = m_samplesAccumulationPerSectionArray[sectionIndex] + samplesChangeCount;
-		m_samplesAccumulationPerSectionArray[sectionIndex] = Mathf.Clamp( changedSamplesCountRaw, 0, maxSamplesCount );
-
+		m_samplesAccumulationPerSectionArray[sectionIndex] = (int)Mathf.Clamp( changedSamplesCountRaw, 1, maxSamplesCount );
 	}
 
 }
