@@ -10,8 +10,10 @@ public class FrequencyDataManager : MonoBehaviour
 	float[] m_processedFFTDataArray;
 	float[] m_previousProcessedFFTDataArray;
 
-	int[] samplesAccumulationArray = {2,2,5,9,12,25,55,175};
-	int samplesAccumulationStartIndexOffset = 10;
+	int[] m_samplesAccumulationArray = {2,2,5,9,12,25,55,175};
+	int m_samplesAccumulationStartIndexOffset = 10;
+	float[] m_binsScalerArray = {1,1,1,1,1,1,1,1};
+	float m_globalFFTDataScaler = 1.0f;
 
 	enum DataSources
 	{
@@ -52,7 +54,7 @@ public class FrequencyDataManager : MonoBehaviour
 
 	void ProcessRawFFTData()
 	{
-		int samplesSum = 0 + samplesAccumulationStartIndexOffset;
+		int samplesSum = 0 + m_samplesAccumulationStartIndexOffset;
 		int accumulationIndex = 0;
 		int accumulationInterval = m_processedFFTDataArray.Length/8;
 		for(int i = 0; i< m_processedFFTDataArray.Length; i++)
@@ -60,7 +62,7 @@ public class FrequencyDataManager : MonoBehaviour
 			if(i % accumulationInterval == 0 && i != 0)
 				accumulationIndex += 1;
 
-			samplesSum += samplesAccumulationArray[accumulationIndex];
+			samplesSum += m_samplesAccumulationArray[accumulationIndex];
 		}
 		if(samplesSum > m_currentRawFFTDataArray.Length)
 			Debug.LogError("Sum of samples is too large: " + samplesSum + " , max is: " + m_currentRawFFTDataArray.Length);
@@ -78,13 +80,13 @@ public class FrequencyDataManager : MonoBehaviour
 				accumulationIndex += 1;
 
 			tempSum = 0;
-			currentRawSamplesPerProcessedPoint = samplesAccumulationArray[accumulationIndex];
+			currentRawSamplesPerProcessedPoint = m_samplesAccumulationArray[accumulationIndex];
 			for(int j = 0; j < currentRawSamplesPerProcessedPoint; j++)
 			{
-				tempSum += m_currentRawFFTDataArray[rawFFTIndex + samplesAccumulationStartIndexOffset];
+				tempSum += m_binsScalerArray[accumulationIndex] * m_currentRawFFTDataArray[rawFFTIndex + m_samplesAccumulationStartIndexOffset];
 				rawFFTIndex += 1;
 			}
-			m_processedFFTDataArray[i] = Mathf.Clamp( 1.0f * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
+			m_processedFFTDataArray[i] = Mathf.Clamp( m_globalFFTDataScaler * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
 			//Debug.Log("Sum for acuumuator: " + currentRawSamplesPerProcessedPoint + " , " + tempSum);
 
 			// averageing with previous to smooth out depth axis and hide repeat data
