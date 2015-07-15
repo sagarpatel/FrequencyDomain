@@ -10,9 +10,9 @@ public class FrequencyDataManager : MonoBehaviour
 	float[] m_processedFFTDataArray;
 	float[] m_previousProcessedFFTDataArray;
 
-	int[] m_samplesAccumulationArray = {2,2,5,9,12,25,55,175};
+	int[] m_samplesAccumulationPerSectionArray = {2,2,5,9,12,25,55,175};
 	int m_samplesAccumulationStartIndexOffset = 10;
-	float[] m_binsScalerArray = {1,1,1,1,1,1,1,1};
+	float[] m_sectionsScalerArray = {1,1,1,1,1,1,1,1};
 	float m_globalFFTDataScaler = 1.0f;
 
 	enum DataSources
@@ -54,23 +54,8 @@ public class FrequencyDataManager : MonoBehaviour
 
 	void ProcessRawFFTData()
 	{
-		int samplesSum = 0 + m_samplesAccumulationStartIndexOffset;
 		int accumulationIndex = 0;
 		int accumulationInterval = m_processedFFTDataArray.Length/8;
-		for(int i = 0; i< m_processedFFTDataArray.Length; i++)
-		{
-			if(i % accumulationInterval == 0 && i != 0)
-				accumulationIndex += 1;
-
-			samplesSum += m_samplesAccumulationArray[accumulationIndex];
-		}
-		if(samplesSum > m_currentRawFFTDataArray.Length)
-			Debug.LogError("Sum of samples is too large: " + samplesSum + " , max is: " + m_currentRawFFTDataArray.Length);
-
-
-
-		accumulationIndex = 0;
-		accumulationInterval = m_processedFFTDataArray.Length/8;
 		float tempSum = 0;
 		int rawFFTIndex = 0;
 		int currentRawSamplesPerProcessedPoint = 0;
@@ -80,10 +65,10 @@ public class FrequencyDataManager : MonoBehaviour
 				accumulationIndex += 1;
 
 			tempSum = 0;
-			currentRawSamplesPerProcessedPoint = m_samplesAccumulationArray[accumulationIndex];
+			currentRawSamplesPerProcessedPoint = m_samplesAccumulationPerSectionArray[accumulationIndex];
 			for(int j = 0; j < currentRawSamplesPerProcessedPoint; j++)
 			{
-				tempSum += m_binsScalerArray[accumulationIndex] * m_currentRawFFTDataArray[rawFFTIndex + m_samplesAccumulationStartIndexOffset];
+				tempSum += m_sectionsScalerArray[accumulationIndex] * m_currentRawFFTDataArray[rawFFTIndex + m_samplesAccumulationStartIndexOffset];
 				rawFFTIndex += 1;
 			}
 			m_processedFFTDataArray[i] = Mathf.Clamp( m_globalFFTDataScaler * tempSum, 0 ,1); ///(float)currentRawSamplesPerProcessedPoint;
@@ -193,6 +178,32 @@ public class FrequencyDataManager : MonoBehaviour
 		m_liveAudioDataManager.m_liveAudioSource.GetSpectrumData(m_currentRawFFTDataArray,0, FFTWindow.BlackmanHarris);
 		ProcessRawFFTData();
 		return m_processedFFTDataArray;
+	}
+
+	int CalculateMaxExtraSamplesCountForSection(int targetSectionIndex)
+	{
+		int totalSamplesSum = 0 + m_samplesAccumulationStartIndexOffset;
+		int sectionIndexCounter = 0;
+		int sectionInterval = m_processedFFTDataArray.Length/8;
+		for(int i = 0; i< m_processedFFTDataArray.Length; i++)
+		{
+			if(i % sectionInterval == 0 && i != 0)
+				sectionIndexCounter += 1;
+
+			totalSamplesSum += m_samplesAccumulationPerSectionArray[sectionIndexCounter];
+		}
+
+		int samplesRemaining =  m_currentRawFFTDataArray.Length - totalSamplesSum;
+		int maxSamplesCountForIndex = samplesRemaining / m_samplesAccumulationPerSectionArray[targetSectionIndex];
+		return maxSamplesCountForIndex;	
+	}
+
+	public void IncrementFrequencyRangeSamplesCount(int sectionIndex, int samplesChangeCount)
+	{
+		int maxSamplesCount = m_samplesAccumulationPerSectionArray[sectionIndex] + CalculateMaxExtraSamplesCountForSection(sectionIndex);
+		int changedSamplesCountRaw = m_samplesAccumulationPerSectionArray[sectionIndex] + samplesChangeCount;
+		m_samplesAccumulationPerSectionArray[sectionIndex] = Mathf.Clamp( changedSamplesCountRaw, 0, maxSamplesCount );
+
 	}
 
 }
