@@ -19,6 +19,9 @@ public class MeshCreatureActions: PlayerActionSet
 	public PlayerAction BendOut;
 	public PlayerOneAxisAction Bend;
 	public PlayerAction SpeedUp;
+	public PlayerAction SkyboxNext;
+	public PlayerAction SkyboxPrev;
+	public PlayerOneAxisAction SkyboxChange;
 
 	public MeshCreatureActions()
 	{
@@ -36,6 +39,10 @@ public class MeshCreatureActions: PlayerActionSet
 		Bend = CreateOneAxisPlayerAction(BendOut, BendIn);
 
 		SpeedUp = CreatePlayerAction("Speed Up");
+
+		SkyboxNext = CreatePlayerAction("Skybox Next");
+		SkyboxPrev = CreatePlayerAction("Skybox Prev");
+		SkyboxChange = CreateOneAxisPlayerAction(SkyboxPrev, SkyboxNext);
 	}
 
 	// for controller
@@ -56,6 +63,10 @@ public class MeshCreatureActions: PlayerActionSet
 
 		SpeedUp = CreatePlayerAction("Speed Up");
 
+		SkyboxNext = CreatePlayerAction("Skybox Next");
+		SkyboxPrev = CreatePlayerAction("Skybox Prev");
+		SkyboxChange = CreateOneAxisPlayerAction(SkyboxPrev, SkyboxNext);
+
 		if(deviceIndex >= 0)
 		{
 			DeviceIndex = deviceIndex;
@@ -71,6 +82,7 @@ public class MeshCreatureController : MonoBehaviour
 	MeshTerrainGenerator m_meshTerrainGenerator;
 	MeshCreatureActions m_meshCreatureInputs;
 	MeshTerrainBendPhysics m_meshTerrainBendPhysics;
+	DebugSkyboxController m_debugSkyboxController;
 
 	float yawScale = 15.0f;
 	float pitchScale = 20.0f;
@@ -105,6 +117,8 @@ public class MeshCreatureController : MonoBehaviour
 		m_meshCreatureInputs.BendIn.AddDefaultBinding( InputControlType.LeftBumper );
 		m_meshCreatureInputs.BendOut.AddDefaultBinding( InputControlType.RightBumper );
 		m_meshCreatureInputs.SpeedUp.AddDefaultBinding( InputControlType.Action1 );
+		m_meshCreatureInputs.SkyboxNext.AddDefaultBinding( InputControlType.DPadRight );
+		m_meshCreatureInputs.SkyboxPrev.AddDefaultBinding( InputControlType.DPadLeft );
 	}
 
 	void Start()
@@ -112,6 +126,7 @@ public class MeshCreatureController : MonoBehaviour
 		m_meshCreaturePhysics = GetComponent<MeshCreaturePhysics>();
 		m_meshTerrainGenerator = GetComponent<MeshTerrainGenerator>();
 		m_meshTerrainBendPhysics = GetComponent<MeshTerrainBendPhysics>();
+		m_debugSkyboxController = FindObjectOfType<DebugSkyboxController>();
 	}
 
 	void Update()
@@ -121,10 +136,12 @@ public class MeshCreatureController : MonoBehaviour
 		float inputRoll = m_meshCreatureInputs.Roll.Value * rollScale * Time.deltaTime;
 		float inputBend = m_meshCreatureInputs.Bend.Value * bendScale * Time.deltaTime;
 		float inputSpeedUp = m_meshCreatureInputs.SpeedUp.Value * Time.deltaTime;
+		int inputSkyboxChange = (int)m_meshCreatureInputs.SkyboxChange.Value;
 
 		m_meshCreaturePhysics.IncrementCreatureRotationalVel( inputPitch , inputYaw, -inputRoll );
 		m_meshCreaturePhysics.IncrementExtraSpeedStep(inputSpeedUp);
 		m_meshTerrainBendPhysics.IncrementMeshBendVelocity(inputBend);
+		m_debugSkyboxController.SkyboxChange(inputSkyboxChange);
 	}
 
 }

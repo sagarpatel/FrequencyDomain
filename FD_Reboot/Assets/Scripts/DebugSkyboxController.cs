@@ -9,6 +9,9 @@ public class DebugSkyboxController : MonoBehaviour
 	public Material[] m_skyboxMaterialsArray;
 	public Material m_renderTextureSkybox;
 
+	float m_prevInput = 0;
+	int m_currentIndex = 0;
+
 	void Start()
 	{
 		m_riderCameraSkybox = FindObjectOfType<Skybox>();
@@ -36,7 +39,7 @@ public class DebugSkyboxController : MonoBehaviour
 			SetToSkybox_Normal(1);
 		}
 		else if(Input.GetKeyDown(KeyCode.Alpha5))
-		{
+		{		
 			SetToSkybox_Normal(2);
 		}
 		else if(Input.GetKeyDown(KeyCode.Alpha6))
@@ -48,7 +51,7 @@ public class DebugSkyboxController : MonoBehaviour
 			SetToSkybox_Normal(4);
 		}
 		else if(Input.GetKeyDown(KeyCode.Alpha8))
-		{
+		{		
 			SetToSkybox_Normal(5);
 		}
 		else if(Input.GetKeyDown(KeyCode.Alpha9))
@@ -77,6 +80,60 @@ public class DebugSkyboxController : MonoBehaviour
 	{
 		m_riderCameraSkybox.enabled = true;
 		m_riderCameraSkybox.material = m_renderTextureSkybox;
+	}
+
+	public void SkyboxChange(int input)
+	{
+		if(m_prevInput != input)
+		{
+
+			m_currentIndex = (m_currentIndex + input) % 10;
+
+
+			if( m_currentIndex == 0)
+			{
+				SetToColor(Color.black);
+			}
+			else if ( m_currentIndex == 1)
+			{
+				SetToColor(Color.white);
+			}
+			else if( m_currentIndex == 2)
+			{
+				SetToSkybox_Normal(0);
+			}
+			else if( m_currentIndex == 3)
+			{
+				SetToSkybox_Normal(1);
+			}
+			else if( m_currentIndex == 4)
+			{		
+				SetToSkybox_Normal(2);
+			}
+			else if( m_currentIndex == 5)
+			{
+				SetToSkybox_Normal(3);
+			}
+			else if( m_currentIndex == 6)
+			{
+				SetToSkybox_Normal(4);
+			}
+			else if( m_currentIndex == 7)
+			{		
+				SetToSkybox_Normal(5);
+			}
+			else if( m_currentIndex == 8)
+			{
+				SetToSkybox_Normal(6);
+			}
+			else if( m_currentIndex == 9)
+			{
+				SetToSkybox_RenderTexture();
+			}
+		}
+
+		m_prevInput = input;
+
 	}
 
 }
