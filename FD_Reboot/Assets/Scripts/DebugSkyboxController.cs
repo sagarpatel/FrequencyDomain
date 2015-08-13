@@ -4,7 +4,9 @@ using System.Collections;
 public class DebugSkyboxController : MonoBehaviour 
 {
 	Skybox m_riderCameraSkybox;
+	Skybox m_conductorCameraSkybox;
 	Camera m_riderCamera;
+	Camera m_conductorCamera;
 
 	public Material[] m_skyboxMaterialsArray;
 	public Material m_renderTextureSkybox;
@@ -14,8 +16,10 @@ public class DebugSkyboxController : MonoBehaviour
 
 	void Start()
 	{
-		m_riderCameraSkybox = FindObjectOfType<Skybox>();
-		m_riderCamera = FindObjectOfType<Camera>();
+		m_riderCameraSkybox = GameObject.FindGameObjectWithTag("RiderCamera").GetComponent<Skybox>();
+		m_conductorCameraSkybox = GameObject.FindGameObjectWithTag("ConductorCamera").GetComponent<Skybox>();
+		m_riderCamera = GameObject.FindGameObjectWithTag("RiderCamera").GetComponent<Camera>();
+		m_conductorCamera = GameObject.FindGameObjectWithTag("ConductorCamera").GetComponent<Camera>();
 		SetToColor(Color.black);
 	}
 
@@ -68,18 +72,27 @@ public class DebugSkyboxController : MonoBehaviour
 	{
 		m_riderCameraSkybox.enabled = false;
 		m_riderCamera.backgroundColor = bkgColor;
+
+		m_conductorCameraSkybox.enabled = false;
+		m_conductorCamera.backgroundColor = bkgColor;
 	}
 
 	void SetToSkybox_Normal(int skyboxIndex)
 	{
 		m_riderCameraSkybox.enabled = true;
 		m_riderCameraSkybox.material = m_skyboxMaterialsArray[skyboxIndex];
+
+		m_conductorCameraSkybox.enabled = true;
+		m_conductorCameraSkybox.material = m_skyboxMaterialsArray[skyboxIndex];
 	}
 
 	void SetToSkybox_RenderTexture()
 	{
 		m_riderCameraSkybox.enabled = true;
 		m_riderCameraSkybox.material = m_renderTextureSkybox;
+
+		m_conductorCameraSkybox.enabled = true;
+		m_conductorCameraSkybox.material = m_renderTextureSkybox;
 	}
 
 	public void SkyboxChange(int input)
