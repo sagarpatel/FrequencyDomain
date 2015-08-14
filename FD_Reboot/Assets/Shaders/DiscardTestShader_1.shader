@@ -3,7 +3,7 @@
 	{
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_Cutoff ("Cutoff", float) = 0.0
+		//_Cutoff ("Cutoff", float) = 0.0
 		//_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		//_Metallic ("Metallic", Range(0,1)) = 0.0
 	}
@@ -41,14 +41,14 @@
 		//half _Glossiness;
 		//half _Metallic;
 		fixed4 _Color;
-		float _Cutoff;
+		//float _Cutoff;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) 
 		{
 			//clip (frac((IN.worldPos.y+IN.worldPos.z*0.1) * 5) - 0.5 * _SinTime);
 			
 			// Albedo comes from a texture tinted by color
-			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;			
 			//c.rgb = float3(IN.uv_MainTex.xy,0);
 			
 			//c.rgb = float3( IN.barryCenterCoord.xyz);
@@ -57,7 +57,7 @@
 			
 			//float avr = ( IN.barryCenterCoord.x + IN.barryCenterCoord.y + IN.barryCenterCoord.z )/3.0;
 			//clip(IN.barryCenterCoord.x - 0.2);
-			float cut = _Cutoff; //0.09;
+			//float cut = _Cutoff; //0.09;
 			
 			if( IN.barryCenterCoord.x < 0.0351 || IN.barryCenterCoord.y < 0.0351 || IN.barryCenterCoord.z < 0.0351)
 			{
