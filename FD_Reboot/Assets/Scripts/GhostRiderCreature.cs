@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GhostRiderCreature : MonoBehaviour 
 {
@@ -49,6 +50,7 @@ public class GhostRiderCreature : MonoBehaviour
 		m_headPart.transform.parent = transform;
 		m_headPart.transform.localPosition = Vector3.zero;
 		m_headPart.transform.localRotation = Quaternion.identity;
+		SetBarycentricPoints_CubeMesh(m_headPart.GetComponent<MeshFilter>().mesh);
 
 		m_bodyPartsArray = new GameObject[bodyPartsCount];
 
@@ -59,6 +61,7 @@ public class GhostRiderCreature : MonoBehaviour
 			bodyPart.transform.parent = transform;
 			bodyPart.transform.position = m_headPart.transform.position;
 			bodyPart.transform.rotation = m_headPart.transform.rotation;
+			SetBarycentricPoints_CubeMesh(bodyPart.GetComponent<MeshFilter>().mesh);
 
 			m_bodyPartsArray[i] = bodyPart;
 		}
@@ -69,6 +72,47 @@ public class GhostRiderCreature : MonoBehaviour
 			m_bodyPartsMaterialsArray[i] = m_bodyPartsArray[i].GetComponent<MeshRenderer>().material;
 
 		StartCoroutine(AnimateGhostRiderCreature());
+	}
+
+	// curent implentation is just a copy of the the pattern used for the mesh strips
+	void SetBarycentricPoints_CubeMesh(Mesh cubeMesh)
+	{
+		// set up barycentric coordiantes points per vertex, laid out so that each triangle has own set
+		List<Vector4> barrycenterPoints = new List<Vector4>();
+		Vector4 b_coord_1 = new Vector4(1,0,0,1);
+		Vector4 b_coord_2 = new Vector4(0,1,0,1);
+		Vector4 b_coord_3 = new Vector4(0,0,1,1);
+		int topRowCounter = 0;
+		int bottomRowCounter = 0;
+
+		for(int i = 0; i < cubeMesh.vertices.Length; i++)
+		{
+			// top row
+			if(i % 2 == 0)
+			{
+				if(topRowCounter % 3 == 0)
+					barrycenterPoints.Add(b_coord_1);
+				else if(topRowCounter % 3 == 1)
+					barrycenterPoints.Add(b_coord_2);
+				else if(topRowCounter % 3 == 2)
+					barrycenterPoints.Add(b_coord_3);
+				
+				topRowCounter ++;
+			}
+			else
+			{
+				if(bottomRowCounter % 3 == 0)
+					barrycenterPoints.Add(b_coord_2);
+				else if(bottomRowCounter % 3 == 1)
+					barrycenterPoints.Add(b_coord_3);
+				else if(bottomRowCounter % 3 == 2)
+					barrycenterPoints.Add(b_coord_1);
+				
+				bottomRowCounter ++;
+			}			
+		}
+
+		cubeMesh.tangents = barrycenterPoints.ToArray();
 	}
 
 	IEnumerator AnimateGhostRiderCreature()
