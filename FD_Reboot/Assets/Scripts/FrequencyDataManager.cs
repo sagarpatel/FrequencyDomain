@@ -13,7 +13,7 @@ public class FrequencyDataManager : MonoBehaviour
 	int[] m_samplesAccumulationPerSectionArray = {2,2,5,9,12,25,55,175};
 	int m_samplesAccumulationStartIndexOffset = 10;
 	float[] m_sectionsScalerArray = {1,1,1,1,1,1,1,1};
-	float m_globalFFTDataScaler = 1.0f;
+	public float m_globalFFTDataScaler = 1.0f;
 
 	enum DataSources
 	{
