@@ -1,4 +1,4 @@
-﻿Shader "FD/MeshCreature/testShader_1" 
+﻿Shader "FD/testShader_1" 
 {
 	Properties
 	{

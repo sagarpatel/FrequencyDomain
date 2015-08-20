@@ -1,4 +1,4 @@
-﻿Shader "Custom/DiscardTestShader_1" {
+﻿Shader "FD/DiscardTestShader_1" {
 	Properties 
 	{
 		_Color ("Color", Color) = (1,1,1,1)
