@@ -17,8 +17,8 @@ public class DebugSkyboxController : MonoBehaviour
 	void Start()
 	{
 		m_riderCameraSkybox = GameObject.FindGameObjectWithTag("RiderCamera").GetComponent<Skybox>();
-		m_conductorCameraSkybox = GameObject.FindGameObjectWithTag("ConductorCamera").GetComponent<Skybox>();
 		m_riderCamera = GameObject.FindGameObjectWithTag("RiderCamera").GetComponent<Camera>();
+		m_conductorCameraSkybox = GameObject.FindGameObjectWithTag("ConductorCamera").GetComponent<Skybox>();
 		m_conductorCamera = GameObject.FindGameObjectWithTag("ConductorCamera").GetComponent<Camera>();
 		SetToColor(Color.black);
 	}
