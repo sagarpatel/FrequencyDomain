@@ -5,8 +5,7 @@
 		//_MainTex ("Albedo (RGB)", 2D) = "white" {}
 		//_Cutoff ("Cutoff", float) = 0.0
 		//_Glossiness ("Smoothness", Range(0,1)) = 0.5
-		//_Metallic ("Metallic", Range(0,1)) = 0.0
-		_Emissiveness ("Emissiveness", float) = 0.0
+		//_Metallic ("Metallic", Range(0,1)) = 0.0		
 		
 	}
 	SubShader 
@@ -44,7 +43,7 @@
 		//half _Metallic;
 		fixed4 _Color;
 		//float _Cutoff;
-		half3 _Emissiveness;
+		
 
 		void surf (Input IN, inout SurfaceOutputStandard o) 
 		{
@@ -90,8 +89,7 @@
 			// Metallic and smoothness come from slider variables
 			o.Metallic = 0; //_Metallic;
 			o.Smoothness = 0; //_Glossiness;
-			o.Alpha = c.a;
-			o.Emission = _Emissiveness;
+			o.Alpha = c.a;			
 		}
 		ENDCG
 	} 
