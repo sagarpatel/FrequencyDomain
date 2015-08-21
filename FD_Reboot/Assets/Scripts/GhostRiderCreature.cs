@@ -77,6 +77,7 @@ public class GhostRiderCreature : MonoBehaviour
 		for(int i = 0; i < m_bodyPartsArray.Length; i++)
 			m_bodyPartsMaterialsArray[i] = m_bodyPartsArray[i].GetComponent<MeshRenderer>().material;
 
+		StartCoroutine(AnimateGhostRiderBirthFlash());
 		StartCoroutine(AnimateGhostRiderCreature());
 	}
 
@@ -111,6 +112,44 @@ public class GhostRiderCreature : MonoBehaviour
 		}
 
 		cubeMesh.tangents = barrycenterPoints;
+	}
+
+	IEnumerator AnimateGhostRiderBirthFlash()
+	{
+		Light headLight = m_headPart.GetComponent<Light>();
+		float birthStartRange = 0;
+		float birthPeakRange = 2000;
+		float birthEndRange = headLight.range;
+
+		// TODO: Make parameters propertional to ghost rider size
+		float rampUpDuration = 0.2f;
+		float rampHoldDuration = 0.05f;
+		float rampDownDuration = 0.85f;
+
+		headLight.range = birthStartRange;
+		float timeCounter = 0;
+		while(timeCounter < rampUpDuration)
+		{
+			float progression = timeCounter/rampUpDuration;
+			float step = progression; // TODO: use curve here
+			headLight.range = Mathf.Lerp(birthStartRange, birthPeakRange, step);
+			timeCounter += Time.deltaTime;
+			yield return null;
+		}
+
+		yield return new WaitForSeconds(rampHoldDuration);
+
+		timeCounter = 0;
+		while(timeCounter < rampUpDuration)
+		{
+			float progression = timeCounter/rampUpDuration;
+			float step = progression; // TODO: use curve here
+			headLight.range = Mathf.Lerp(birthPeakRange, birthEndRange, step);
+			timeCounter += Time.deltaTime;
+			yield return null;
+		}
+
+		headLight.range = birthEndRange;
 	}
 
 	IEnumerator AnimateGhostRiderCreature()
