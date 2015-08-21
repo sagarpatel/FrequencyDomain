@@ -46,6 +46,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	GameObject d_circleCenterObject;
 
+	public bool p_isMeshColorLive = true;
+
 	void Start()
 	{
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
@@ -278,9 +280,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 	
 	void SetMeshTerrainColor(Color color)
 	{
-		m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripColor(color); // testing out strip colors instead of global color
-		//for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
-		//	m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
+		if(p_isMeshColorLive == true)
+			for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
+				m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
+		else
+			m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripColor(color); // testing out strip colors instead of global color
 	}
 
 	void SetMeshTerrainWireframeBounds(Color wireframeBoundsColor)
