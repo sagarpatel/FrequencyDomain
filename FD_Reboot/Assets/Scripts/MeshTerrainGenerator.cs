@@ -284,6 +284,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	void SetMeshTerrainWireframeValue(float wireframeValue)
 	{
+		//m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripWireframeValue(wireframeValue); // testing out strip wirefrafme
 		for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
 			m_meshStripGeneratorsArray[i].SetMeshStripWireframeValue(wireframeValue);
 	}
