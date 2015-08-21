@@ -2,6 +2,7 @@
 	Properties 
 	{
 		_Color ("Color", Color) = (1,1,1,1)
+		_WireframeBoundsRGB ("WireframeBoundsRGB", Color) = (0,0,0,0)
 		//_MainTex ("Albedo (RGB)", 2D) = "white" {}
 		//_Cutoff ("Cutoff", float) = 0.0
 		//_Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -41,6 +42,7 @@
 		//half _Glossiness;
 		//half _Metallic;
 		fixed4 _Color;
+		fixed4 _WireframeBoundsRGB;
 		//float _Cutoff;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) 
@@ -48,7 +50,8 @@
 			//clip (frac((IN.worldPos.y+IN.worldPos.z*0.1) * 5) - 0.5 * _SinTime);
 			
 			// Albedo comes from a texture tinted by color
-			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;			
+			fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			fixed4 wireframeBounds = _WireframeBoundsRGB;			
 			//c.rgb = float3(IN.uv_MainTex.xy,0);
 			
 			//c.rgb = float3( IN.barryCenterCoord.xyz);
@@ -66,15 +69,15 @@
 			else
 			{
 				// bass needs some extra boost to feel
-				if(IN.barryCenterCoord.x + 1.5 * c.r > 1 )
+				if(IN.barryCenterCoord.x + 1.5 * wireframeBounds.r > 1 )
 				{
 					
 				}
-				else if(IN.barryCenterCoord.y + 1.00 * c.g > 1 )
+				else if(IN.barryCenterCoord.y + 1.00 * wireframeBounds.g > 1 )
 				{
 				
 				}
-				else if(IN.barryCenterCoord.z + 1.0 * c.b > 1 )
+				else if(IN.barryCenterCoord.z + 1.0 * wireframeBounds.b > 1 )
 				{
 				
 				}

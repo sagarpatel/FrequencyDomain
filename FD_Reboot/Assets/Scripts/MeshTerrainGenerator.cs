@@ -263,7 +263,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_currentMaterialColor = m_frequencyDataManager.GetFreshRGB();
 		//m_meshStripsMaterial.color = m_currentMaterialColor;
 		SetMeshTerrainColor(m_currentMaterialColor);
-		float cutoff = 0.02f + 0.1720f * (m_currentMaterialColor.r + m_currentMaterialColor.g +m_currentMaterialColor.b); //0.02f + 0.9733f * m_currentMaterialColor.r; //0.025f + 0.2f * Mathf.Abs(Mathf.Sin(0.95f * Time.time));
+		SetMeshTerrainWireframeBounds(m_currentMaterialColor);
+		//float cutoff = 0.02f + 0.1720f * (m_currentMaterialColor.r + m_currentMaterialColor.g +m_currentMaterialColor.b); //0.02f + 0.9733f * m_currentMaterialColor.r; //0.025f + 0.2f * Mathf.Abs(Mathf.Sin(0.95f * Time.time));
 		//m_meshStripsMaterial.SetFloat("_Cutoff", cutoff);
 		//SetMeshTerrainWireframeValue(cutoff);
 		Profiler.EndSample();
@@ -282,11 +283,11 @@ public class MeshTerrainGenerator : MonoBehaviour
 		//	m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
 	}
 
-	void SetMeshTerrainWireframeValue(float wireframeValue)
+	void SetMeshTerrainWireframeBounds(Color wireframeBoundsColor)
 	{
 		//m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripWireframeValue(wireframeValue); // testing out strip wirefrafme
 		for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
-			m_meshStripGeneratorsArray[i].SetMeshStripWireframeValue(wireframeValue);
+			m_meshStripGeneratorsArray[i].SetMeshStripWireframeValue(wireframeBoundsColor);
 	}
 
 }
