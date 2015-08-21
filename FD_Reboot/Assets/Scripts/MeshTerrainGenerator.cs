@@ -277,8 +277,9 @@ public class MeshTerrainGenerator : MonoBehaviour
 	
 	void SetMeshTerrainColor(Color color)
 	{
-		for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
-			m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
+		m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripColor(color); // testing out strip colors instead of global color
+		//for(int i = 0; i < m_meshStripGeneratorsArray.Length; i++)
+		//	m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
 	}
 
 	void SetMeshTerrainWireframeValue(float wireframeValue)
