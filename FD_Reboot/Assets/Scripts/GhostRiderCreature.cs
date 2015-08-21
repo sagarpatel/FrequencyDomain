@@ -24,6 +24,7 @@ public class GhostRiderCreature : MonoBehaviour
 	float m_ghostDepthRatio = 0;
 	float m_ghostDepthSpeed = 0.08f;
 	float m_ghostSpeedAccumulator = 0;
+	float m_headPartMoveScaler = 200.0f;
 	float m_bodyPartMoveStepScaler = 15.0f;
 	float m_moveToFrontAnimationDuration = 1.0f;
 	float m_headToTailDistanceTriggerThreashold = 1.0f;
@@ -44,6 +45,11 @@ public class GhostRiderCreature : MonoBehaviour
 		m_colorsDataArray = colorDataArray;
 		m_rotationsArray = riderCameraRotationsArray;
 		m_ghostMovementAnimationDuration = moveAnimationDuration;
+
+
+		// moving geneartion point to the front end of the meshcreature
+		transform.position = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ m_meshTerrainGenerator.m_lastActivatedStripIndex ].transform.position;
+		transform.rotation = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ m_meshTerrainGenerator.m_lastActivatedStripIndex ].transform.rotation;
 
 		// create parts
 		m_headPart = (GameObject)Instantiate(headPartPrefab);
@@ -120,6 +126,29 @@ public class GhostRiderCreature : MonoBehaviour
 
 		float ghostDataAnimationTimeCounter = 0;
 
+		/*
+		// set head to initial pos/rot 
+		Vector3 startPos = Vector3.zero;
+		Quaternion startRot = Quaternion.identity;
+		meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
+		float startDepthRatio = m_movementsDataArray[0].x;
+		float startWidthRatio = m_movementsDataArray[0].y;
+		float startHeightOffset = m_movementsDataArray[0].z;
+		int startStripIndex = (int)(startDepthRatio * (float)meshStripsCount);
+		targetMeshStripGenerator = m_meshTerrainGenerator.m_meshStripGeneratorsArray[ startStripIndex ];
+		targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( startWidthRatio, startHeightOffset, out startPos, out startRot);
+		m_headPart.transform.position = startPos;
+		m_headPart.transform.rotation = startRot;
+
+
+		*/
+
+		//Debug.LogError("HEAD SET");
+
+		yield return null;
+
+		bool isDebugPosted = false;
+
 		while(ghostDataAnimationTimeCounter < m_ghostMovementAnimationDuration)
 		{			
 			meshStripsCount = m_meshTerrainGenerator.m_meshStripsPoolCount;
@@ -132,6 +161,8 @@ public class GhostRiderCreature : MonoBehaviour
 			float dataIndexLerpStep = dataIndexLocation - (float)dataIndexFloor;
 
 			//Debug.Log("Array length: " + m_movementsDataArray.Length + " ceil index: " + dataIndexCeil + " progress: " + progress);
+
+			//Debug.Log( "Frame " + Time.frameCount + " " + gameObject.name + " : " + dataIndexFloor + " | " + dataIndexCeil + " | " + dataIndexLocation + " | " + dataIndexLerpStep + " dt: " + Time.deltaTime);
 
 			Vector4 lerpedRiderMovementData = Vector4.Lerp(m_movementsDataArray[dataIndexFloor], m_movementsDataArray[dataIndexCeil], dataIndexLerpStep);
 			m_riderDataDepthRatio = lerpedRiderMovementData.x;
@@ -151,8 +182,8 @@ public class GhostRiderCreature : MonoBehaviour
 
 			targetMeshStripGenerator.CalculatePositionOnStrip_Ghost( m_riderDataWidthRatio, m_riderDataHeightOffsetTerrain, out pos, out rot);
 
-			m_headPart.transform.position = pos;
-			m_headPart.transform.rotation = lerpedCameraRotation; 
+			m_headPart.transform.position = Vector3.Lerp(m_headPart.transform.position, pos, m_headPartMoveScaler * Time.deltaTime);
+			m_headPart.transform.rotation = Quaternion.Slerp(m_headPart.transform.rotation, lerpedCameraRotation, m_headPartMoveScaler * Time.deltaTime); 
 			m_headPartMaterial.color = lerpedColor;
 			LerpBodyParts();
 
@@ -167,6 +198,13 @@ public class GhostRiderCreature : MonoBehaviour
 			}
 
 			ghostDataAnimationTimeCounter += Time.deltaTime;
+
+			if(isDebugPosted == false)
+			{
+				//Debug.LogError("Finsihed postort");
+				isDebugPosted = true;
+			}
+
 			yield return null;
 		}
 
