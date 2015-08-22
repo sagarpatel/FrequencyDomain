@@ -40,6 +40,10 @@ public class MeshStripGenerator : MonoBehaviour
 
 	string m_wireframePropertyString = "_WireframeBoundsRGB";
 
+	// TODO : need to make read only accesor for external
+	public Color r_latestStripColor;
+	public Color r_latestStripWireframeBounds;
+
 	public void GenerateMeshStrip(int collumnsCount, float collumnWidth, float rowDepth, Material meshMaterial)
 	{
 		m_widthVerticesCount = collumnsCount;
@@ -562,12 +566,16 @@ public class MeshStripGenerator : MonoBehaviour
 	{
 		m_meshStripMaterial_Right.color = color;
 		m_meshStripMaterial_Left.color = color;
+
+		r_latestStripColor = color;
 	}
 
 	public void SetMeshStripWireframeValue(Color wireframeBoundsColor)
 	{
 		m_meshStripMaterial_Right.SetColor( m_wireframePropertyString, wireframeBoundsColor );
 		m_meshStripMaterial_Left.SetColor( m_wireframePropertyString, wireframeBoundsColor);
+
+		r_latestStripWireframeBounds = wireframeBoundsColor;
 	}
 
 
