@@ -35,7 +35,7 @@ public class FrequencyDataManager : MonoBehaviour
 
 	float m_rScaler = 1.0f;
 	float m_gScaler = 1.0f;
-	float m_bScaler = 1.0f;
+	float m_bScaler = 1.3f;
 	public float m_colorScaler = 25.0f;
 
 	float m_localPeakValueThreashold = 0.15f;
