@@ -62,7 +62,7 @@
 			//clip(IN.barryCenterCoord.x - 0.2);
 			//float cut = _Cutoff; //0.09;
 			
-			if( IN.barryCenterCoord.x < 0.0351 || IN.barryCenterCoord.y < 0.0351 || IN.barryCenterCoord.z < 0.0351)
+			if( IN.barryCenterCoord.x < 0.0151 || IN.barryCenterCoord.y < 0.0151 || IN.barryCenterCoord.z < 0.0151)
 			{
 				// basic wireframe
 			}
