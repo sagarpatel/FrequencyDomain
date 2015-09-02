@@ -34,6 +34,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 	float[] t_zeroHeightsArray;
 
 	public Material m_meshStripsMaterial;
+	public Material m_meshOriginMaterial;
 
 	float[] m_freshHeighValues_Right;
 	float[] m_freshHeighValues_Left;
@@ -82,7 +83,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshStripsMaterial);
 			//m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
-		m_meshCreatureOriginMesh.GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshStripsMaterial);
+		m_meshCreatureOriginMesh.GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshOriginMaterial);
 
 		// for initing arrays with legit values
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[0].GetFrontRowVertices_Right();
