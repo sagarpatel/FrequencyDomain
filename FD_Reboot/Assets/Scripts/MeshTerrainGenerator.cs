@@ -6,6 +6,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 {
 	GameObject[] m_meshStripGeneratorsGOArray;
 	public MeshStripGenerator[] m_meshStripGeneratorsArray;
+	MeshStripGenerator m_meshCreatureOriginMesh;
+	GameObject m_meshCreatureOriginMeshObject;
 	public int m_meshStripsPoolCount = 300;
 	public int m_lastActivatedStripIndex = 0;
 	float m_distanceTravelledLastFrame = 0;
@@ -14,6 +16,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	int m_stripsWidthVerticesCount = 256;
 	float m_stripsWidthVerticesScale = 3.5f;
+	public float m_generationDepth = 10.0f;
 
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right;
 	Vector3[] m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left;
@@ -27,6 +30,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 	Vector3[] t_stripUpVectorsArray_Left;
 	Quaternion t_diffQuaternion;
 	MeshStripGenerator m_lastGeneratedMeshStrip;
+	Vector3[] m_generationCenterPointVertices;
+	float[] t_zeroHeightsArray;
 
 	public Material m_meshStripsMaterial;
 
@@ -44,14 +49,20 @@ public class MeshTerrainGenerator : MonoBehaviour
 
 	FrequencyDataManager m_frequencyDataManager;
 
-	GameObject d_circleCenterObject;
-
 	public bool p_isMeshColorLive = true;
 
 	void Start()
 	{
+			
 		GameObject meshStripsHolder = new GameObject("MeshStripsHolder");
 		m_meshStripGeneratorsGOArray = new GameObject[m_meshStripsPoolCount];
+		m_meshCreatureOriginMeshObject = new GameObject("MeshCreatureOriginMeshObject");
+		m_meshCreatureOriginMeshObject.transform.parent = transform;
+		m_meshCreatureOriginMeshObject.transform.localPosition = Vector3.zero;
+		m_meshCreatureOriginMeshObject.transform.localRotation = Quaternion.identity;
+		m_meshCreatureOriginMeshObject.AddComponent<MeshStripGenerator>();
+		m_meshCreatureOriginMesh = m_meshCreatureOriginMeshObject.GetComponent<MeshStripGenerator>();
+
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
 			m_meshStripGeneratorsGOArray[i] = new GameObject();
@@ -64,11 +75,14 @@ public class MeshTerrainGenerator : MonoBehaviour
 		}
 		m_meshStripGeneratorsArray = m_meshStripGeneratorsGOArray.Select(g => g.GetComponent<MeshStripGenerator>()).ToArray();
 
+
+
 		for(int i = 0; i < m_meshStripGeneratorsGOArray.Length; i++)
 		{
 			m_meshStripGeneratorsArray[i].GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshStripsMaterial);
 			//m_meshStripGeneratorsGOArray[i].SetActive(false);
 		}
+		m_meshCreatureOriginMesh.GenerateMeshStrip(m_stripsWidthVerticesCount, m_stripsWidthVerticesScale, 0.0f, m_meshStripsMaterial);
 
 		// for initing arrays with legit values
 		m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right = m_meshStripGeneratorsArray[0].GetFrontRowVertices_Right();
@@ -80,6 +94,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 		t_calcBackRowVertsArray_Left = new Vector3[t_calcFrontRowVertsArray_Left.Length];
 		t_stripUpVectorsArray_Right = new Vector3[t_calcFrontRowVertsArray_Left.Length];
 		t_stripUpVectorsArray_Left = new Vector3[t_calcFrontRowVertsArray_Left.Length];
+		m_generationCenterPointVertices = new Vector3[t_calcFrontRowVertsArray_Left.Length];
+		t_zeroHeightsArray = new float[t_calcFrontRowVertsArray_Left.Length];
 		//t_calcFrontRowVertsArray = m_meshStripGeneratorsArray[0].GetFrontRowVertices(); // this just made a refernece, need pure local copy
 		for(int i = 0; i < t_calcFrontRowVertsArray_Right.Length; i++)
 		{
@@ -89,6 +105,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 			t_calcBackRowVertsArray_Left[i] = new Vector3();
 			t_stripUpVectorsArray_Left[i] = new Vector3();
 			t_stripUpVectorsArray_Right[i] = new Vector3();
+			m_generationCenterPointVertices[i] = new Vector3();
+			t_zeroHeightsArray[i] = 0;
 		}
 		m_lastGeneratedMeshStrip_Rotation = m_meshStripGeneratorsGOArray[0].transform.rotation;
 		m_lastGeneratedMeshStrip_Transform = m_meshStripGeneratorsGOArray[0].transform;
@@ -112,10 +130,6 @@ public class MeshTerrainGenerator : MonoBehaviour
 		m_circleCenterPos = new Vector3(0, m_circleFormRadius, 0);
 
 		m_frequencyDataManager = FindObjectOfType<FrequencyDataManager>();
-
-		d_circleCenterObject = new GameObject("Circle Center");
-		d_circleCenterObject.transform.parent = transform;
-		d_circleCenterObject.transform.localPosition = m_circleCenterPos;
 
 	}
 
@@ -189,6 +203,25 @@ public class MeshTerrainGenerator : MonoBehaviour
 		}
 
 		m_lastGeneratedMeshStrip = m_meshStripGeneratorsArray[stripIndex];
+
+		// doing origin strip stuff
+		// calculate vertices center
+		Vector3 averageSum = Vector3.zero;
+		for(int i  = 0; i < m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left.Length; i++)
+			averageSum += m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left[i];
+
+		averageSum = averageSum/(float)m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left.Length;
+		// kill the x, since center point is always x-axis centered, z should be anyways
+		averageSum.x = 0;
+		averageSum.z = m_generationDepth;
+		for(int i = 0; i < m_generationCenterPointVertices.Length; i++)
+			m_generationCenterPointVertices[i] = averageSum;
+
+		m_meshCreatureOriginMesh.SetRowsVertices_Right(m_generationCenterPointVertices, m_lastGeneratedMeshStrip_FrontRowVerticesArray_Right, t_stripUpVectorsArray_Right, t_zeroHeightsArray, 0);
+		m_meshCreatureOriginMesh.SetRowsVertices_Left(m_generationCenterPointVertices, m_lastGeneratedMeshStrip_FrontRowVerticesArray_Left, t_stripUpVectorsArray_Left, t_zeroHeightsArray, 0);
+		// do normals averaging?
+
+
 	}
 	
 	Vector3 GenerateFrontRowBaselineVertex(int collumnIndex, float bendFactor)
@@ -285,6 +318,8 @@ public class MeshTerrainGenerator : MonoBehaviour
 				m_meshStripGeneratorsArray[i].SetMeshStripColor(color);
 		else
 			m_meshStripGeneratorsArray[m_lastActivatedStripIndex].SetMeshStripColor(color); // testing out strip colors instead of global color
+
+		m_meshCreatureOriginMesh.SetMeshStripColor(color);
 	}
 
 	void SetMeshTerrainWireframeBounds(Color wireframeBoundsColor)
