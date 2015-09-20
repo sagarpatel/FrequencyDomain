@@ -4,7 +4,7 @@ using System.Collections;
 public class DebugMenuNavigator : MonoBehaviour 
 {
 
-	public enum DebugTypes
+	public enum DebugMenuCategory
 	{
 		FrequencyDataScaling,
 		ColorScaling,
@@ -13,11 +13,14 @@ public class DebugMenuNavigator : MonoBehaviour
 		ConductorParameters
 	}
 
-	public DebugTypes m_currentDebugType = DebugTypes.FrequencyDataScaling;
+	DebugMenuCategory m_currentDebugCategory_Highlighted = DebugMenuCategory.FrequencyDataScaling;
+	bool m_isCatergorySelected = false;
 
 	FrequencyDataManager m_frequencyDataManager;
 	LiveAudioDataManager m_liveAudioDataManager;
 	RiderPhysics m_riderPhysics;
+
+
 
 	void Start()
 	{
@@ -26,18 +29,24 @@ public class DebugMenuNavigator : MonoBehaviour
 		m_riderPhysics = FindObjectOfType<RiderPhysics>();
 	}
 
-	public void ChangeDebugMenuType(bool menuMoveDirection)
+	// input should be -1 or 1
+	public void HandleInput_UpDown(int input)
 	{
-		int change = 0;
-		if(menuMoveDirection == true)
-			change = 1;
-		else
-			change = -1;
+		// move category highglighter up down
+		if(m_isCatergorySelected == false)
+		{
+			m_currentDebugCategory_Highlighted = (DebugMenuCategory)(((int)m_currentDebugCategory_Highlighted + input) % 5) ; // TDDO: err... FIX THIS ??!?
 
-		m_currentDebugType = (DebugTypes)((int)m_currentDebugType + change); // TDDO: err... FIX THIS ??!?
+		}
+
 
 	}
 
+
+	public void HandleInput_LeftRight(int input)
+	{
+
+	}
 
 
 }
