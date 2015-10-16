@@ -26,7 +26,7 @@ public class LiveAudioDataManager : MonoBehaviour
 		m_currentAudioDeviceIndex = 0;
 		for(int i = 0; i < m_audioDevicesArray.Length; i++)
 		{
-			if(m_audioDevicesArray[i].Contains("Stereo Mix") || m_audioDevicesArray[i].Contains("Boom"))
+			if(m_audioDevicesArray[i].Contains("Stereo Mix") || m_audioDevicesArray[i].Contains("Microphone"))
 			{
 				m_currentAudioDeviceIndex = i;
 				break;
