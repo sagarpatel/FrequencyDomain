@@ -6,7 +6,7 @@ public class MeshTerrainGenerator : MonoBehaviour
 {
 	GameObject[] m_meshStripGeneratorsGOArray;
 	public MeshStripGenerator[] m_meshStripGeneratorsArray;
-	MeshStripGenerator m_meshCreatureOriginMesh;
+	public MeshStripGenerator m_meshCreatureOriginMesh;
 	GameObject m_meshCreatureOriginMeshObject;
 	public int m_meshStripsPoolCount = 300;
 	public int m_lastActivatedStripIndex = 0;
